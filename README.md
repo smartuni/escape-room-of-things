@@ -8,4 +8,5 @@
 * `/RasPi`: For the configuration and setup of the RaspberryPi
 * `/Nodes`: Maintains everything RIOT related, including source code of the basic puzzle nodes
 * `/Puzzle/<name>`: Files, code and documentation for a specific puzzle
+* `/Backend`: Rest Api, DB Logic, Coap client and Coap Server
 
