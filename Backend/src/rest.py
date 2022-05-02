@@ -1,5 +1,5 @@
-from coapthon_client import get_led, set_led
-from sqlite import update_led, insert_led, get_led_by_name
+from coapthon_client import *
+from sqlite import *
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 
@@ -17,6 +17,18 @@ def api_get_led_value(id):
 @app.route('/coap/led<id>', methods=['POST'])
 def api_set_led_value(id):
     response = set_led(id, request.get_json()["value"])
+    return jsonify(response)
+
+
+@app.route('/coap/box<id>', methods=['GET'])
+def api_get_box_value(id):
+    response = get_box(id)
+    return jsonify(response)
+
+
+@app.route('/coap/box<id>', methods=['POST'])
+def api_set_box_value(id):
+    response = set_box(id, request.get_json()["value"])
     return jsonify(response)
 
 
