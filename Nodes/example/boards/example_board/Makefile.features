@@ -1,0 +1,1 @@
+include $(RIOTBOARD)/nrf52840dongle/Makefile.features

@@ -1,0 +1,7 @@
+# Module of the custom board
+USEMODULE += board_example_nrf52840dongle
+
+# we want to use RIOTboot bootloader
+FEATURES_REQUIRED=riotboot
+
+include $(RIOTBOARD)/nrf52840dongle/Makefile.dep

@@ -1,0 +1,9 @@
+# We must duplicate the include done by $(RIOTBASE)/Makefile.include
+# to also include the main board header
+INCLUDES += $(addprefix -I,$(wildcard $(RIOTBOARD)/nrf52840dongle/include))
+
+# we flash using DFU Util
+PROGRAMMER = dfu-util
+PROGRAMMERS_SUPPORTED += dfu-util
+
+include $(RIOTBOARD)/nrf52840dongle/Makefile.include
