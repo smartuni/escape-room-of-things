@@ -1,7 +1,7 @@
 from coapthon.resources.resource import Resource
 from coapthon.server.coap import CoAP
 from coapthon import defines
-
+from coapthon.client.helperclient import HelperClient
 
 class LEDResource(Resource):
     def __init__(self, name="led", coap_server=None):
@@ -26,16 +26,15 @@ class LEDResource(Resource):
 
 class CoAPServer(CoAP):
     def __init__(self, host, port):
-        CoAP.__init__(self, (host, port))
-        self.add_resource('led0', LEDResource(name='led0'))
-        self.add_resource('led1', LEDResource(name='led1'))
-        self.add_resource('led2', LEDResource(name='led2'))
-        self.add_resource('led3', LEDResource(name='led3'))
-
+        CoAP.__init__(self, host, port)
+        client = HelperClient(server=("127.0.0.1", 5683))
+        response = client.put("rd?ep=server", payload="ct:40;</server>")
+        print(response.payload)
+        client.stop()
 
 def main():
     print("Server start")
-    server = CoAPServer("127.0.0.1", 5683)
+    server = CoAPServer("127.0.0.1", 5863)
     try:
         server.listen(10)
     except KeyboardInterrupt:

@@ -1,6 +1,6 @@
 from coapthon_client import *
 from sqlite import *
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, render_template
 from flask_cors import CORS
 
 app = Flask(__name__)
@@ -51,5 +51,20 @@ def api_db_add_led(id):
     return jsonify(insert_led("led{}".format(id)))
 
 
+# webapp
+@app.route('/ControlCenter', methods=['GET'])
+def api_get_ControlCenter():
+    return render_template('ControlCenter.html')
+
+
+# webapp
+@app.route('/', methods=['GET'])
+def index():
+    return render_template("ControlCenter.html")
+
+
 if __name__ == "__main__":
+    # from waitress import serve
+
+    # serve(app, host="0.0.0.0")
     app.run(host="0.0.0.0")
