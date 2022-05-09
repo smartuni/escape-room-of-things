@@ -33,32 +33,15 @@
 #define SERVO_MAX        (2000U)
 
 static ssize_t _riot_board_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len, void *ctx);
-static ssize_t _led_handler(coap_pkt_t *pdu, uint8_t *buf, size_t len, void *ctx);
-
-/* [TASK 2: add the prototype of your resource handler here] */
-
-
-/* [TASK 2: declare the array of LEDs here] */
-static const gpio_t leds[] = {
-    LED0_PIN,
-    LED1_PIN,
-    LED2_PIN,
-};
-
+static ssize_t servo_handler(coap_pkt_t *pdu, uint8_t *buf, size_t len, void *ctx);
 
 /* CoAP resources. Must be sorted by path (ASCII order). */
 static const coap_resource_t _resources[] = {
-    /* [TASK 2: register your CoAP resource here] */
-    { "/led/", COAP_GET | COAP_PUT | COAP_MATCH_SUBTREE, _led_handler, NULL },
+    /*registration of CoAP resource*/
+    { "/servo", COAP_PUT | COAP_GET, servo_handler, NULL },
     { "/riot/board", COAP_GET, _riot_board_handler, NULL }
 };
 
-/* a gcoap listener is a collection of resources. Additionally we can specify
- * custom functions to:
- *      - list our resources on the /.well-known/core
- *      - how our resources are matched on an incoming request (simple string
- *        comparison is the default)
- */
 static gcoap_listener_t _listener = {
     _resources,
     ARRAY_SIZE(_resources),
@@ -72,79 +55,51 @@ static servo_t servo;
 void server_init(void)
 {
     gcoap_register_listener(&_listener);
-    servo_init(&servo, DEV, CHANNEL, SERVO_MIN, SERVO_MAX);
-    servo_set(&servo, 1000U);
+    servo_init(&servo, DEV, CHANNEL, SERVO_MIN, SERVO_MAX); /*initialize servo motor*/
+    /*test if servo works after initialisation*/
+    servo_set(&servo, 1000U); /*move servo to min position*/
+    printf("Move to min position\n");
     xtimer_sleep(3);
-    servo_set(&servo, 2000U);
+    servo_set(&servo, 2000U); /*move servo to max position*/
+    printf("Move to max position\n");
     xtimer_sleep(3);
     servo_set(&servo, 1000U);
-
-
-    /* [TASK 2: initialize the GPIOs here] */
-    /* initialize LEDs and turn them off */
-    //for (unsigned i = 0; i < ARRAY_SIZE(leds); i++) {
-    //    gpio_init(leds[i], GPIO_OUT);
-    //    gpio_set(leds[i]);
-//}
 }	
 
-
-
-/* [TASK 2: implement the LED handler here] */
-static ssize_t _led_handler(coap_pkt_t *pdu, uint8_t *buf, size_t len, void *ctx)
+/* implementation of servo handler */
+static ssize_t servo_handler(coap_pkt_t *pdu, uint8_t *buf, size_t len, void *ctx)
 {
     (void) ctx; /* argument not used */
-    
-/*int res;*/
-/* Initialize servo motor */
-/*servo_init(&servo, DEV, CHANNEL, SERVO_MIN, SERVO_MAX);
-if (res < 0) {
-    puts("Errors while initializing servo");
-return -1;
-}
-puts("Servo initialized.");*/
 
-    /* implement your handler here */
     char uri[CONFIG_NANOCOAP_URI_MAX] = { 0 };
-    /* get the request path, to know which LED is being requested */
+    /* get the request path */
     if (coap_get_uri_path(pdu, (uint8_t *)uri) <= 0) {
         /* reply with an error if we could not parse the URI */
         return gcoap_response(pdu, buf, len, COAP_CODE_BAD_REQUEST);
     }
 
-    /* find the LED number, the URI should be /led/<number> */
-    char *led_str = uri + strlen("/led/");
-    unsigned led_number = atoi(led_str);
-
-    /* verify that the number is valid, respond with an error otherwise */
-    if (led_number >= ARRAY_SIZE(leds)) {
-        return gcoap_response(pdu, buf, len, COAP_CODE_BAD_REQUEST);
-    }
-
     ssize_t resp_len = 0;
-    int led_status = 0;
+    int servo_status = 0;
     unsigned method = coap_method2flag(coap_get_code_detail(pdu));
 
     switch (method) {
-    case COAP_PUT: /* on PUT, we set the status of the LED based on the payload */
+    case COAP_PUT: /* on PUT, we set the status of the servo based on the payload */
         if (pdu->payload_len) {
-            led_status = atoi((char *)pdu->payload);
+            servo_status = atoi((char *)pdu->payload);
         } else {
             return gcoap_response(pdu, buf, len, COAP_CODE_BAD_REQUEST);
         }
 
-        if (led_status) {
-            servo_set(&servo, 1000U);
-            //gpio_clear(leds[led_number]);
-            puts("LED off");
+        if (!servo_status) {
+            servo_set(&servo, 1000U); /*servo to min position on "0"*/
+            puts("Servo min");
         } else {
-            servo_set(&servo, 2000U);
-            //gpio_set(leds[led_number]);
-            puts("LED on");
+            servo_set(&servo, 2000U); /*servo to max position on "1"*/
+            puts("Servo max");
         }
         return gcoap_response(pdu, buf, len, COAP_CODE_CHANGED);
 
-    case COAP_GET: /* on GET, we return the status of the LED in plain text */
+    case COAP_GET: /* on GET, we return the status of the servo in plain text */
         /* initialize the CoAP response */
         gcoap_resp_init(pdu, buf, len, COAP_CODE_CONTENT);
 
@@ -154,11 +109,8 @@ puts("Servo initialized.");*/
         /* finish the options indicating that we will include a payload */
         resp_len = coap_opt_finish(pdu, COAP_OPT_FINISH_PAYLOAD);
 
-        /* get the current status of the LED, which is the inverted value of the GPIO */
-        //led_status = !gpio_read(leds[led_number]);
-
         /* based on the status, write the value of the payload to send */
-        if (led_status) {
+        if (!servo_status) {
             pdu->payload[0] = '1';
         } else {
             pdu->payload[0] = '0';
