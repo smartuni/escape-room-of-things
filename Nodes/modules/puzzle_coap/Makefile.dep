@@ -1,0 +1,7 @@
+# add the module dependencies here
+# USEMODULE += random
+
+USEMODULE += gcoap
+USEMODULE += cord_ep_standalone
+USEMODULE += uri_parser
+USEPKG += tinycbor
