@@ -41,17 +41,17 @@ def api_get_room(room):
 
 
 @app.route('/Rooms/movepuzzle/<puzzle>', methods=['POST'])
-def api_update_room(puzzle):
+def api_moovepuzzle(puzzle):
     request_data = request.get_json()
-    response = update_room(request_data['newRoom'],[request_data['oldRoom']], puzzle)
-    return jsonify(response)
+    response = update_puzzle(request_data['newRoom'],[request_data['oldRoom']], puzzle)
+    return jsonify({'name': response.name, 'room':response.room, 'state': response.state})
 
 
 # puzzles
 @app.route('/Rooms/<room>/<puzzle>', methods=['GET'])
-def api_get_room(room, puzzle):
+def api_get_puzzle(room, puzzle):
     response = get_room_by_name(room, puzzle)
-    return jsonify(response)
+    return jsonify({'name': response.name, 'room':response.room, 'state': response.state})
 
 
 # coap
