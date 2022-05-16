@@ -1,5 +1,5 @@
 # name of your application
-APPLICATION = coap-example
+APPLICATION = servo_control
 
 # If no BOARD is found in the environment, use this default:
 BOARD ?= pba-d-01-kw2x
