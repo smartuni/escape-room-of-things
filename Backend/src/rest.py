@@ -16,18 +16,18 @@ def api_getall():
 
 # rooms
 
-@app.route('/Rooms/delete/<room>', methods=['DELETE'])
+@app.route('/Rooms/<room>', methods=['DELETE'])
 def api_delete_room(room):
     response = delete_room(room)
     return jsonify(response)
 
 
-@app.route('/Rooms/add/<room>', methods=['POST'])
+@app.route('/Roomm/<room>', methods=['POST'])
 def api_add_room(room):
     response = add_room(room)
     return jsonify(response)
 
-@app.route('/Rooms/update/<room>', methods=['POST'])
+@app.route('/Rooms/<room>', methods=['PUT'])
 def api_update_room(room):
     request_data = request.get_json()
     response = update_room(request_data['state'],room)
@@ -40,7 +40,7 @@ def api_get_room(room):
     return jsonify(response)
 
 
-@app.route('/Rooms/movepuzzle/<puzzle>', methods=['POST'])
+@app.route('/Rooms/movepuzzle/<puzzle>', methods=['PUT'])
 def api_moovepuzzle(puzzle):
     request_data = request.get_json()
     response = update_puzzle(request_data['newRoom'],[request_data['oldRoom']], puzzle)
