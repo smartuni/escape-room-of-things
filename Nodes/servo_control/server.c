@@ -102,20 +102,7 @@ static ssize_t servo_handler(coap_pkt_t *pdu, uint8_t *buf, size_t len, void *ct
     case COAP_GET: /* on GET, we return the status of the servo in plain text */
         /* initialize the CoAP response */
         gcoap_resp_init(pdu, buf, len, COAP_CODE_CONTENT);
-
-        /* set the content format to plain text */
-        coap_opt_add_format(pdu, COAP_FORMAT_TEXT);
-
-        /* finish the options indicating that we will include a payload */
-        resp_len = coap_opt_finish(pdu, COAP_OPT_FINISH_PAYLOAD);
-
-        /* based on the status, write the value of the payload to send */
-        if (!servo_status) {
-            pdu->payload[0] = '1';
-        } else {
-            pdu->payload[0] = '0';
-        }
-        resp_len++;
+example
         return resp_len;
 
     }
