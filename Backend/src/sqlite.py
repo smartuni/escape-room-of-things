@@ -104,7 +104,7 @@ def create_table_puzzle():
                 path TEXT NOT NULL,
                 room TEXT NOT NULL,
                 state TEXT,
-                FOREIGN KEY(room) REFERENCESname(rooms)
+                FOREIGN KEY(room) REFERENCES name(rooms)
             );
         ''')
 
@@ -148,12 +148,12 @@ def delete_puzzle(puzzle):
     return deleted_puzzle
 
 
-def update_puzzle(newRoom, puzzle):
+def update_puzzle(newRoom, oldRoom, puzzle):
     updated_puzzle = {}
     try:
         conn = connect_to_db()
         cur = conn.cursor()
-        cur.execute("UPDATE puzzles SET room = {} WHERE name = '{}' and room = '{}'".format(newRoom,puzzle['name'], puzzle['room']))
+        cur.execute("UPDATE puzzles SET room = {} WHERE name = '{}' and room = '{}'".format(newRoom, puzzle, oldRoom))
         conn.commit()
         updated_puzzle = get_room_by_name(puzzle['name'])
     except:
@@ -170,6 +170,25 @@ def get_puzzle_by_name(puzzle):
         conn = connect_to_db()
         cur = conn.cursor()
         cur.execute("SELECT * from puzzles where name = '{}'".format(puzzle))
+        row = cur.fetchone()
+        fetched_puzzle["name"] = row[1]
+        fetched_puzzle["path"] = row[2]
+        fetched_puzzle["room"] = row[3]
+        fetched_puzzle["state"] = row[4]
+    except:
+        conn().rollback()
+
+    finally:
+        conn.close()
+    return (fetched_puzzle)
+
+
+def get_puzzle_by_name_and_room(puzzle, room):
+    fetched_puzzle = {}
+    try:
+        conn = connect_to_db()
+        cur = conn.cursor()
+        cur.execute("SELECT * from puzzles where name = '{}' and room = '{}'".format(puzzle, room))
         row = cur.fetchone()
         fetched_puzzle["name"] = row[1]
         fetched_puzzle["path"] = row[2]
