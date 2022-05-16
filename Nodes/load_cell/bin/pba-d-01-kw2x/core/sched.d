@@ -31,7 +31,6 @@
  /mnt/fileserver/MyHome/escape-room-of-things/Nodes/RIOT/core/include/msg.h \
  /mnt/fileserver/MyHome/escape-room-of-things/Nodes/RIOT/core/include/sched.h \
  /mnt/fileserver/MyHome/escape-room-of-things/Nodes/RIOT/core/lib/include/thread_config.h \
- /mnt/fileserver/MyHome/escape-room-of-things/Nodes/RIOT/core/include/thread_flags.h \
  /mnt/fileserver/MyHome/escape-room-of-things/Nodes/RIOT/cpu/cortexm_common/include/thread_arch.h \
  /mnt/fileserver/MyHome/escape-room-of-things/Nodes/RIOT/core/lib/include/log.h \
  /usr/include/newlib/stdio.h /usr/include/newlib/sys/cdefs.h \
@@ -115,8 +114,6 @@
 /mnt/fileserver/MyHome/escape-room-of-things/Nodes/RIOT/core/include/sched.h:
 
 /mnt/fileserver/MyHome/escape-room-of-things/Nodes/RIOT/core/lib/include/thread_config.h:
-
-/mnt/fileserver/MyHome/escape-room-of-things/Nodes/RIOT/core/include/thread_flags.h:
 
 /mnt/fileserver/MyHome/escape-room-of-things/Nodes/RIOT/cpu/cortexm_common/include/thread_arch.h:
 

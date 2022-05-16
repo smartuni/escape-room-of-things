@@ -42,15 +42,8 @@
  /mnt/fileserver/MyHome/escape-room-of-things/Nodes/RIOT/core/include/msg.h \
  /mnt/fileserver/MyHome/escape-room-of-things/Nodes/RIOT/core/include/sched.h \
  /mnt/fileserver/MyHome/escape-room-of-things/Nodes/RIOT/core/lib/include/thread_config.h \
- /mnt/fileserver/MyHome/escape-room-of-things/Nodes/RIOT/core/include/thread_flags.h \
  /mnt/fileserver/MyHome/escape-room-of-things/Nodes/RIOT/cpu/cortexm_common/include/thread_arch.h \
- /mnt/fileserver/MyHome/escape-room-of-things/Nodes/RIOT/sys/include/pm_layered.h \
- /mnt/fileserver/MyHome/escape-room-of-things/Nodes/RIOT/drivers/include/periph/spi.h \
- /usr/include/newlib/errno.h /usr/include/newlib/sys/errno.h \
- /usr/lib/gcc/arm-none-eabi/9.2.1/include-fixed/limits.h \
- /mnt/fileserver/MyHome/escape-room-of-things/Nodes/RIOT/boards/pba-d-01-kw2x/include/periph_conf.h \
- /mnt/fileserver/MyHome/escape-room-of-things/Nodes/RIOT/drivers/include/periph/gpio.h \
- /mnt/fileserver/MyHome/escape-room-of-things/Nodes/RIOT/drivers/include/periph/hwrng.h
+ /mnt/fileserver/MyHome/escape-room-of-things/Nodes/RIOT/sys/include/pm_layered.h
 
 /mnt/fileserver/MyHome/escape-room-of-things/Nodes/load_cell/bin/pba-d-01-kw2x/riotbuild/riotbuild.h:
 
@@ -154,22 +147,6 @@
 
 /mnt/fileserver/MyHome/escape-room-of-things/Nodes/RIOT/core/lib/include/thread_config.h:
 
-/mnt/fileserver/MyHome/escape-room-of-things/Nodes/RIOT/core/include/thread_flags.h:
-
 /mnt/fileserver/MyHome/escape-room-of-things/Nodes/RIOT/cpu/cortexm_common/include/thread_arch.h:
 
 /mnt/fileserver/MyHome/escape-room-of-things/Nodes/RIOT/sys/include/pm_layered.h:
-
-/mnt/fileserver/MyHome/escape-room-of-things/Nodes/RIOT/drivers/include/periph/spi.h:
-
-/usr/include/newlib/errno.h:
-
-/usr/include/newlib/sys/errno.h:
-
-/usr/lib/gcc/arm-none-eabi/9.2.1/include-fixed/limits.h:
-
-/mnt/fileserver/MyHome/escape-room-of-things/Nodes/RIOT/boards/pba-d-01-kw2x/include/periph_conf.h:
-
-/mnt/fileserver/MyHome/escape-room-of-things/Nodes/RIOT/drivers/include/periph/gpio.h:
-
-/mnt/fileserver/MyHome/escape-room-of-things/Nodes/RIOT/drivers/include/periph/hwrng.h:

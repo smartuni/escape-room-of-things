@@ -32,9 +32,7 @@
  /mnt/fileserver/MyHome/escape-room-of-things/Nodes/RIOT/cpu/kinetis/include/cpu_conf_kinetis.h \
  /mnt/fileserver/MyHome/escape-room-of-things/Nodes/RIOT/cpu/cortexm_common/include/cpu_conf_common.h \
  /mnt/fileserver/MyHome/escape-room-of-things/Nodes/RIOT/core/lib/include/thread_config.h \
- /mnt/fileserver/MyHome/escape-room-of-things/Nodes/RIOT/core/include/thread_flags.h \
  /mnt/fileserver/MyHome/escape-room-of-things/Nodes/RIOT/cpu/cortexm_common/include/thread_arch.h \
- /mnt/fileserver/MyHome/escape-room-of-things/Nodes/RIOT/core/include/thread_flags.h \
  /mnt/fileserver/MyHome/escape-room-of-things/Nodes/RIOT/core/lib/include/irq.h \
  /mnt/fileserver/MyHome/escape-room-of-things/Nodes/RIOT/cpu/cortexm_common/include/irq_arch.h \
  /mnt/fileserver/MyHome/escape-room-of-things/Nodes/RIOT/core/lib/include/debug.h \
@@ -120,11 +118,7 @@
 
 /mnt/fileserver/MyHome/escape-room-of-things/Nodes/RIOT/core/lib/include/thread_config.h:
 
-/mnt/fileserver/MyHome/escape-room-of-things/Nodes/RIOT/core/include/thread_flags.h:
-
 /mnt/fileserver/MyHome/escape-room-of-things/Nodes/RIOT/cpu/cortexm_common/include/thread_arch.h:
-
-/mnt/fileserver/MyHome/escape-room-of-things/Nodes/RIOT/core/include/thread_flags.h:
 
 /mnt/fileserver/MyHome/escape-room-of-things/Nodes/RIOT/core/lib/include/irq.h:
 

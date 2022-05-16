@@ -46,7 +46,7 @@ int main(void)
 
     expect(units_after <= 1);
 
-    /*endless loop*//
+    /*endless loop*/
     while (1) {
         int32_t value = hx711_get_value(&dev, times);
         int32_t units = hx711_get_units(&dev, times);

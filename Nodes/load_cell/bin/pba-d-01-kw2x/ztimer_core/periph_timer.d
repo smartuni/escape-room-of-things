@@ -36,7 +36,6 @@
  /mnt/fileserver/MyHome/escape-room-of-things/Nodes/RIOT/core/lib/include/assert.h \
  /mnt/fileserver/MyHome/escape-room-of-things/Nodes/RIOT/core/include/msg.h \
  /mnt/fileserver/MyHome/escape-room-of-things/Nodes/RIOT/core/lib/include/thread_config.h \
- /mnt/fileserver/MyHome/escape-room-of-things/Nodes/RIOT/core/include/thread_flags.h \
  /mnt/fileserver/MyHome/escape-room-of-things/Nodes/RIOT/cpu/cortexm_common/include/thread_arch.h \
  /mnt/fileserver/MyHome/escape-room-of-things/Nodes/RIOT/core/lib/include/rmutex.h \
  /mnt/fileserver/MyHome/escape-room-of-things/Nodes/RIOT/drivers/include/periph/timer.h \
@@ -135,8 +134,6 @@
 /mnt/fileserver/MyHome/escape-room-of-things/Nodes/RIOT/core/include/msg.h:
 
 /mnt/fileserver/MyHome/escape-room-of-things/Nodes/RIOT/core/lib/include/thread_config.h:
-
-/mnt/fileserver/MyHome/escape-room-of-things/Nodes/RIOT/core/include/thread_flags.h:
 
 /mnt/fileserver/MyHome/escape-room-of-things/Nodes/RIOT/cpu/cortexm_common/include/thread_arch.h:
 

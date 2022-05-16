@@ -41,15 +41,13 @@
  /mnt/fileserver/MyHome/escape-room-of-things/Nodes/RIOT/core/include/msg.h \
  /mnt/fileserver/MyHome/escape-room-of-things/Nodes/RIOT/core/include/sched.h \
  /mnt/fileserver/MyHome/escape-room-of-things/Nodes/RIOT/core/lib/include/thread_config.h \
- /mnt/fileserver/MyHome/escape-room-of-things/Nodes/RIOT/core/include/thread_flags.h \
  /mnt/fileserver/MyHome/escape-room-of-things/Nodes/RIOT/cpu/cortexm_common/include/thread_arch.h \
  /mnt/fileserver/MyHome/escape-room-of-things/Nodes/RIOT/core/lib/include/panic.h \
  /mnt/fileserver/MyHome/escape-room-of-things/Nodes/RIOT/core/lib/include/kernel_defines.h \
  /mnt/fileserver/MyHome/escape-room-of-things/Nodes/RIOT/drivers/include/periph/pm.h \
  /mnt/fileserver/MyHome/escape-room-of-things/Nodes/RIOT/cpu/kinetis/include/periph_cpu.h \
  /mnt/fileserver/MyHome/escape-room-of-things/Nodes/RIOT/sys/include/pm_layered.h \
- /mnt/fileserver/MyHome/escape-room-of-things/Nodes/RIOT/core/lib/include/log.h \
- /mnt/fileserver/MyHome/escape-room-of-things/Nodes/RIOT/sys/include/ps.h
+ /mnt/fileserver/MyHome/escape-room-of-things/Nodes/RIOT/core/lib/include/log.h
 
 /mnt/fileserver/MyHome/escape-room-of-things/Nodes/load_cell/bin/pba-d-01-kw2x/riotbuild/riotbuild.h:
 
@@ -151,8 +149,6 @@
 
 /mnt/fileserver/MyHome/escape-room-of-things/Nodes/RIOT/core/lib/include/thread_config.h:
 
-/mnt/fileserver/MyHome/escape-room-of-things/Nodes/RIOT/core/include/thread_flags.h:
-
 /mnt/fileserver/MyHome/escape-room-of-things/Nodes/RIOT/cpu/cortexm_common/include/thread_arch.h:
 
 /mnt/fileserver/MyHome/escape-room-of-things/Nodes/RIOT/core/lib/include/panic.h:
@@ -166,5 +162,3 @@
 /mnt/fileserver/MyHome/escape-room-of-things/Nodes/RIOT/sys/include/pm_layered.h:
 
 /mnt/fileserver/MyHome/escape-room-of-things/Nodes/RIOT/core/lib/include/log.h:
-
-/mnt/fileserver/MyHome/escape-room-of-things/Nodes/RIOT/sys/include/ps.h:
