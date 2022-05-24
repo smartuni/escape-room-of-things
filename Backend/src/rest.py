@@ -4,7 +4,7 @@ from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "*"}})
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////tmp/escape_room.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///D:/study/SOSE2022/Project/dbescape_room.db'
 db = SQLAlchemy(app)
 
 
@@ -14,17 +14,19 @@ db = SQLAlchemy(app)
 
 @app.route('/rooms', methods=['GET'])
 def api_get_rooms():
-    allEntries = {}
+    allEntries = {'rooms': []}
+    allRooms = []
     rooms = Room.query.all()
     for room in rooms:
-        allEntries[room.id] = [room, Puzzle.query.filter_by(room = room.id).all()]
-    # todo: implement properly {rooms: [room[puzzle[device,...],...],...]}
-    return jsonify(allEntries)
+        allRooms.append(room)
+        # todo: implement properly {rooms: [room[puzzle[device,...],...],...]}
+    print(allRooms)
+    return jsonify({'rooms': allRooms})
 
 
 @app.route('/rooms/<roomid>', methods=['GET'])
 def api_get_room(roomid):
-    room = Room.query.filter_by(id=room).first()
+    room = Room.query.filter_by(id=roomid).first()
     return jsonify(room.serialize())
 
 
@@ -51,9 +53,10 @@ def api_update_room(roomid):
 @app.route('/rooms/<roomid>', methods=['DELETE'])
 def api_delete_room(roomid):
     room = Room.query.filter_by(id=roomid).first()
+    roomcopy = room.serialize()
     db.session.delete(room)
     db.session.commit()
-    return jsonify(room.serialize())
+    return jsonify(roomcopy)
 
 
 # puzzles
@@ -93,30 +96,31 @@ def api_update_puzzle(puzzleid):
 
 
 @app.route('/puzzles/<puzzleid>', methods=['DELETE'])
-def api_delete_room(puzzleid):
+def api_delete_puzzle(puzzleid):
     puzzle = Puzzle.query.filter_by(id=puzzleid).first()
+    puzzlecopy = puzzle.serialize()
     db.session.delete(puzzle)
     db.session.commit()
-    return jsonify(puzzle.serialize())
+    return jsonify(puzzlecopy)
 
 
 # devices
 
 @app.route('/devices', methods=['GET'])
-def api_get_puzzles():
+def api_get_devices():
     puzzle = Puzzle.query.all()
     # todo: implement properly {puzzles: [puzzle[device,...],...]}
     return jsonify(puzzle.serialize())
 
 
 @app.route('/devices/<deviceid>', methods=['GET'])
-def api_get_puzzle(deviceid):
+def api_get_device(deviceid):
     device = Device.query.filter_by(id=deviceid).first()
     return jsonify(device.serialize())
 
 
 @app.route('/devices/<deviceid>', methods=['PUT'])
-def api_update_puzzle(deviceid):
+def api_update_device(deviceid):
     request_data = request.get_json()
     device = Device.query.filter_by(id=deviceid).first()
     device.state = request_data['state']
@@ -126,12 +130,13 @@ def api_update_puzzle(deviceid):
 
 
 @app.route('/devices/<deviceid>', methods=['DELETE'])
-def api_delete_room(deviceid):
+def api_delete_device(deviceid):
     device = Device.query.filter_by(id=deviceid).first()
+    devicecopy = device.serialize()
     db.session.delete(device)
     db.session.commit()
     # todo: remove device from rd?
-    return jsonify(device.serialize())
+    return jsonify(devicecopy)
 
 
 class Room(db.Model):
@@ -139,11 +144,11 @@ class Room(db.Model):
     name = db.Column(db.String(100), unique=False, nullable=False)
     description = db.Column(db.String(1000), unique=False, nullable=True)
     state = db.Column(db.String(20), unique=False, nullable=False)
+    puzzles = db.relationship('Puzzle', backref='puzzle', lazy=True)
 
     def __repr__(self):
         return 'ID: {}\nName: {}\nDescription: {}\nState: {}'.format(self.id, self.name, self.description, self.state)
     
-    @property
     def serialize(self):
        """Return object data in easily serializable format"""
        return {
@@ -153,7 +158,6 @@ class Room(db.Model):
            'state': self.state
        }
 
-    @property
     def serialize_many2many(self):
        """
        Return object's relations in easily serializable format.
@@ -172,7 +176,6 @@ class Puzzle(db.Model):
     def __repr__(self):
         return 'ID: {}\nName: {}\nDescription: {}\nState: {}\nRoom: {}'.format(self.id, self.name, self.description, self.state, self.room)
     
-    @property
     def serialize(self):
         """Return object data in easily serializable format"""
         return {
@@ -194,7 +197,6 @@ class Device(db.Model):
     def __repr__(self):
         return 'ID: {}\nDevice IP: {}\nDevice Type: {}\nState: {}\nPuzzle: {}'.format(self.id, self.devIP, self.devType, self.state, self.puzzle)
 
-    @property
     def serialize(self):
         """Return object data in easily serializable format"""
         return {
@@ -207,5 +209,5 @@ class Device(db.Model):
 
 
 if __name__ == "__main__":
-    db.create_all()
+    # db.create_all()
     app.run(host="0.0.0.0")
