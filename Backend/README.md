@@ -243,3 +243,14 @@ ID for PUT in request or path? -> currently path: path -> identification, reques
 Always return all puzzles/devices for room/puzzle requests? -> currently not
 DELETE Device -> Remove Device also from RD?
 PUT device -> What makes sense here? -> Only Update puzzle or also state?
+
+
+ToDo:
+
+Getall rooms/puzzles/devices orm 
+Device discovery -> get on device for observe
+coap server should use orm
+-> move orm classes into separete file
+puzzle solve logic(romm solve logic) -> solved event?
+default room/ default puzzle -> id=0  for new devices
+presentation slides for 2nd milestone
