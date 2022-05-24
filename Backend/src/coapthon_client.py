@@ -1,10 +1,10 @@
 from coapthon.client.helperclient import HelperClient
-host = "127.0.0.1"
+host = "2001:db8::814c:35fc:fd31:5fde"
 port = 5683
 
 
 def get_led(led):
-    path = "led{}".format(led)
+    path = "led/{}".format(led)
 
     client = HelperClient(server=(host, port))
     response = client.get(path)
@@ -14,7 +14,7 @@ def get_led(led):
 
 
 def set_led(led, value):
-    path = "led{}".format(led)
+    path = "led/{}".format(led)
 
     client = HelperClient(server=(host, port))
     response = client.put(path, payload=value)
