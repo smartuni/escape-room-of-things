@@ -1,6 +1,10 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
+from Backend.src.orm_classes.Puzzle import Puzzle
+from Backend.src.orm_classes.Device import Device
+from Backend.src.orm_classes.Room import Room
+
 
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "*"}})
@@ -77,7 +81,8 @@ def api_get_puzzle(puzzleid):
 @app.route('/puzzles', methods=['POST'])
 def api_add_puzzle():
     request_data = request.get_json()
-    puzzle = Puzzle(name=request_data['name'], description=request_data['description'], state=request_data['state'], room=request_data['room'])
+    puzzle = Puzzle(name=request_data['name'], description=request_data['description'], state=request_data['state'],
+                    room=request_data['room'])
     db.session.add(puzzle)
     db.session.commit()
     return jsonify(puzzle.serialize())
@@ -137,75 +142,6 @@ def api_delete_device(deviceid):
     db.session.commit()
     # todo: remove device from rd?
     return jsonify(devicecopy)
-
-
-class Room(db.Model):
-    id = db.Column(db.INTEGER, primary_key=True)
-    name = db.Column(db.String(100), unique=False, nullable=False)
-    description = db.Column(db.String(1000), unique=False, nullable=True)
-    state = db.Column(db.String(20), unique=False, nullable=False)
-    puzzles = db.relationship('Puzzle', backref='puzzle', lazy=True)
-
-    def __repr__(self):
-        return 'ID: {}\nName: {}\nDescription: {}\nState: {}'.format(self.id, self.name, self.description, self.state)
-    
-    def serialize(self):
-       """Return object data in easily serializable format"""
-       return {
-           'id': self.id,
-           'name': self.name,
-           'description': self.description,
-           'state': self.state
-       }
-
-    def serialize_many2many(self):
-       """
-       Return object's relations in easily serializable format.
-       NB! Calls many2many's serialize property.
-       """
-       return [ item.serialize for item in self.many2many]
-
-
-class Puzzle(db.Model):
-    id = db.Column(db.INTEGER, primary_key=True)
-    name = db.Column(db.String(100), unique=False, nullable=False)
-    description = db.Column(db.String(1000), unique=False, nullable=True)
-    state = db.Column(db.String(20), unique=False, nullable=False)
-    room = db.Column(db.INTEGER, db.ForeignKey('room.id'), nullable=False)
-
-    def __repr__(self):
-        return 'ID: {}\nName: {}\nDescription: {}\nState: {}\nRoom: {}'.format(self.id, self.name, self.description, self.state, self.room)
-    
-    def serialize(self):
-        """Return object data in easily serializable format"""
-        return {
-            'id': self.id,
-            'name': self.name,
-            'description': self.description,
-            'state': self.state,
-            'room': self.room
-        }
-
-
-class Device(db.Model):
-    id = db.Column(db.INTEGER, primary_key=True)
-    devIP = db.Column(db.String(100), unique=False, nullable=False)
-    devType = db.Column(db.String(20), unique=False, nullable=False)
-    state = db.Column(db.String(20), unique=False, nullable=False)
-    puzzle = db.Column(db.INTEGER, db.ForeignKey('puzzle.id'), nullable=False)
-
-    def __repr__(self):
-        return 'ID: {}\nDevice IP: {}\nDevice Type: {}\nState: {}\nPuzzle: {}'.format(self.id, self.devIP, self.devType, self.state, self.puzzle)
-
-    def serialize(self):
-        """Return object data in easily serializable format"""
-        return {
-            'id': self.id,
-            'name': self.name,
-            'description': self.description,
-            'state': self.state,
-            'puzzle': self.puzzle
-        }
 
 
 if __name__ == "__main__":

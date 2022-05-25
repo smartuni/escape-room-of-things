@@ -1,0 +1,23 @@
+from ..rest import db
+
+
+class Device(db.Model):
+    id = db.Column(db.INTEGER, primary_key=True)
+    devIP = db.Column(db.String(100), unique=False, nullable=False)
+    devType = db.Column(db.String(20), unique=False, nullable=False)
+    state = db.Column(db.String(20), unique=False, nullable=False)
+    puzzle = db.Column(db.INTEGER, db.ForeignKey('puzzle.id'), nullable=False)
+
+    def __repr__(self):
+        return 'ID: {}\nDevice IP: {}\nDevice Type: {}\nState: {}\nPuzzle: {}'.format(self.id, self.devIP, self.devType,
+                                                                                      self.state, self.puzzle)
+
+    def serialize(self):
+        """Return object data in easily serializable format"""
+        return {
+            'id': self.id,
+            'name': self.name,
+            'description': self.description,
+            'state': self.state,
+            'puzzle': self.puzzle
+        }
