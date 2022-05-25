@@ -29,6 +29,32 @@ Res:{Response}
 
 ##misc
 
+
+/rooms/state/{roomid} (PUT) 
+-> admin puts a specific room into a new state (states either "ready" or "maintainance")
+Req: {'state': 'text'}
+
+Res:
+{
+	'id': text
+	'name': text,
+	'description': text,
+	'state': text
+}
+
+/puzzles/state/{puzzleid} (PUT) 
+-> admin puts a specific puzzle into a new state (states either "ready" or "maintainance")
+Req: {'state': 'text'}
+
+Res:
+{
+	'id': text
+	'name': text,
+	'description': text,
+	'state': text,
+	'room': text
+}
+
 ##rooms
 
 /rooms (GET)
@@ -62,8 +88,7 @@ Res:
 {
 	'id': text
 	'name': text,
-	'description': text,
-	'state': text,
+	'description': text
 }
 
 /rooms (POST)
@@ -71,8 +96,7 @@ Res:
 Req:
 {
 	'name': text,
-	'description': text,
-	'state': text
+	'description': text
 }
 
 Res:
@@ -80,7 +104,7 @@ Res:
 	'id': text
 	'name': text,
 	'description': text,
-	'state': text,
+	'state': text
 }
 
 /rooms/{roomid} (PUT)
@@ -88,15 +112,14 @@ Res:
 Req:
 {
 	'name': text,
-	'description': text,
-	'state': text
+	'description': text
 }
 Res:
 {
 	'id': text
 	'name': text,
 	'description': text,
-	'state': text,
+	'state': text
 }
 
 /rooms/{roomid} (DELETE)
@@ -147,7 +170,6 @@ Req:
 {
 	'name': text,
 	'description': text,
-	'state': text,
 	'room': text,
 }
 
@@ -167,7 +189,6 @@ Req:
 
 	'name': text,
 	'description': text,
-	'state': text,
 	'room': text
 }
 Res:
@@ -217,7 +238,6 @@ Res:
 ->updates device for deviceid from path and returns the updated device
 Req:
 {
-	'state': text,
 	'puzzle': text
 }
 Res:

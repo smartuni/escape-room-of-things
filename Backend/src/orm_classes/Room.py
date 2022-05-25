@@ -1,4 +1,4 @@
-from ..rest import db
+from .shared import db
 
 
 class Room(db.Model):

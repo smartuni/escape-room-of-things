@@ -1,4 +1,4 @@
-from ..rest import db
+from .shared import db
 
 
 class Puzzle(db.Model):
