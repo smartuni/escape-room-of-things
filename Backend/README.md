@@ -320,6 +320,13 @@ coap server should use orm
 puzzle solve logic(romm solve logic) -> solved event?
 presentation slides for 2nd milestone
 
+Next Milestone:
+- key/token exchange frontend<->backend
+- user tables
+- key exchange with devices
+- implement a way to change the device states by the server (solved -> ready / * -> maintainance)
+
+
 Done:
 Getall rooms/puzzles/devices orm
 move orm classes into separete file
