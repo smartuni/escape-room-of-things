@@ -1,6 +1,5 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-from flask_sqlalchemy import SQLAlchemy
 from orm_classes.shared import db
 from orm_classes.Device import Device
 from orm_classes.Puzzle import Puzzle
@@ -22,7 +21,8 @@ config.read('Backend/src/restconfig.ini')
 
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "*"}})
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + config.get('database', 'path')
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + \
+    config.get('database', 'path')
 db.init_app(app)
 
 
@@ -63,7 +63,9 @@ def api_get_room(roomid):
 @app.route('/rooms', methods=['POST'])
 def api_add_room():
     request_data = request.get_json()
-    room = Room(name=request_data[NAME], description=request_data[DESCRIPTION], state=READY)
+    room = Room(name=request_data[NAME],
+                description=request_data[DESCRIPTION],
+                state=READY)
     db.session.add(room)
     db.session.commit()
     return jsonify(room.serialize())
@@ -105,7 +107,9 @@ def api_get_puzzle(puzzleid):
 @app.route('/puzzles', methods=['POST'])
 def api_add_puzzle():
     request_data = request.get_json()
-    puzzle = Puzzle(name=request_data[NAME], description=request_data[DESCRIPTION], state=READY,
+    puzzle = Puzzle(name=request_data[NAME],
+                    description=request_data[DESCRIPTION],
+                    state=READY,
                     room=request_data[ROOM])
     db.session.add(puzzle)
     db.session.commit()
@@ -169,8 +173,15 @@ def api_delete_device(deviceid):
 # function to add the default room and default puzzle for unassigned devices
 
 def add_default_room_and_puzzle():
-    room = Room(id="0", name="default", description="Default room for unassigned devices", state=READY)
-    puzzle = Puzzle(id="0", name="default", description="Default puzzle for unassigned devices", room="0", state=READY)
+    room = Room(id="0",
+                name="default",
+                description="Default room for unassigned devices",
+                state=READY)
+    puzzle = Puzzle(id="0",
+                    name="default",
+                    description="Default puzzle for unassigned devices",
+                    room="0",
+                    state=READY)
     db.session.add(room)
     db.session.add(puzzle)
     db.session.commit()
@@ -186,6 +197,7 @@ def serialize_rooms(rooms):
         serializedRooms.append(sr)
     return serializedRooms
 
+
 def serialize_puzzles(puzzles):
     serializedPuzzles = []
     for p in puzzles:
@@ -198,7 +210,7 @@ def serialize_puzzles(puzzles):
 def serialize_devices(devices):
     serializedDevices = []
     for d in devices:
-        serializedDevices.append (d.serialize())
+        serializedDevices.append(d.serialize())
     return serializedDevices
 
 
@@ -215,7 +227,10 @@ def new_room(number=1):
 def new_puzzle(roomid, number=1):
     puzzles = []
     for _ in range(number):
-        puzzles.append(Puzzle(name="testpuzzle", description="", room=roomid, state=READY))
+        puzzles.append(Puzzle(name="testpuzzle",
+                              description="",
+                              room=roomid,
+                              state=READY))
     db.session.add_all(puzzles)
     db.session.commit()
 
@@ -223,7 +238,11 @@ def new_puzzle(roomid, number=1):
 def new_device(puzzleid, number=1):
     devices = []
     for _ in range(number):
-        devices.append(Device(name="testdevice", devIP="", description="", puzzle=puzzleid, state=READY))
+        devices.append(Device(name="testdevice",
+                              devIP="",
+                              description="",
+                              puzzle=puzzleid,
+                              state=READY))
     db.session.add_all(devices)
     db.session.commit()
 

@@ -9,7 +9,8 @@ class Room(db.Model):
     puzzles = db.relationship('Puzzle', backref='puzzle', lazy=True)
 
     def __repr__(self):
-        return 'ID: {}\nName: {}\nDescription: {}\nState: {}'.format(self.id, self.name, self.description, self.state)
+        return 'ID: {}\nName: {}\nDescription: {}\nState: {}'\
+            .format(self.id, self.name, self.description, self.state)
 
     def serialize(self):
         """Return object data in easily serializable format"""
@@ -19,4 +20,3 @@ class Room(db.Model):
             'description': self.description,
             'state': self.state
         }
-    

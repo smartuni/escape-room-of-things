@@ -10,8 +10,8 @@ class Puzzle(db.Model):
     devices = db.relationship('Device', backref='device', lazy=True)
 
     def __repr__(self):
-        return 'ID: {}\nName: {}\nDescription: {}\nState: {}\nRoom: {}'.format(self.id, self.name, self.description,
-                                                                               self.state, self.room)
+        return 'ID: {}\nName: {}\nDescription: {}\nState: {}\nRoom: {}'\
+         .format(self.id, self.name, self.description, self.state, self.room)
 
     def serialize(self):
         """Return object data in easily serializable format"""

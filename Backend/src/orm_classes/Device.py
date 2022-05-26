@@ -10,8 +10,8 @@ class Device(db.Model):
     puzzle = db.Column(db.INTEGER, db.ForeignKey('puzzle.id'), nullable=False)
 
     def __repr__(self):
-        return 'ID: {}\nDevice IP: {}\nName: {}\nState: {}\nPuzzle: {}'.format(self.id, self.devIP, self.name,
-                                                                                      self.state, self.puzzle)
+        return 'ID: {}\nDevice IP: {}\nName: {}\nState: {}\nPuzzle: {}'\
+            .format(self.id, self.devIP, self.name, self.state, self.puzzle)
 
     def serialize(self):
         """Return object data in easily serializable format"""
