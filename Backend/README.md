@@ -53,7 +53,7 @@ pip install -U Flask-SQLAlchemy
 # Discovery of devices
 
 There will be a default room with id=0 and a default puzzle with id=0 in which we will store devices which want to integrated in our IoT network.
-The FRONTEND can get them with a call to /rooms (GET) and filter for id=0 on room and puzzle
+The FRONTEND can get them with a call to /puzzles (GET)and filter for id=0 on puzzle
 
 
 
