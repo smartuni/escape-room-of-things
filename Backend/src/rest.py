@@ -50,14 +50,8 @@ def api_update_puzzle_state(puzzleid):
 
 @app.route('/rooms', methods=['GET'])
 def api_get_rooms():
-    allEntries = {'rooms': []}
-    allRooms = []
     rooms = Room.query.all()
-    for room in rooms:
-        allRooms.append(room)
-        # todo: implement properly {rooms: [room[puzzle[device,...],...],...]}
-    print(allRooms)
-    return jsonify({'rooms': allRooms})
+    return jsonify({'rooms': serialize_rooms(rooms)})
 
 
 @app.route('/rooms/<roomid>', methods=['GET'])
@@ -98,9 +92,8 @@ def api_delete_room(roomid):
 
 @app.route('/puzzles', methods=['GET'])
 def api_get_puzzles():
-    puzzle = Puzzle.query.all()
-    # todo: implement properly {puzzles: [puzzle[device,...],...]}
-    return jsonify(puzzle.serialize())
+    puzzles = Puzzle.query.all()
+    return jsonify({'puzzles': serialize_puzzles(puzzles)})
 
 
 @app.route('/puzzles/<puzzleid>', methods=['GET'])
@@ -143,9 +136,8 @@ def api_delete_puzzle(puzzleid):
 
 @app.route('/devices', methods=['GET'])
 def api_get_devices():
-    puzzle = Puzzle.query.all()
-    # todo: implement properly {puzzles: [puzzle[device,...],...]}
-    return jsonify(puzzle.serialize())
+    devices = Device.query.all()
+    return jsonify({'devices': serialize_devices(devices)})
 
 
 @app.route('/devices/<deviceid>', methods=['GET'])
@@ -174,8 +166,72 @@ def api_delete_device(deviceid):
     return jsonify(devicecopy)
 
 
+# function to add the default room and default puzzle for unassigned devices
+
+def add_default_room_and_puzzle():
+    room = Room(id="0", name="default", description="Default room for unassigned devices", state=READY)
+    puzzle = Puzzle(id="0", name="default", description="Default puzzle for unassigned devices", room="0", state=READY)
+    db.session.add(room)
+    db.session.add(puzzle)
+    db.session.commit()
+
+
+# functions for serializing lists of objects for the get all paths
+
+def serialize_rooms(rooms):
+    serializedRooms = []
+    for r in rooms:
+        sr = r.serialize()
+        sr['puzzles'] = serialize_puzzles(r.puzzles)
+        serializedRooms.append(sr)
+    return serializedRooms
+
+def serialize_puzzles(puzzles):
+    serializedPuzzles = []
+    for p in puzzles:
+        sp = p.serialize()
+        sp['devices'] = serialize_devices(p.devices)
+        serializedPuzzles.append(sp)
+    return serializedPuzzles
+
+
+def serialize_devices(devices):
+    serializedDevices = []
+    for d in devices:
+        serializedDevices.append (d.serialize())
+    return serializedDevices
+
+
+# create functions for testing purposes (can be called in app_context in main)
+
+def new_room(number=1):
+    rooms = []
+    for _ in range(number):
+        rooms.append(Room(name="testroom", description="", state=READY))
+    db.session.add_all(rooms)
+    db.session.commit()
+
+
+def new_puzzle(roomid, number=1):
+    puzzles = []
+    for _ in range(number):
+        puzzles.append(Puzzle(name="testpuzzle", description="", room=roomid, state=READY))
+    db.session.add_all(puzzles)
+    db.session.commit()
+
+
+def new_device(puzzleid, number=1):
+    devices = []
+    for _ in range(number):
+        devices.append(Device(name="testdevice", devIP="", description="", puzzle=puzzleid, state=READY))
+    db.session.add_all(devices)
+    db.session.commit()
+
+
 if __name__ == "__main__":
-    # db.create_all()
-    print('soup')
-    print(app.config['SQLALCHEMY_DATABASE_URI'])
+    # uncomment for first time to create db and default room + puzzle
+    # todo: think of better solution
+    # with app.app_context():
+    #     db.create_all()
+    #     add_default_room_and_puzzle()
     app.run(host="0.0.0.0")

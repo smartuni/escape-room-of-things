@@ -19,3 +19,4 @@ class Room(db.Model):
             'description': self.description,
             'state': self.state
         }
+    
