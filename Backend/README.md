@@ -20,6 +20,38 @@ pip install db-sqlite3
 pip install -U Flask-SQLAlchemy
 
 
+
+# JSON Object representations:
+
+## Room:
+{
+	'id': text
+	'name': text,
+	'description': text,
+	'state': text,
+}
+
+## Puzzle:
+{
+	'id': text
+	'name': text,
+	'description': text,
+	'state': text,
+	'room': text,
+}
+
+## Device:
+{ 
+  'id': text, 
+  'devIP': text, 
+  'name': text, 
+  'description': text,
+  'state': text, 
+  'puzzle': text
+}
+
+
+
 # api
 
 /path
@@ -27,12 +59,11 @@ pip install -U Flask-SQLAlchemy
 Req:{Request}
 Res:{Response}
 
-##misc
-
+## misc
 
 /rooms/state/{roomid} (PUT) 
 -> admin puts a specific room into a new state (states either "ready" or "maintainance")
-Req: {'state': 'text'}
+Req. Payload: {'state': text}
 
 Res:
 {
@@ -44,7 +75,7 @@ Res:
 
 /puzzles/state/{puzzleid} (PUT) 
 -> admin puts a specific puzzle into a new state (states either "ready" or "maintainance")
-Req: {'state': 'text'}
+Req. Payload: {'state': text}
 
 Res:
 {
@@ -72,11 +103,13 @@ Res:
 				'state': text,
 				'room': text,
 				'devices':[{
-					'id': text,
-					'devType': text,
-					'state': text,
-					'puzzle': text,
-				},...]
+						'id': text, 
+						'devIP': text, 
+						'name': text, 
+						'description': text,
+						'state': text, 
+						'puzzle': text
+					},...]
 			},...]
 		},...]
 }
@@ -88,12 +121,13 @@ Res:
 {
 	'id': text
 	'name': text,
-	'description': text
+	'description': text,
+	'state': text
 }
 
 /rooms (POST)
 ->adds room from request and returns the new room
-Req:
+Req. Payload:
 {
 	'name': text,
 	'description': text
@@ -109,11 +143,12 @@ Res:
 
 /rooms/{roomid} (PUT)
 ->updates room for roomid from path and returns the updated room
-Req:
+Req. Payload:
 {
 	'name': text,
 	'description': text
 }
+
 Res:
 {
 	'id': text
@@ -129,7 +164,7 @@ Res:
 	'id': text
 	'name': text,
 	'description': text,
-	'state': text,
+	'state': text
 }
 
 
@@ -145,10 +180,12 @@ Res:
 				'state': text,
 				'room': text,
 				'devices':[{
-					'id': text,
-					'devType': text,
-					'state': text,
-					'puzzle': text,
+					'id': text, 
+					'devIP': text, 
+					'name': text, 
+					'description': text,
+					'state': text, 
+					'puzzle': text
 				},...]
 			},...]
 }
@@ -161,16 +198,16 @@ Res:
 	'name': text,
 	'description': text,
 	'state': text,
-	'room': text,
+	'room': text
 }
 
 /puzzles (POST)
 ->adds puzzle from request and returns the new puzzle
-Req:
+Req. Payload:
 {
 	'name': text,
 	'description': text,
-	'room': text,
+	'room': text
 }
 
 Res:
@@ -179,18 +216,18 @@ Res:
 	'name': text,
 	'description': text,
 	'state': text,
-	'room': text,
+	'room': text
 }
 
 /puzzles/{puzzleid} (PUT)
 ->updates puzzle for puzzleid from path returns the updated puzzle
-Req:
+Req. Payload:
 {
-
 	'name': text,
 	'description': text,
 	'room': text
 }
+
 Res:
 {
 	'id': text
@@ -216,10 +253,12 @@ Res{
 /devices (GET)
 ->returns all devices
 {'devices': [{
-				'id': text,
-				'devType': text,
-				'state': text,
-				'puzzle': text,
+				'id': text, 
+				'devIP': text, 
+				'name': text, 
+				'description': text,
+				'state': text, 
+				'puzzle': text		
 			},...]
 }
 
@@ -227,34 +266,40 @@ Res{
 ->returns device for deviceid in path
 Res:
 {
-	'id': text
-	'devType': text,
-	'description': text,
-	'state': text,
-	'puzzle': text
+	'id': text, 
+  	'devIP': text, 
+  	'name': text, 
+  	'description': text,
+  	'state': text, 
+  	'puzzle': text
 }
 
 /devices/{deviceid} (PUT)
-->updates device for deviceid from path and returns the updated device
-Req:
+->updates puzzle of device for specified deviceid and returns the updated device
+Req. Payload:
 {
 	'puzzle': text
 }
+
 Res:
 {
-	'id': text
-	'name': text,
-	'state': text,
-	'puzzle': text
+	'id': text, 
+  	'devIP': text, 
+  	'name': text, 
+  	'description': text,
+  	'state': text, 
+  	'puzzle': text
 }
 
 /devices/{deviceid} (DELETE)
 -> deletes device with deviceid from path and returns deleted device
 Res{
-	'id': text
-	'devType': text,
-	'state': text,
-	'puzzle': text
+	'id': text, 
+  	'devIP': text, 
+  	'name': text, 
+  	'description': text,
+  	'state': text, 
+  	'puzzle': text
 }
 
 
