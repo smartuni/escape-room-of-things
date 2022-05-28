@@ -250,8 +250,6 @@ def new_device(puzzleid, number=1):
 
 
 if __name__ == "__main__":
-    # uncomment for first time to create db and default room + puzzle
-    # todo: think of better solution
     if len(sys.argv) > 1:
         with app.app_context():
             db.create_all()
