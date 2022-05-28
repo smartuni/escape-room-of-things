@@ -1,4 +1,5 @@
 from coapthon.client.helperclient import HelperClient
+from coapthon import defines
 host = "2001:db8::814c:35fc:fd31:5fde"
 port = 5683
 
@@ -43,3 +44,15 @@ def set_box(box, value):
     return response.payload
 
 
+def regdev():
+    dev = "horaa"
+    path = "rd?ep={}&con=coap://{}ip".format(dev,dev)
+    ct = {'content_type': defines.Content_types["application/link-format"]}
+    
+    client = HelperClient(server=("127.0.0.1", 5683))
+    response = client.post(path,'',None,None,**ct)
+    client.stop()
+    print(response)
+
+if __name__ == '__main__':
+    regdev()
