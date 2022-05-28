@@ -1,3 +1,4 @@
+import sys
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from orm_classes.shared import db
@@ -17,7 +18,7 @@ PUZZLE = "puzzle"
 
 
 config = configparser.ConfigParser()
-config.read('Backend/src/restconfig.ini')
+config.read('restconfig.ini')
 
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "*"}})
@@ -250,7 +251,8 @@ def new_device(puzzleid, number=1):
 if __name__ == "__main__":
     # uncomment for first time to create db and default room + puzzle
     # todo: think of better solution
-    # with app.app_context():
-    #     db.create_all()
-    #     add_default_room_and_puzzle()
+    if len(sys.argv) > 1:
+        with app.app_context():
+            db.create_all()
+            add_default_room_and_puzzle()
     app.run(host="0.0.0.0")
