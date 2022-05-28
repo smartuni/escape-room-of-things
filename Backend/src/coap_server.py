@@ -10,11 +10,12 @@ from orm_classes.Device import Device
 from orm_classes.Puzzle import Puzzle
 
 config = configparser.ConfigParser()
-config.read(os.path.join(os.path.dirname(__file__),'restconfig.ini'))
+config.read(os.path.join(os.path.dirname(__file__), 'restconfig.ini'))
 db_app = Flask(__name__)
 db_app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + \
-    config.get('database', 'path')
+                                           config.get('database', 'path')
 db.init_app(db_app)
+
 
 class WhoAmI(resource.Resource):
     async def render_get(self, request):
@@ -33,15 +34,49 @@ class WhoAmI(resource.Resource):
                        payload="\n".join(text).encode('utf8'))
 
 
+def victory(room):
+    print("CONGRATULATIONS *BOX OPENS*")
+
+
+def check_game_state(device):
+    set_device_solved(device)  # For Tests
+    puzzle = device.puzzle
+    room = puzzle.room
+    if check_puzzle_state(puzzle):
+        if check_room_state(room):
+            return victory(room)
+
+
+def check_room_state(room):
+    for puz in room:
+        if puz.state is not "solved":
+            return False
+    room.state = "solved"
+    return True
+
+
+def check_puzzle_state(puzzle):
+    for dev in puzzle.devices:
+        if dev.state is not "solved":
+            return False
+    puzzle.state = "solved"
+    return True
+
+
+def set_device_solved(device):
+    device.state = "solved"
+
+
 
 def addNewDevices(devices, ips):
     print(devices)
     for dev in devices:
         if "con=" in dev:
-            matches = re.search('ep="(.+?)";con="coap://(.+?)";',dev)
+            matches = re.search('ep="(.+?)";con="coap://(.+?)";', dev)
             if matches.group(2) not in ips:
                 with db_app.app_context():
-                    d = Device(name=matches.group(1), description="test", devIP=matches.group(2), state='ready', puzzle=0)
+                    d = Device(name=matches.group(1), description="test", devIP=matches.group(2), state='ready',
+                               puzzle=0)
                     db.session.add(d)
                     db.session.commit()
                     ips.append(matches.group(2))
@@ -78,7 +113,7 @@ async def main():
     async for r in req.observation:
         li = r.payload.decode('utf-8').split(",")
         connectedIps = addNewDevices(li, connectedIps)
-        
+
     # Run forever
     print("server running now")
     await asyncio.get_running_loop().create_future()
