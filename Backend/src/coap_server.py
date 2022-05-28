@@ -1,5 +1,6 @@
 import asyncio
 import configparser
+import os
 import aiocoap.resource as resource
 import re
 from aiocoap import *
@@ -9,7 +10,7 @@ from orm_classes.Device import Device
 from orm_classes.Puzzle import Puzzle
 
 config = configparser.ConfigParser()
-config.read('restconfig.ini')
+config.read(os.path.join(os.path.dirname(__file__),'restconfig.ini'))
 db_app = Flask(__name__)
 db_app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + \
     config.get('database', 'path')
