@@ -81,7 +81,7 @@ def set_device_solved(device):
     db.session.commit()
 
 
-def add_new_devices(devices, ips):
+def add_new_devices(devices, ips, con):
     print(devices)
     for dev in devices:
         if "con=" in dev:
@@ -93,6 +93,7 @@ def add_new_devices(devices, ips):
                     db.session.add(d)
                     db.session.commit()
                     ips.append(matches.group(2))
+                    observeDevice(d, con)
     return ips
 
 
@@ -102,13 +103,29 @@ def get_devices_from_db():
         return [d.devIP for d in devs]
 
 
+async def observe_device(device, con):
+    request = Message(code=GET, uri="coap://{}/node/info/".format(device.devIP),
+                    observe=0)
+
+    req = con.request(request)
+    res = await req.response
+    # parse answer, CBOR?
+
+    print("observe: {}".format(device.devIP))
+    async for r in req.observation:
+        device.state = "solved"
+        # parse answer, CBOR?
+        # implement if
+        #check_game_state(device)
+
+
 async def main():
     connectedIps = []
     connectedIps = get_devices_from_db()
     root = resource.Site()
 
     root.add_resource(['.well-known', 'core'],
-                      resource.WKCResource(root.get_resources_as_linkheader))
+                    resource.WKCResource(root.get_resources_as_linkheader))
     root.add_resource(['whoami'], WhoAmI())
 
     con = await Context.create_server_context(root, bind=("127.0.0.1", 5555))
@@ -119,13 +136,14 @@ async def main():
     req = con.request(request)
     res = await req.response
     cachedli = res.payload.decode('utf-8').split(",")
-
-    connectedIps = add_new_devices(cachedli, connectedIps)
+    connectedIps = add_new_devices(cachedli, connectedIps, con)
 
     print("start async loop")
     async for r in req.observation:
         li = r.payload.decode('utf-8').split(",")
-        connectedIps = add_new_devices(li, connectedIps)
+
+        connectedIps = add_new_devices(li, connectedIps, con)
+
 
     # Run forever
     print("server running now")
