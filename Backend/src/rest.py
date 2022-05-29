@@ -8,7 +8,7 @@ from orm_classes.Puzzle import Puzzle
 from orm_classes.Room import Room
 import configparser
 
-
+SOLVED = "solved"
 READY = "ready"
 ID = "id"
 NAME = "name"
@@ -17,14 +17,13 @@ STATE = "state"
 ROOM = "room"
 PUZZLE = "puzzle"
 
-
 config = configparser.ConfigParser()
-config.read(os.path.join(os.path.dirname(__file__),'restconfig.ini'))
+config.read(os.path.join(os.path.dirname(__file__), 'restconfig.ini'))
 
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "*"}})
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + \
-    config.get('database', 'path')
+                                        config.get('database', 'path')
 db.init_app(app)
 
 
@@ -68,7 +67,13 @@ def api_add_room():
     room = Room(name=request_data[NAME],
                 description=request_data[DESCRIPTION],
                 state=READY)
+    puzzle = Puzzle(name="victoryPuzzle",
+                    description="This Puzzle contains the Victory-Event",
+                    state=SOLVED,
+                    isVictory=True,
+                    room=room.id)
     db.session.add(room)
+    db.session.add(puzzle)
     db.session.commit()
     return jsonify(room.serialize())
 
@@ -112,7 +117,8 @@ def api_add_puzzle():
     puzzle = Puzzle(name=request_data[NAME],
                     description=request_data[DESCRIPTION],
                     state=READY,
-                    room=request_data[ROOM])
+                    room=request_data[ROOM],
+                    isVictory=False)
     db.session.add(puzzle)
     db.session.commit()
     return jsonify(puzzle.serialize())

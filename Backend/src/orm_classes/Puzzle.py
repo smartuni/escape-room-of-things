@@ -7,7 +7,9 @@ class Puzzle(db.Model):
     description = db.Column(db.String(1000), unique=False, nullable=True)
     state = db.Column(db.String(20), unique=False, nullable=False)
     room = db.Column(db.INTEGER, db.ForeignKey('room.id'), nullable=False)
+    isVictory = db.Column(db.BOOLEAN, nullable=True)
     devices = db.relationship('Device', backref='device', lazy=True)
+
 
     def __repr__(self):
         return 'ID: {}\nName: {}\nDescription: {}\nState: {}\nRoom: {}'\
