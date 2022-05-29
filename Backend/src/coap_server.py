@@ -8,13 +8,15 @@ from flask import Flask
 from orm_classes.shared import db
 from orm_classes.Device import Device
 from orm_classes.Puzzle import Puzzle
+from orm_classes.Room import Room
 
 config = configparser.ConfigParser()
-config.read(os.path.join(os.path.dirname(__file__),'restconfig.ini'))
+config.read(os.path.join(os.path.dirname(__file__), 'restconfig.ini'))
 db_app = Flask(__name__)
 db_app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + \
-    config.get('database', 'path')
+                                           config.get('database', 'path')
 db.init_app(db_app)
+
 
 class WhoAmI(resource.Resource):
     async def render_get(self, request):
@@ -33,14 +35,54 @@ class WhoAmI(resource.Resource):
                        payload="\n".join(text).encode('utf8'))
 
 
-def addNewDevices(devices, ips, con):
+def victory(room):
+    print("CONGRATULATIONS *BOX OPENS*")
+
+
+def check_game_state(device):
+    set_device_solved(device)  # For Tests
+    puzzle_id = device.puzzle
+    puzzle = Puzzle.query.filter_by(id=puzzle_id).first()
+    if check_puzzle_state(puzzle):
+        room_id = puzzle.room
+        room = Room.query.filter_by(id=room_id).first()
+        if check_room_state(room):
+            victory(room)
+
+
+def check_room_state(room):
+    for puz in room.puzzles:
+        if puz.state != "solved":
+            return False
+    room.state = "solved"
+    db.session.commit()
+    return True
+
+
+def check_puzzle_state(puzzle):
+    for dev in puzzle.devices:
+        if dev.state != "solved":
+            return False
+    puzzle.state = "solved"
+    db.session.commit()
+    return True
+
+
+# For Tests
+def set_device_solved(device):
+    device.state = "solved"
+    db.session.commit()
+
+
+def add_new_devices(devices, ips, con):
     print(devices)
     for dev in devices:
         if "con=" in dev:
-            matches = re.search('ep="(.+?)";con="coap://(.+?)";',dev)
+            matches = re.search('ep="(.+?)";con="coap://(.+?)";', dev)
             if matches.group(2) not in ips:
                 with db_app.app_context():
-                    d = Device(name=matches.group(1), description="test", devIP=matches.group(2), state='ready', puzzle=0)
+                    d = Device(name=matches.group(1), description="test", devIP=matches.group(2), state='ready',
+                               puzzle=0)
                     db.session.add(d)
                     db.session.commit()
                     ips.append(matches.group(2))
@@ -48,13 +90,13 @@ def addNewDevices(devices, ips, con):
     return ips
 
 
-def getDevicesFromDB():
+def get_devices_from_db():
     with db_app.app_context():
         devs = Device.query.all()
         return [d.devIP for d in devs]
 
 
-async def observeDevice(device, con):
+async def observe_device(device, con):
     request = Message(code=GET, uri="coap://{}/node/info/".format(device.devIP),
                     observe=0)
 
@@ -72,7 +114,7 @@ async def observeDevice(device, con):
 
 async def main():
     connectedIps = []
-    # connectedIps = getDevicesFromDB()
+    # connectedIps = get_devices_from_db()
     root = resource.Site()
 
     root.add_resource(['.well-known', 'core'],
@@ -87,14 +129,15 @@ async def main():
     req = con.request(request)
     res = await req.response
     cachedli = res.payload.decode('utf-8').split(",")
-
-    connectedIps = addNewDevices(cachedli, connectedIps, con)
+    connectedIps = add_new_devices(cachedli, connectedIps, con)
 
     print("start async loop")
     async for r in req.observation:
         li = r.payload.decode('utf-8').split(",")
-        connectedIps = addNewDevices(li, connectedIps, con)
+
+        connectedIps = add_new_devices(li, connectedIps, con)
         
+
     # Run forever
     print("server running now")
     await asyncio.get_running_loop().create_future()
