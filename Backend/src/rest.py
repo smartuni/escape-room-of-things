@@ -162,7 +162,6 @@ def api_get_device(deviceid):
 def api_update_device(deviceid):
     request_data = request.get_json()
     device = Device.query.filter_by(id=deviceid).first()
-    device.state = request_data[STATE]
     device.puzzle = request_data[PUZZLE]
     db.session.commit()
     return jsonify(device.serialize())
