@@ -74,7 +74,7 @@ def set_device_solved(device):
     db.session.commit()
 
 
-def add_new_devices(devices, ips, con):
+async def add_new_devices(devices, ips, con):
     print(devices)
     for dev in devices:
         if "con=" in dev:
@@ -86,7 +86,7 @@ def add_new_devices(devices, ips, con):
                     db.session.add(d)
                     db.session.commit()
                     ips.append(matches.group(2))
-                    observeDevice(d, con)
+                    await observe_device(d,con)
     return ips
 
 
@@ -96,17 +96,21 @@ def get_devices_from_db():
         return [d.devIP for d in devs]
 
 
-async def observe_device(device, con):
-    request = Message(code=GET, uri="coap://{}/node/info/".format(device.devIP),
+async def observe_device(device,con):
+    con = await Context.create_client_context()
+    request = Message(code=GET, uri="coap://{}/node/info".format(device.devIP),
                     observe=0)
 
     req = con.request(request)
     res = await req.response
-    # parse answer, CBOR?
+    print(res)
+    print(res.payload)
 
     print("observe: {}".format(device.devIP))
     async for r in req.observation:
         device.state = "solved"
+        print(r)
+        print(r.payload)
         # parse answer, CBOR?
         # implement if 
         #check_game_state(device)
@@ -129,13 +133,13 @@ async def main():
     req = con.request(request)
     res = await req.response
     cachedli = res.payload.decode('utf-8').split(",")
-    connectedIps = add_new_devices(cachedli, connectedIps, con)
+    connectedIps = await add_new_devices(cachedli, connectedIps, con)
 
     print("start async loop")
     async for r in req.observation:
         li = r.payload.decode('utf-8').split(",")
 
-        connectedIps = add_new_devices(li, connectedIps, con)
+        connectedIps = await add_new_devices(li, connectedIps, con)
         
 
     # Run forever
