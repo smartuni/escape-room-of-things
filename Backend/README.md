@@ -18,6 +18,8 @@ pip install Flask_cors
 pip install db-sqlite3  
 # install Flask SQLAlchemy
 pip install -U Flask-SQLAlchemy
+# install linkheader for rd
+pip3 install linkheader
 
 starting rest.py with arguments ( e.g: 1) now creates db and default room+puzzle, without argument it expects them to exist
 
