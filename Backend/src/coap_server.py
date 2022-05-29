@@ -35,11 +35,16 @@ class WhoAmI(resource.Resource):
                        payload="\n".join(text).encode('utf8'))
 
 
-def victory(room):
-    print("CONGRATULATIONS *BOX OPENS*")
+async def victory(room, con):
+    victory_puzzle = next(filter(lambda puzzle: puzzle.isVictory.isTrue, room.puzzles))
+    for dev in victory_puzzle:
+        request = Message(code=PUT, uri="coap://{}/node/maintenance".format(dev.devIP),
+                          observe=1, payload=None)
+        req = con.request(request)
+        await req.response
 
 
-def check_game_state(device):
+async def check_game_state(device, con):
     set_device_solved(device)  # For Tests
     puzzle_id = device.puzzle
     puzzle = Puzzle.query.filter_by(id=puzzle_id).first()
@@ -47,11 +52,13 @@ def check_game_state(device):
         room_id = puzzle.room
         room = Room.query.filter_by(id=room_id).first()
         if check_room_state(room):
-            victory(room)
+            await victory(room, con)
 
 
 def check_room_state(room):
     for puz in room.puzzles:
+        if puz.id == 0:
+            continue
         if puz.state != "solved":
             return False
     room.state = "solved"
@@ -112,13 +119,13 @@ async def observe_device(device,con):
         print(r)
         print(r.payload)
         # parse answer, CBOR?
-        # implement if 
+        # implement if
         #check_game_state(device)
 
 
 async def main():
     connectedIps = []
-    # connectedIps = get_devices_from_db()
+    connectedIps = get_devices_from_db()
     root = resource.Site()
 
     root.add_resource(['.well-known', 'core'],
@@ -126,7 +133,7 @@ async def main():
     root.add_resource(['whoami'], WhoAmI())
 
     con = await Context.create_server_context(root, bind=("127.0.0.1", 5555))
-    
+
     request = Message(code=GET, uri="coap://127.0.0.1:5683/endpoint-lookup/",
                       observe=0)
 
