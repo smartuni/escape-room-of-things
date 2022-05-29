@@ -33,8 +33,7 @@ class WhoAmI(resource.Resource):
                        payload="\n".join(text).encode('utf8'))
 
 
-
-def addNewDevices(devices, ips):
+def addNewDevices(devices, ips, con):
     print(devices)
     for dev in devices:
         if "con=" in dev:
@@ -45,6 +44,7 @@ def addNewDevices(devices, ips):
                     db.session.add(d)
                     db.session.commit()
                     ips.append(matches.group(2))
+                    observeDevice(d, con)
     return ips
 
 
@@ -54,17 +54,33 @@ def getDevicesFromDB():
         return [d.devIP for d in devs]
 
 
+async def observeDevice(device, con):
+    request = Message(code=GET, uri="coap://{}/node/info/".format(device.devIP),
+                    observe=0)
+
+    req = con.request(request)
+    res = await req.response
+    # parse answer, CBOR?
+
+    print("observe: {}".format(device.devIP))
+    async for r in req.observation:
+        device.state = "solved"
+        # parse answer, CBOR?
+        # implement if 
+        #check_game_state(device)
+
+
 async def main():
     connectedIps = []
-    connectedIps = getDevicesFromDB()
+    # connectedIps = getDevicesFromDB()
     root = resource.Site()
 
     root.add_resource(['.well-known', 'core'],
-                      resource.WKCResource(root.get_resources_as_linkheader))
+                    resource.WKCResource(root.get_resources_as_linkheader))
     root.add_resource(['whoami'], WhoAmI())
 
     con = await Context.create_server_context(root, bind=("127.0.0.1", 5555))
-
+    
     request = Message(code=GET, uri="coap://127.0.0.1:5683/endpoint-lookup/",
                       observe=0)
 
@@ -72,12 +88,12 @@ async def main():
     res = await req.response
     cachedli = res.payload.decode('utf-8').split(",")
 
-    connectedIps = addNewDevices(cachedli, connectedIps)
+    connectedIps = addNewDevices(cachedli, connectedIps, con)
 
     print("start async loop")
     async for r in req.observation:
         li = r.payload.decode('utf-8').split(",")
-        connectedIps = addNewDevices(li, connectedIps)
+        connectedIps = addNewDevices(li, connectedIps, con)
         
     # Run forever
     print("server running now")
