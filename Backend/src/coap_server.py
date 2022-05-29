@@ -8,6 +8,7 @@ from flask import Flask
 from orm_classes.shared import db
 from orm_classes.Device import Device
 from orm_classes.Puzzle import Puzzle
+from orm_classes.Room import Room
 
 config = configparser.ConfigParser()
 config.read(os.path.join(os.path.dirname(__file__), 'restconfig.ini'))
@@ -40,35 +41,40 @@ def victory(room):
 
 def check_game_state(device):
     set_device_solved(device)  # For Tests
-    puzzle = device.puzzle
-    room = puzzle.room
+    puzzle_id = device.puzzle
+    puzzle = Puzzle.query.filter_by(id=puzzle_id).first()
     if check_puzzle_state(puzzle):
+        room_id = puzzle.room
+        room = Room.query.filter_by(id=room_id).first()
         if check_room_state(room):
-            return victory(room)
+            victory(room)
 
 
 def check_room_state(room):
-    for puz in room:
-        if puz.state is not "solved":
+    for puz in room.puzzles:
+        if puz.state != "solved":
             return False
     room.state = "solved"
+    db.session.commit()
     return True
 
 
 def check_puzzle_state(puzzle):
     for dev in puzzle.devices:
-        if dev.state is not "solved":
+        if dev.state != "solved":
             return False
     puzzle.state = "solved"
+    db.session.commit()
     return True
 
 
+# For Tests
 def set_device_solved(device):
     device.state = "solved"
+    db.session.commit()
 
 
-
-def addNewDevices(devices, ips):
+def add_new_devices(devices, ips):
     print(devices)
     for dev in devices:
         if "con=" in dev:
@@ -83,7 +89,7 @@ def addNewDevices(devices, ips):
     return ips
 
 
-def getDevicesFromDB():
+def get_devices_from_db():
     with db_app.app_context():
         devs = Device.query.all()
         return [d.devIP for d in devs]
@@ -91,7 +97,7 @@ def getDevicesFromDB():
 
 async def main():
     connectedIps = []
-    connectedIps = getDevicesFromDB()
+    # connectedIps = getDevicesFromDB()
     root = resource.Site()
 
     root.add_resource(['.well-known', 'core'],
@@ -107,12 +113,12 @@ async def main():
     res = await req.response
     cachedli = res.payload.decode('utf-8').split(",")
 
-    connectedIps = addNewDevices(cachedli, connectedIps)
+    connectedIps = add_new_devices(cachedli, connectedIps)
 
     print("start async loop")
     async for r in req.observation:
         li = r.payload.decode('utf-8').split(",")
-        connectedIps = addNewDevices(li, connectedIps)
+        connectedIps = add_new_devices(li, connectedIps)
 
     # Run forever
     print("server running now")
