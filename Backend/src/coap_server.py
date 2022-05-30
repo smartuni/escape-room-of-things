@@ -45,7 +45,7 @@ class WhoAmI(resource.Resource):
 class coap_server:
     async def init(self):
         self.connectedDevices = []
-        self.get_devices_from_db()
+        # self.get_devices_from_db()
         root = resource.Site()
         self.con = await Context.create_server_context(root, bind=('::1', 5555))
 
@@ -63,7 +63,7 @@ class coap_server:
                         if matches.group(1) not in self.connectedDevices:
                             self.connectedDevices.append(matches.group(1))
                             print(matches.group(1) + " connected")
-                        await self.observe_device(d)
+                            await self.observe_device(d)
 
     def device_disconnected(self, devices):
         print('check for divices to disconnect')
@@ -92,21 +92,26 @@ class coap_server:
 
     async def observe_device(self, device):
         print('start observe on ' + device.serial)
-        request = Message(code=GET, uri=f"coap://{device.devIP}/node/info",
-                          observe=0)
-        req = self.con.request(request)
-        res = await req.response
-        print(res)
-        print(res.payload)
+        try:
+            con= await Context.create_client_context()
+            request = Message(code=GET, uri=f"coap://{device.devIP}/node/info", observe=0)
+            req = con.request(request)
+            
+            res = await req.response
+            print(res)
+            print(res.payload)
 
-        async for r in req.observation:
-            device.state = SOLVED
-            db.session.commit()
-            print(r)
-            print(r.payload)
-            # parse answer, CBOR?
-            # implement if
-            # check_game_state(device)
+            async for r in req.observation:
+               device.state = SOLVED
+               db.session.commit()
+               print(r)
+               print(r.payload)
+                # parse answer, CBOR?
+                # implement if
+                # check_game_state(device)
+        except Exception as e:
+            print('device observe troubles')
+            print(e)
 
     async def observe_rd(self):
         request = Message(code=GET, uri="coap://[::1]:5683/endpoint-lookup/",
