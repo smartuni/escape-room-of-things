@@ -107,6 +107,7 @@ async def observe_device(device, con):
     print(device.name)
     request = Message(code=GET, uri="coap://[2001:db8::4574:2140:c31d:296e]/node/info",
                       observe=0)
+    print(request)
     req = con.request(request)
     res = await req.response
     print(res)
@@ -136,7 +137,6 @@ async def main():
 
     request = Message(code=GET, uri="coap://127.0.0.1:5683/endpoint-lookup/",
                       observe=0)
-
     req = con.request(request)
     res = await req.response
     cachedli = res.payload.decode('utf-8').split(",")
