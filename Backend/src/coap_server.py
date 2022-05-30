@@ -133,7 +133,7 @@ async def main():
                       resource.WKCResource(root.get_resources_as_linkheader))
     root.add_resource(['whoami'], WhoAmI())
 
-    con = await Context.create_server_context(root, bind=("[::1%lo]", 5555))
+    con = await Context.create_server_context(root, bind=())
 
     request = Message(code=GET, uri="coap://127.0.0.1:5683/endpoint-lookup/",
                       observe=0)
