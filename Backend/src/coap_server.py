@@ -134,8 +134,8 @@ async def main():
     root.add_resource(['whoami'], WhoAmI())
 
     con = await Context.create_server_context(root, bind=())
-
-    request = Message(code=GET, uri="coap://127.0.0.1:5683/endpoint-lookup/",
+    # 127.0.0.1:5683
+    request = Message(code=GET, uri="coap://[fd00:dead:beef::1]:5555/endpoint-lookup/",
                       observe=0)
     req = con.request(request)
     res = await req.response
