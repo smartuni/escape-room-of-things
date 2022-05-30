@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@id/fragmentOverview"
+            android:icon="@drawable/baseline_overview_24"
+            android:title="Overview" />
+        <item
+            android:id="@id/fragmentRiddle1"
+            android:icon="@drawable/baseline_riddle_24"
+            android:title="Riddle1" />
+        <item
+            android:id="@id/fragmentLed"
+            android:icon="@drawable/baseline_lightbulb_24"
+            android:title="@string/led" />
+        <item
+            android:id="@id/fragmentQr"
+            android:icon="@drawable/baseline_qr_code_scanner_24"
+            android:title="@string/qr" />
+    </group>
+    <group
+        android:id="@+id/groupAdmin"
+        android:checkableBehavior="single"
+        android:visible="false">
+        <item
+            android:id="@id/fragmentRoom"
+            android:icon="@drawable/baseline_room_preferences_24"
+            android:title="@string/roomConfig" />
+        <item
+            android:id="@id/fragmentSettings"
+            android:icon="@drawable/baseline_settings_24"
+            android:title="@string/settings" />
+    </group>
+</menu>

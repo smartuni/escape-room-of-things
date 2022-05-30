@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/fragmentInfo">
+
+    <fragment
+        android:id="@+id/fragmentInfo"
+        android:name="de.haw.riddle.ui.info.InfoFragment"
+        android:label="info"
+        tools:layout="@layout/fragment_info">
+        <action
+            android:id="@+id/action_fragment_info_to_fragment_overview"
+            app:destination="@id/fragmentOverview"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/fragmentOverview"
+        android:name="de.haw.riddle.ui.overview.OverviewFragment"
+        android:label="overview"
+        tools:layout="@layout/fragment_overview" />
+
+    <fragment
+        android:id="@+id/fragmentRiddle1"
+        android:name="de.haw.riddle.ui.riddle1.Riddle1Fragment"
+        android:label="riddle1"
+        tools:layout="@layout/fragment_riddle1" />
+
+    <fragment
+        android:id="@+id/fragmentLed"
+        android:name="de.haw.riddle.ui.led.LedFragment"
+        android:label="led"
+        tools:layout="@layout/fragment_led" />
+
+    <fragment
+        android:id="@+id/fragmentQr"
+        android:name="de.haw.riddle.ui.qr.QrFragment"
+        android:label="qr"
+        tools:layout="@layout/fragment_qr" />
+
+    <fragment
+        android:id="@+id/fragmentSettings"
+        android:name="de.haw.riddle.ui.admin.settings.AdminSettingsFragment"
+        android:label="@string/settings"
+        tools:layout="@layout/fragment_settings" />
+
+    <fragment
+        android:id="@+id/fragmentRoom"
+        android:name="de.haw.riddle.ui.admin.room.RoomFragment"
+        android:label="Rooms"
+        tools:layout="@layout/fragment_room">
+        <action
+            android:id="@+id/action_fragmentRoom_to_fragmentRiddle"
+            app:destination="@id/fragmentPuzzle"
+            app:enterAnim="@anim/enter_from_right"
+            app:exitAnim="@anim/exit_to_left"
+            app:popEnterAnim="@anim/enter_from_left"
+            app:popExitAnim="@anim/exit_to_right" />
+        <action
+            android:id="@+id/action_fragmentRoom_to_fragmentRoomDetail"
+            app:destination="@id/fragmentRoomDetail"
+            app:enterAnim="@anim/enter_from_right"
+            app:exitAnim="@anim/exit_to_left"
+            app:popEnterAnim="@anim/enter_from_left"
+            app:popExitAnim="@anim/exit_to_right" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/fragmentRoomDetail"
+        android:name="de.haw.riddle.ui.admin.room.RoomDetailFragment"
+        android:label="RoomDetail"
+        tools:layout="@layout/fragment_room_detail" />
+
+    <fragment
+        android:id="@+id/fragmentPuzzle"
+        android:name="de.haw.riddle.ui.admin.riddle.RiddleFragment"
+        android:label="Riddles"
+        tools:layout="@layout/fragment_puzzle" >
+        <action
+            android:id="@+id/action_fragmentPuzzle_to_fragmentDevice"
+            app:destination="@id/fragmentDevice" />
+        <action
+            android:id="@+id/action_fragmentPuzzle_to_fragment_riddle_detail"
+            app:destination="@id/fragment_riddle_detail" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/fragmentDevice"
+        android:name="de.haw.riddle.ui.admin.device.DeviceFragment"
+        android:label="Device"
+        tools:layout="@layout/fragment_device" />
+
+    <fragment
+        android:id="@+id/fragment_riddle_detail"
+        android:name="de.haw.riddle.ui.admin.riddle.RiddleDetailFragment"
+        android:label="Device"
+        tools:layout="@layout/fragment_riddle_detail" />
+
+</navigation>
