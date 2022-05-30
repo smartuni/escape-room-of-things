@@ -59,14 +59,14 @@ The FRONTEND can get them with a call to /puzzles (GET)and filter for id=0 on pu
 
 
 
-# api
+# API
 
 /path
 -> description
 Req:{Request}
 Res:{Response}
 
-## misc
+## States
 
 /rooms/state/{roomid} (PUT) 
 -> admin puts a specific room into a new state (states either "ready" or "maintainance")
@@ -175,7 +175,7 @@ Res:
 }
 
 
-##puzzles
+## Puzzles
 
 /puzzles (GET)
 ->Returns all puzzles with devices
@@ -255,7 +255,7 @@ Res{
 }
 
 
-##devices
+## Devices
 
 /devices (GET)
 ->returns all devices
@@ -310,26 +310,15 @@ Res{
 }
 
 
-Questions: 
-ID for PUT in request or path? -> currently path: path -> identification, request -> updatable
-Always return all puzzles/devices for room/puzzle requests? -> currently not
-DELETE Device -> Remove Device also from RD?
 
-
-ToDo:
-Device discovery -> get on device for observe
-coap server should use orm
-puzzle solve logic(romm solve logic) -> solved event?
-presentation slides for 2nd milestone
-
-Next Milestone:
-- key/token exchange frontend<->backend
-- user tables
+## ToDo:
+- Update API to send complete responses (Puzzle -> isVictory, Device -> is_event_device, pubkey, nodestate, Room -> puzzles) + README(API)
+- Delete Puzzles on room delete and move devices to default Puzzle
+- Post Device(Name, Description, pubkey)
+- Put Device(is_event_device)
+- State change for devices(like room and puzzle)
+- Admin Authentication(Flask-Auth.)
+- Update rd-observe(instead add device/update device)
+- Observe rd for devices(disconnected devices) 
 - key exchange with devices
 - implement a way to change the device states by the server (solved -> ready / * -> maintainance)
-
-
-Done:
-Getall rooms/puzzles/devices orm
-move orm classes into separete file
-default room/ default puzzle -> id=0  for new devices

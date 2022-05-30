@@ -12,6 +12,7 @@ from orm_classes.Puzzle import Puzzle
 from orm_classes.Room import Room
 from orm_classes.shared import db
 
+SOLVED = "solved"
 config = configparser.ConfigParser()
 config.read(os.path.join(os.path.dirname(__file__), 'restconfig.ini'))
 db_app = Flask(__name__)
@@ -50,6 +51,7 @@ async def check_game_state(device, con):
     puzzle_id = device.puzzle
     puzzle = Puzzle.query.filter_by(id=puzzle_id).first()
     if check_puzzle_state(puzzle):
+        await trigger_event(puzzle, con)
         room_id = puzzle.room
         room = Room.query.filter_by(id=room_id).first()
         if check_room_state(room):
@@ -60,25 +62,35 @@ def check_room_state(room):
     for puz in room.puzzles:
         if puz.id == 0:
             continue
-        if puz.state != "solved":
+        if puz.state != SOLVED:
             return False
-    room.state = "solved"
+    room.state = SOLVED
     db.session.commit()
     return True
 
 
 def check_puzzle_state(puzzle):
     for dev in puzzle.devices:
-        if dev.state != "solved":
+        if dev.state != SOLVED:
             return False
-    puzzle.state = "solved"
+    puzzle.state = SOLVED
     db.session.commit()
     return True
 
 
 def set_device_solved(device):
-    device.state = "solved"
+    device.state = SOLVED
     db.session.commit()
+
+
+async def trigger_event(puzzle, con):
+    event_devices = list(filter(lambda device: device.is_event_device, puzzle.devices))
+    if len(event_devices) != 0:
+        for dev in event_devices:
+            request = Message(code=PUT, uri=f"coap://{dev.devIP}/node/maintenance",
+                              observe=1, payload=None)
+            req = con.request(request)
+            await req.response
 
 
 async def add_new_devices(devices, ips, con):
@@ -115,8 +127,8 @@ async def observe_device(device, con):
 
     print("observe: {}".format(device.devIP))
     async for r in req.observation:
-        # device.state = r.response.payload.state
-        # db.session.commit()
+        device.state = SOLVED
+        db.session.commit()
         print(r)
         print(r.payload)
         # parse answer, CBOR?
@@ -133,9 +145,9 @@ async def main():
                       resource.WKCResource(root.get_resources_as_linkheader))
     root.add_resource(['whoami'], WhoAmI())
 
-    con = await Context.create_server_context(root, bind=('fd00:dead:beef', 5683))
+    con = await Context.create_server_context(root, bind=('fd00:dead:beef', 5555))
     # 127.0.0.1:5683
-    request = Message(code=GET, uri="coap://fd00:dead:beef::1]:5555/endpoint-lookup/",
+    request = Message(code=GET, uri="coap://fd00:dead:beef::1]:5683/endpoint-lookup/",
                       observe=0)
     req = con.request(request)
     res = await req.response
@@ -154,5 +166,5 @@ async def main():
 
 
 if __name__ == '__main__':
-   # asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
+    # asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
     asyncio.run(main())

@@ -8,6 +8,9 @@ class Device(db.Model):
     description = db.Column(db.String(1000), unique=False, nullable=True)
     state = db.Column(db.String(20), unique=False, nullable=False)
     puzzle = db.Column(db.INTEGER, db.ForeignKey('puzzle.id'), nullable=False)
+    pubkey = db.Column(db.String(100), unique=False, nullable=False)
+    node_state = db.Column(db.String(20), unique=False, nullable=False)
+    is_event_device = db.Column(db.BOOLEAN)
 
     def __repr__(self):
         return 'ID: {}\nDevice IP: {}\nName: {}\nState: {}\nPuzzle: {}'\
