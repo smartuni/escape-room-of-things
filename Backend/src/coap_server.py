@@ -85,7 +85,7 @@ async def add_new_devices(devices, ips, con):
     print(devices)
     for dev in devices:
         if "con=" in dev:
-            matches = re.search('ep="(.+?)";con="coap://(.+?)";', dev)
+            matches = re.search('ep="(.+?)";base="coap://(.+?)";', dev)
             if matches.group(2) not in ips:
                 with db_app.app_context():
                     d = Device(name=matches.group(1), description="test", devIP=matches.group(2), state='ready',
