@@ -105,7 +105,7 @@ def get_devices_from_db():
 
 async def observe_device(device, con):
     print(device.name)
-    request = Message(code=GET, uri="coap://[2001:db8::4574:2140:c31d:296e]/node/info",
+    request = Message(code=GET, uri=f"coap://{device.devIP}/node/info",
                       observe=0)
     print(request)
     req = con.request(request)
