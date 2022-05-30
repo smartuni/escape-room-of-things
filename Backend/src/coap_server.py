@@ -84,7 +84,7 @@ def set_device_solved(device):
 async def add_new_devices(devices, ips, con):
     print(devices)
     for dev in devices:
-        if "con=" in dev:
+        if "base=" in dev:
             matches = re.search('ep="(.+?)";base="coap://(.+?)";', dev)
             if matches.group(2) not in ips:
                 with db_app.app_context():
