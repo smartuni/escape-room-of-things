@@ -316,6 +316,7 @@ Res{
 - Delete Puzzles on room delete and move devices to default Puzzle
 - Post Device(Name, Description, pubkey)
 - Put Device(is_event_device)
+- add serial column to device
 - State change for devices(like room and puzzle)
 - Admin Authentication(Flask-Auth.)
 - Update rd-observe(instead add device/update device)
