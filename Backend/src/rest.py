@@ -67,12 +67,13 @@ def api_add_room():
     room = Room(name=request_data[NAME],
                 description=request_data[DESCRIPTION],
                 state=READY)
+    db.session.add(room)
+    db.session.commit()
     puzzle = Puzzle(name="victoryPuzzle",
                     description="This Puzzle contains the Victory-Event",
                     state=SOLVED,
                     isVictory=True,
                     room=room.id)
-    db.session.add(room)
     db.session.add(puzzle)
     db.session.commit()
     return jsonify(room.serialize())
