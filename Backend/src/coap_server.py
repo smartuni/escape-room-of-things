@@ -3,12 +3,15 @@ import configparser
 import os
 import platform
 import re
+import json
 import cbor2
 
 import aiocoap.resource as resource
 from aiocoap import *
 from flask import Flask
 from aiocoap.numbers.codes import GET, PUT
+from aiocoap.credentials import CredentialsMap
+
 
 from orm_classes.Device import Device
 from orm_classes.Puzzle import Puzzle
@@ -43,12 +46,19 @@ class WhoAmI(resource.Resource):
                        payload="\n".join(text).encode('utf8'))
 
 
+class DTLSCredential (CredentialsMap):
+    def find_dtls_psk(self, identity):
+        print(identity) #CHANGE this to DB lookup for the KEY
+        raise Exception("TEST")
+
 class coap_server:
     async def init(self):
         self.connectedDevices = []
         # self.get_devices_from_db()
         root = resource.Site()
-        self.con = await Context.create_server_context(root, bind=('::1', 5555))
+        server_credentials = DTLSCredential()
+        #server_credentials.load_from_dict(json.load(open("/tmp/testclient.json")))
+        self.con = await Context.create_server_context(root, bind=('::1', 5555), server_credentials=server_credentials)
 
     async def device_connected(self, devices):
         print('check for divices to connect')
@@ -99,16 +109,22 @@ class coap_server:
             req = con.request(request)
             
             res = await req.response
-            print(res)
-            print(res.payload)
+            unpacked = cbor2.loads(res.payload)
+            print(unpacked)
+            device.state = unpacked["puzzleState"]
+            db.session.commit()
+            # trigger cascading logic to check for solved
+            #if unpacked["puzzleState"] == "solved":
+            #    check_game_state(device)
 
             async for r in req.observation:
                 unpacked = cbor2.loads(r.payload)
                 print(unpacked)
-                device.state = unpacked.puzzlestate
+                device.state = unpacked["puzzleState"]
                 db.session.commit()
-                # implement if
-                # check_game_state(device)
+                # trigger cascading logic to check for solved
+                #if unpacked["puzzleState"] == "solved":
+                #    check_game_state(device)
         except Exception as e:
             print('device observe troubles')
             print(e)
