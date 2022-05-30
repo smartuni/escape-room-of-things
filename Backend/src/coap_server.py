@@ -105,7 +105,7 @@ def get_devices_from_db():
 
 async def observe_device(device, con):
     print(device.name)
-    request = Message(code=GET, uri="coap://{}/node/info".format(device.devIP),
+    request = Message(code=GET, uri="coap://[2001:db8::4574:2140:c31d:296e]/node/info",
                       observe=0)
     req = con.request(request)
     res = await req.response
@@ -154,5 +154,5 @@ async def main():
 
 
 if __name__ == '__main__':
-    asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
+   # asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
     asyncio.run(main())
