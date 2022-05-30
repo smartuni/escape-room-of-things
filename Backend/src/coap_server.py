@@ -40,7 +40,7 @@ class WhoAmI(resource.Resource):
 async def victory(room, con):
     victory_puzzle = next(filter(lambda puzzle: puzzle.isVictory.isTrue, room.puzzles))
     for dev in victory_puzzle:
-        request = Message(code=PUT, uri="coap://{}/node/maintenance".format(dev.devIP),
+        request = Message(code=PUT, uri=f"coap://{dev.devIP}/node/maintenance",
                           observe=1, payload=None)
         req = con.request(request)
         await req.response
@@ -133,9 +133,9 @@ async def main():
                       resource.WKCResource(root.get_resources_as_linkheader))
     root.add_resource(['whoami'], WhoAmI())
 
-    con = await Context.create_server_context(root, bind=())
+    con = await Context.create_server_context(root, bind=('fd00:dead:beef', 5683))
     # 127.0.0.1:5683
-    request = Message(code=GET, uri="coap://[fd00:dead:beef::1]:5555/endpoint-lookup/",
+    request = Message(code=GET, uri="coap://fd00:dead:beef::1]:5555/endpoint-lookup/",
                       observe=0)
     req = con.request(request)
     res = await req.response
