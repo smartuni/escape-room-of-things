@@ -47,9 +47,13 @@ class WhoAmI(resource.Resource):
 
 
 class DTLSCredential (CredentialsMap):
-    def find_dtls_psk(self, identity):
-        print(identity) #CHANGE this to DB lookup for the KEY
-        raise Exception("TEST")
+    psk = ""
+
+    def credentials_from_request(self, msg):
+        print("START DTLS connection")
+        print(msg)
+        print(self.psk)
+        return self.psk
 
 class coap_server:
     async def init(self):
@@ -57,8 +61,7 @@ class coap_server:
         # self.get_devices_from_db()
         root = resource.Site()
         server_credentials = DTLSCredential()
-        #server_credentials.load_from_dict(json.load(open("/tmp/testclient.json")))
-        self.con = await Context.create_server_context(root, bind=('::1', 5555), server_credentials=server_credentials)
+        self.con = await Context.create_server_context(root, bind=('::1', 5555))
 
     async def device_connected(self, devices):
         print('check for divices to connect')
@@ -104,8 +107,14 @@ class coap_server:
     async def observe_device(self, device):
         print('start observe on ' + device.serial)
         try:
+            dtls = DTLSCredential()
+            dtls.psk = device.psk
             con= await Context.create_client_context()
-            request = Message(code=GET, uri=f"coap://{device.devIP}/node/info", observe=0)
+            uri = f"coaps://{device.devIP}:5684/node/info"
+            print(device.psk + ' ' + device.qrid)
+            con.client_credentials.load_from_dict(
+                {uri: {'dtls': {'psk': device.psk.encode(), 'client-identity': device.qrid.encode()}}})
+            request = Message(code=GET, uri=uri, observe=0)
             req = con.request(request)
             
             res = await req.response
