@@ -28,7 +28,7 @@ CONNECTED = 'connected'
 DISCONNECTED = 'disconnected'
 DEVIP = 'devIP'
 PSK = 'psk'
-QRID = 'id'
+QRID = 'qrid'
 PUBKEY = 'pubkey'
 ADMIN = 'admin'
 config = configparser.ConfigParser()
@@ -265,12 +265,11 @@ def api_add_device():
     puzzle = request_data[PUZZLE] if PUZZLE in request_data else "0"
     description = request_data[DESCRIPTION] if DESCRIPTION in request_data else ""
     name = request_data[NAME] if NAME in request_data else False
-    QRid = request_data[QRID] if QRID in request_data else False
 
     device = Device(
         serial=request_data[SERIAL],
         psk=request_data[PSK],
-        qrid=QRid,
+        qrid=request_data[QRID],
         name=name,
         description=description,
         puzzle=puzzle,
