@@ -26,11 +26,13 @@ class WhoAmI(resource.Resource):
         text = ["Used protocol: %s." % request.remote.scheme]
 
         text.append("Request came from %s." % request.remote.hostinfo)
-        text.append("The server address used %s." % request.remote.hostinfo_local)
+        text.append("The server address used %s." %
+                    request.remote.hostinfo_local)
 
         claims = list(request.remote.authenticated_claims)
         if claims:
-            text.append("Authenticated claims of the client: %s." % ", ".join(repr(c) for c in claims))
+            text.append("Authenticated claims of the client: %s." %
+                        ", ".join(repr(c) for c in claims))
         else:
             text.append("No claims authenticated.")
 
@@ -39,7 +41,8 @@ class WhoAmI(resource.Resource):
 
 
 async def victory(room, con):
-    victory_puzzle = next(filter(lambda puzzle: puzzle.isVictory.isTrue, room.puzzles))
+    victory_puzzle = next(
+        filter(lambda puzzle: puzzle.isVictory.isTrue, room.puzzles))
     for dev in victory_puzzle:
         request = Message(code=PUT, uri=f"coap://{dev.devIP}/node/maintenance",
                           observe=1, payload=None)
@@ -84,7 +87,8 @@ def set_device_solved(device):
 
 
 async def trigger_event(puzzle, con):
-    event_devices = list(filter(lambda device: device.is_event_device, puzzle.devices))
+    event_devices = list(
+        filter(lambda device: device.is_event_device, puzzle.devices))
     if len(event_devices) != 0:
         for dev in event_devices:
             request = Message(code=PUT, uri=f"coap://{dev.devIP}/node/maintenance",
@@ -93,16 +97,16 @@ async def trigger_event(puzzle, con):
             await req.response
 
 
-async def add_new_devices(devices, ips, con):
+async def device_connected(devices, ips, con):
     print(devices)
     for dev in devices:
         if "base=" in dev:
             matches = re.search('ep="(.+?)";base="coap://(.+?)";', dev)
             if matches.group(2) not in ips:
                 with db_app.app_context():
-                    d = Device(name=matches.group(1), description="test", devIP=matches.group(2), state='ready',
-                               puzzle=0)
-                    db.session.add(d)
+                    d = Device.query.filter_by(id=matches.group(1)).first()
+                    d.devIP = matches.group(2)
+                    d.node_state = "connected"
                     db.session.commit()
                     ips.append(matches.group(2))
                     await observe_device(d, con)
@@ -152,13 +156,13 @@ async def main():
     req = con.request(request)
     res = await req.response
     cachedli = res.payload.decode('utf-8').split(",")
-    connectedIps = await add_new_devices(cachedli, connectedIps, con)
+    connectedIps = await device_connected(cachedli, connectedIps, con)
 
     print("start async loop")
     async for r in req.observation:
         li = r.payload.decode('utf-8').split(",")
 
-        connectedIps = await add_new_devices(li, connectedIps, con)
+        connectedIps = await device_connected(li, connectedIps, con)
 
     # Run forever
     print("server running now")
