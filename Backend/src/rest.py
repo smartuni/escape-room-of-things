@@ -1,12 +1,20 @@
+import configparser
+import datetime
 import os
 import sys
-from flask import Flask, request, jsonify
+import uuid
+from functools import wraps
+
+import jwt
+from flask import Flask, request, jsonify, make_response
 from flask_cors import CORS
-from orm_classes.shared import db
+from werkzeug.security import generate_password_hash, check_password_hash
+
 from orm_classes.Device import Device
 from orm_classes.Puzzle import Puzzle
 from orm_classes.Room import Room
-import configparser
+from orm_classes.User import User
+from orm_classes.shared import db
 
 SOLVED = "solved"
 READY = "ready"
@@ -22,6 +30,7 @@ CONNECTED = 'connected'
 UNCONNECTED = 'unconnected'
 DEVIP = 'devIP'
 PUBKEY = 'pubkey'
+ADMIN = 'admin'
 config = configparser.ConfigParser()
 config.read(os.path.join(os.path.dirname(__file__), 'restconfig.ini'))
 
@@ -29,7 +38,53 @@ app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "*"}})
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + \
                                         config.get('database', 'path')
+app.config['SECRET_KEY'] = 'b8f12c836b29c5d6c1ab1813d5a4c926'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
 db.init_app(app)
+
+
+def user_token_required(f):
+    @wraps(f)
+    def decorator(*args, **kwargs):
+        token = None
+        if 'x-access-tokens' in request.headers:
+            token = request.headers['x-access-tokens']
+
+        if not token:
+            return jsonify({'message': 'a valid token is missing'})
+        try:
+            data = jwt.decode(token, app.config['SECRET_KEY'], algorithms=["HS256"])
+            current_user = User.query.filter_by(public_id=data['public_id']).first()
+
+        except:
+            return jsonify({'message': 'token is invalid'})
+
+        return f(current_user, *args, **kwargs)
+
+    return decorator
+
+
+def admin_token_required(f):
+    @wraps(f)
+    def decorator(*args, **kwargs):
+        token = None
+        if 'x-access-tokens' in request.headers:
+            token = request.headers['x-access-tokens']
+
+        if not token:
+            return jsonify({'message': 'a valid token is missing'})
+        try:
+            data = jwt.decode(token, app.config['SECRET_KEY'], algorithms=["HS256"])
+            current_user = User.query.filter_by(public_id=data['public_id']).first()
+            if not current_user.admin:
+                return jsonify({'message': '403 Forbidden access'})
+
+        except:
+            return jsonify({'message': 'token is invalid'})
+
+        return f(current_user, *args, **kwargs)
+
+    return decorator
 
 
 # misc
@@ -231,6 +286,62 @@ def api_delete_device(deviceid):
     return jsonify(devicecopy)
 
 
+# User-Handling
+
+@app.route('/register', methods=['POST'])
+def signup_user():
+    request_data = request.get_json()
+    hashed_password = generate_password_hash(request_data['password'], method='sha256')
+
+    new_user = User(username=request_data['username'],
+                    public_id=uuid.uuid4(),
+                    password=hashed_password,
+                    admin=False)
+    userdata = new_user.serialize()
+    db.session.add(new_user)
+    db.session.commit()
+    return jsonify(userdata)
+
+
+@app.route('/login', methods=['POST'])
+def login():
+    auth = request.authorization
+    if not auth or not auth.username or not auth.password:
+        return make_response('could not verify', 401, {'Authentication': 'login required"'})
+
+    user = User.query.filter_by(username=auth.username).first()
+    if check_password_hash(user.password, auth.password):
+        token = jwt.encode(
+            {'public_id': user.public_id, 'exp': datetime.datetime.utcnow() + datetime.timedelta(hours=4)},
+            app.config['SECRET_KEY'], "HS256")
+        return jsonify({'token': token})
+    return make_response('could not verify', 401, {'Authentication': '"login required"'})
+
+
+@app.route('/users', methods=['GET'])
+def get_all_users():
+    users = User.query.all()
+    return jsonify({'users': serialize_users(users)})
+
+
+@app.route('/users/<userid>', methods=['DELETE'])
+@admin_token_required
+def delete_user(userid):
+    user = db.query.filter_by(id=userid).first()
+    user_copy = user.serialize()
+    db.session.delete(user)
+    db.session.commit()
+    return jsonify(user_copy)
+
+
+@app.route('/users/<userid>', methods=['PUT'])
+@admin_token_required
+def change_admin_att(userid):
+    request_data = request.get_json()
+    user = db.query.filter_by(id=userid).first()
+    user.admin = request_data[ADMIN]
+
+
 # function to add the default room and default puzzle for unassigned devices
 
 def add_default_room_and_puzzle():
@@ -251,28 +362,38 @@ def add_default_room_and_puzzle():
 # functions for serializing lists of objects for the get all paths
 
 def serialize_rooms(rooms):
-    serializedRooms = []
+    serialized_rooms = []
     for r in rooms:
         sr = r.serialize()
         sr['puzzles'] = serialize_puzzles(r.puzzles)
-        serializedRooms.append(sr)
-    return serializedRooms
+        serialized_rooms.append(sr)
+    return serialized_rooms
 
 
 def serialize_puzzles(puzzles):
-    serializedPuzzles = []
+    serialized_puzzles = []
     for p in puzzles:
         sp = p.serialize()
         sp['devices'] = serialize_devices(p.devices)
-        serializedPuzzles.append(sp)
-    return serializedPuzzles
+        serialized_puzzles.append(sp)
+    return serialized_puzzles
 
 
 def serialize_devices(devices):
-    serializedDevices = []
+    serialized_devices = []
     for d in devices:
-        serializedDevices.append(d.serialize())
-    return serializedDevices
+        serialized_devices.append(d.serialize())
+    return serialized_devices
+
+
+def serialize_users(users):
+    serialized_users = []
+    for u in users:
+        serialized_users.append(u.serialize())
+    return serialized_users
+
+
+# functions for User-Handling
 
 
 # create functions for testing purposes (can be called in app_context in main)
