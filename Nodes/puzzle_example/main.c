@@ -21,6 +21,7 @@
 #include "shell.h"
 #include "xtimer.h"
 
+#include "keys.h"
 #include "puzzle_coap.h"
 
 #define STARTUP_DELAY   (1U)
@@ -37,8 +38,9 @@ static const puzzle_t puzzle = {
     .get_solved_handler = _solved,
     .get_ready_handler = _ready,
     .set_ready_handler = _set_ready,
-    .name = "Example puzzle",
-    .resource_dir_uri = "coap://[fd00:dead:beef::1]",
+    .name = RIOT_APPLICATION,
+    .resource_dir_uri = "coap://[fd00:dead:beef::1]:5683",
+    .serial = SERIAL_UUID,
 };
 
 static bool _is_solved = false;

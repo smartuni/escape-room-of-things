@@ -27,6 +27,9 @@ extern "C" {
 /* the default CONFIG_GCOAP_PDU_BUF_SIZE is 128 */
 #define CBOR_BUF_SIZE 100
 
+extern unsigned char prvkey_der[];
+extern unsigned int prvkey_der_len;
+
 /**
  * Puzzle info structure 
  */
@@ -36,6 +39,7 @@ typedef struct {
     void (*set_ready_handler)(bool maintainance);/**< void handler thats get called to set a puzzle in ready or maintainance mode*/
     const char *resource_dir_uri;   /**< char* URI to a CoRE RD */
     const char *name;               /**< char* name of the puzzle */
+    const char *serial;             /**< char* serial number of the puzzle */
 } puzzle_t;
 
 void puzzle_init(const puzzle_t *puzzle);
