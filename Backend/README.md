@@ -30,7 +30,7 @@ starting rest.py with arguments ( e.g: 1) now creates db and default room+puzzle
 	'id': text
 	'name': text,
 	'description': text,
-	'state': text,
+	'state': text
 }
 
 ## Puzzle:
@@ -39,7 +39,8 @@ starting rest.py with arguments ( e.g: 1) now creates db and default room+puzzle
 	'name': text,
 	'description': text,
 	'state': text,
-	'room': text,
+	'isVictory': bool,
+	'room': text
 }
 
 ## Device:
@@ -130,6 +131,7 @@ Res:
 				'description': text,
 				'state': text,
 				'room': text,
+				'isVictory': bool,
 				'devices':[{
 						'id': text, 
 						'devIP': text, 
@@ -213,6 +215,7 @@ Res:
 				'description': text,
 				'state': text,
 				'room': text,
+				'isVictory': bool,
 				'devices':[{
 					'id': text, 
 					'devIP': text, 
@@ -237,6 +240,7 @@ Res:
 	'description': text,
 	'state': text,
 	'room': text,
+    'isVictory': bool,
 	'devices':[...]
 }
 
@@ -246,7 +250,8 @@ Req. Payload:
 {
 	'name': text,
 	'description': text,
-	'room': text
+	'room': text,
+	'isVictory': bool
 }
 
 Res:
@@ -256,6 +261,7 @@ Res:
 	'description': text,
 	'state': text,
 	'room': text,
+	'isVictory': bool,
 	'devices':[...]
 }
 
@@ -265,7 +271,8 @@ Req. Payload:
 {
 	'name': text,
 	'description': text,
-	'room': text
+	'room': text,
+	'isVictory': bool
 }
 
 Res:
@@ -275,6 +282,7 @@ Res:
 	'description': text,
 	'state': text,
 	'room': text,
+	'isVictory': bool,
 	'devices':[...]
 }
 
@@ -285,7 +293,8 @@ Res{
 	'name': text,
 	'description': text,
 	'state': text,
-	'room': text
+	'room': text,
+	'isVictory': bool
 }
 
 
