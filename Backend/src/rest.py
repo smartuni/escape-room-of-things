@@ -40,7 +40,7 @@ def api_update_room_state(roomid):
     room = Room.query.filter_by(id=roomid).first()
     room.state = request_data[STATE]
     db.session.commit()
-    return jsonify(room.serialize())
+    return jsonify(serialize_rooms([room])[0])
 
 
 @app.route('/puzzles/state/<puzzleid>', methods=['PUT'])
@@ -49,7 +49,7 @@ def api_update_puzzle_state(puzzleid):
     puzzle = Puzzle.query.filter_by(id=puzzleid).first()
     puzzle.state = request_data[STATE]
     db.session.commit()
-    return jsonify(puzzle.serialize())
+    return jsonify(serialize_puzzles([puzzle])[0])
 
 
 @app.route('/devices/state/<deviceid>', methods=['PUT'])
@@ -90,7 +90,7 @@ def api_add_room():
                     room=room.id)
     db.session.add(puzzle)
     db.session.commit()
-    return jsonify(room.serialize())
+    return jsonify(serialize_rooms([room])[0])
 
 
 @app.route('/rooms/<roomid>', methods=['PUT'])
@@ -100,7 +100,7 @@ def api_update_room(roomid):
     room.name = request_data[NAME]
     room.description = request_data[DESCRIPTION]
     db.session.commit()
-    return jsonify(room.serialize())
+    return jsonify(serialize_rooms([room])[0])
 
 
 @app.route('/rooms/<roomid>', methods=['DELETE'])
@@ -131,7 +131,7 @@ def api_get_puzzles():
 @app.route('/puzzles/<puzzleid>', methods=['GET'])
 def api_get_puzzle(puzzleid):
     puzzle = Puzzle.query.filter_by(id=puzzleid).first()
-    return jsonify(puzzle.serialize())
+    return jsonify(serialize_puzzles([puzzle])[0])
 
 
 @app.route('/puzzles', methods=['POST'])
@@ -144,7 +144,7 @@ def api_add_puzzle():
                     isVictory=False)
     db.session.add(puzzle)
     db.session.commit()
-    return jsonify(puzzle.serialize())
+    return jsonify(serialize_puzzles([puzzle])[0])
 
 
 @app.route('/puzzles/<puzzleid>', methods=['PUT'])
@@ -155,7 +155,7 @@ def api_update_puzzle(puzzleid):
     puzzle.description = request_data[DESCRIPTION]
     puzzle.room = request_data[ROOM]
     db.session.commit()
-    return jsonify(puzzle.serialize())
+    return jsonify(serialize_puzzles([puzzle])[0])
 
 
 @app.route('/puzzles/<puzzleid>', methods=['DELETE'])

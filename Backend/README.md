@@ -78,7 +78,8 @@ Res:
 	'id': text
 	'name': text,
 	'description': text,
-	'state': text
+	'state': text,
+	'puzzles':[...]
 }
 
 /puzzles/state/{puzzleid} (PUT) 
@@ -91,7 +92,8 @@ Res:
 	'name': text,
 	'description': text,
 	'state': text,
-	'room': text
+	'room': text,
+	'devices':[...]
 }
 
 /devices/state/{deviceid} (PUT) 
@@ -108,7 +110,8 @@ Res:
 						'state': text, 
 						'puzzle': text,
 						'node_state': text,
-						'is_event_device': bool
+						'is_event_device': bool,
+						'pubkey': text
 }
 
 ##rooms
@@ -136,7 +139,8 @@ Res:
 						'state': text, 
 						'puzzle': text,
 						'node_state': text,
-						'is_event_device': bool
+						'is_event_device': bool,
+						'pubkey': text
 					},...]
 			},...]
 		},...]
@@ -166,7 +170,8 @@ Res:
 	'id': text
 	'name': text,
 	'description': text,
-	'state': text
+	'state': text,
+	'puzzles':[...]
 }
 
 /rooms/{roomid} (PUT)
@@ -182,7 +187,8 @@ Res:
 	'id': text
 	'name': text,
 	'description': text,
-	'state': text
+	'state': text,
+	'puzzles':[...]
 }
 
 /rooms/{roomid} (DELETE)
@@ -216,7 +222,8 @@ Res:
 					'state': text, 
 					'puzzle': text,
 					'node_state': text,
-					'is_event_device': bool
+					'is_event_device': bool,
+					'pubkey': text
 				},...]
 			},...]
 }
@@ -229,7 +236,8 @@ Res:
 	'name': text,
 	'description': text,
 	'state': text,
-	'room': text
+	'room': text,
+	'devices':[...]
 }
 
 /puzzles (POST)
@@ -247,7 +255,8 @@ Res:
 	'name': text,
 	'description': text,
 	'state': text,
-	'room': text
+	'room': text,
+	'devices':[...]
 }
 
 /puzzles/{puzzleid} (PUT)
@@ -266,6 +275,7 @@ Res:
 	'description': text,
 	'state': text,
 	'room': text,
+	'devices':[...]
 }
 
 /puzzles/{puzzleid} (DELETE)
@@ -275,7 +285,7 @@ Res{
 	'name': text,
 	'description': text,
 	'state': text,
-	'room': text,
+	'room': text
 }
 
 
@@ -292,7 +302,8 @@ Res{
 					'state': text, 
 					'puzzle': text,
 					'node_state': text,
-					'is_event_device': bool		
+					'is_event_device': bool,
+					'pubkey': text		
 			},...]
 }
 
@@ -308,7 +319,8 @@ Res:
 	'state': text, 
 	'puzzle': text,
 	'node_state': text,
-	'is_event_device': bool
+	'is_event_device': bool,
+	'pubkey': text
 }
 
 /devices (POST)
@@ -334,7 +346,8 @@ Res:
 	'state': text, 
 	'puzzle': text,
 	'node_state': text,
-	'is_event_device': bool
+	'is_event_device': bool,
+	'pubkey': text
 }
 
 /devices/{deviceid} (PUT)
@@ -355,7 +368,8 @@ Res:
 	'state': text, 
 	'puzzle': text,
 	'node_state': text,
-	'is_event_device': bool
+	'is_event_device': bool,
+	'pubkey': text
 }
 
 /devices/{deviceid} (DELETE)
@@ -369,13 +383,13 @@ Res{
 	'state': text, 
 	'puzzle': text,
 	'node_state': text,
-	'is_event_device': bool
+	'is_event_device': bool,
+	'pubkey': text
 }
 
 
 
 ## ToDo:
-- Update API to send complete responses (Puzzle -> isVictory, Device -> is_event_device, pubkey, nodestate, Room -> puzzles) + README(API)
 - Admin Authentication(Flask-Auth.)
 - Update rd-observe(instead add device/update device)
 - Observe rd for devices(disconnected devices) 
@@ -388,3 +402,4 @@ Res{
 - add serial column to device
 - State change for devices(like room and puzzle)
 - Delete Puzzles on room delete and move devices to default Puzzle
+- Update API to send complete responses (Puzzle -> isVictory, Device -> is_event_device, pubkey, nodestate, Room -> puzzles) + README(API)

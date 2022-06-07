@@ -28,5 +28,6 @@ class Device(db.Model):
             'state': self.state,
             'puzzle': self.puzzle,
             'node_state': self.node_state,
-            'is_event_device': self.is_event_device
+            'is_event_device': self.is_event_device,
+            'pubkey': self.pubkey
         }
