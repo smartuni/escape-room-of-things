@@ -16,7 +16,12 @@ DESCRIPTION = "description"
 STATE = "state"
 ROOM = "room"
 PUZZLE = "puzzle"
-
+IS_EVENT_DEVICE = "is_event_device"
+SERIAL = "serial"
+CONNECTED = 'connected'
+UNCONNECTED = 'unconnected'
+DEVIP = 'devIP'
+PUBKEY = 'pubkey'
 config = configparser.ConfigParser()
 config.read(os.path.join(os.path.dirname(__file__), 'restconfig.ini'))
 
@@ -45,6 +50,15 @@ def api_update_puzzle_state(puzzleid):
     puzzle.state = request_data[STATE]
     db.session.commit()
     return jsonify(puzzle.serialize())
+
+
+@app.route('/devices/state/<deviceid>', methods=['PUT'])
+def api_update_device_state(deviceid):
+    request_data = request.get_json()
+    device = Device.query.filter_by(id=deviceid).first()
+    device.state = request_data[STATE]
+    db.session.commit()
+    return jsonify(device.serialize())
 
 
 # rooms
@@ -159,11 +173,35 @@ def api_get_device(deviceid):
     return jsonify(device.serialize())
 
 
+@app.route('/devices', methods=['POST'])
+def api_add_device():
+    request_data = request.get_json()
+
+    is_event_device = request_data[IS_EVENT_DEVICE] if IS_EVENT_DEVICE in request_data else False
+
+    device = Device(
+        name=request_data[NAME],
+        devIP=request_data[DEVIP],
+        serial=request_data[SERIAL],
+        description=request_data[DESCRIPTION],
+        puzzle=request_data[PUZZLE],
+        pubkey=request_data[PUBKEY],
+        is_event_device=is_event_device,
+        state=READY,
+        node_state=UNCONNECTED
+    )
+    db.session.add(device)
+    db.session.commit()
+    return jsonify(device.serialize())
+
+
 @app.route('/devices/<deviceid>', methods=['PUT'])
 def api_update_device(deviceid):
     request_data = request.get_json()
     device = Device.query.filter_by(id=deviceid).first()
     device.puzzle = request_data[PUZZLE]
+    if IS_EVENT_DEVICE in request_data:
+        device.is_event_device = request_data[IS_EVENT_DEVICE]
     db.session.commit()
     return jsonify(device.serialize())
 

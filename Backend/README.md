@@ -65,6 +65,7 @@ The FRONTEND can get them with a call to /puzzles (GET)and filter for id=0 on pu
 -> description
 Req:{Request}
 Res:{Response}
+JSON fields in () are optional fields
 
 ## States
 
@@ -93,6 +94,23 @@ Res:
 	'room': text
 }
 
+/devices/state/{deviceid} (PUT) 
+-> admin puts a specific device into a new state (states either "ready" or "maintainance")
+Req. Payload: {'state': text}
+
+Res:
+{
+	'id': text, 
+						'devIP': text, 
+						'name': text,
+						'serial': text 
+						'description': text,
+						'state': text, 
+						'puzzle': text,
+						'node_state': text,
+						'is_event_device': bool
+}
+
 ##rooms
 
 /rooms (GET)
@@ -112,10 +130,13 @@ Res:
 				'devices':[{
 						'id': text, 
 						'devIP': text, 
-						'name': text, 
+						'name': text,
+						'serial': text 
 						'description': text,
 						'state': text, 
-						'puzzle': text
+						'puzzle': text,
+						'node_state': text,
+						'is_event_device': bool
 					},...]
 			},...]
 		},...]
@@ -189,10 +210,13 @@ Res:
 				'devices':[{
 					'id': text, 
 					'devIP': text, 
-					'name': text, 
+					'name': text,
+					'serial': text 
 					'description': text,
 					'state': text, 
-					'puzzle': text
+					'puzzle': text,
+					'node_state': text,
+					'is_event_device': bool
 				},...]
 			},...]
 }
@@ -261,11 +285,14 @@ Res{
 ->returns all devices
 {'devices': [{
 				'id': text, 
-				'devIP': text, 
-				'name': text, 
-				'description': text,
-				'state': text, 
-				'puzzle': text		
+					'devIP': text, 
+					'name': text,
+					'serial': text 
+					'description': text,
+					'state': text, 
+					'puzzle': text,
+					'node_state': text,
+					'is_event_device': bool		
 			},...]
 }
 
@@ -274,39 +301,75 @@ Res{
 Res:
 {
 	'id': text, 
-  	'devIP': text, 
-  	'name': text, 
-  	'description': text,
-  	'state': text, 
-  	'puzzle': text
+	'devIP': text, 
+	'name': text,
+	'serial': text 
+	'description': text,
+	'state': text, 
+	'puzzle': text,
+	'node_state': text,
+	'is_event_device': bool
+}
+
+/devices (POST)
+->adds the new device
+Req. Payload:
+{ 
+	'name': text,
+	'devIP': text,
+	'serial': text, 
+	'description': text, 
+	'puzzle': text,
+	'pubkey': text,
+	('is_event_device': bool)
+}
+
+Res:
+{
+	'id': text, 
+	'devIP': text, 
+	'name': text,
+	'serial': text 
+	'description': text,
+	'state': text, 
+	'puzzle': text,
+	'node_state': text,
+	'is_event_device': bool
 }
 
 /devices/{deviceid} (PUT)
 ->updates puzzle of device for specified deviceid and returns the updated device
 Req. Payload:
 {
-	'puzzle': text
+	'puzzle': text,
+	('is_event_device': bool)
 }
 
 Res:
 {
 	'id': text, 
-  	'devIP': text, 
-  	'name': text, 
-  	'description': text,
-  	'state': text, 
-  	'puzzle': text
+	'devIP': text, 
+	'name': text,
+	'serial': text 
+	'description': text,
+	'state': text, 
+	'puzzle': text,
+	'node_state': text,
+	'is_event_device': bool
 }
 
 /devices/{deviceid} (DELETE)
 -> deletes device with deviceid from path and returns deleted device
 Res{
 	'id': text, 
-  	'devIP': text, 
-  	'name': text, 
-  	'description': text,
-  	'state': text, 
-  	'puzzle': text
+	'devIP': text, 
+	'name': text,
+	'serial': text 
+	'description': text,
+	'state': text, 
+	'puzzle': text,
+	'node_state': text,
+	'is_event_device': bool
 }
 
 
