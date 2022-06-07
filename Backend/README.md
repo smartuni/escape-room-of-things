@@ -327,12 +327,11 @@ Res:
 ->adds the new device
 Req. Payload:
 { 
-	'name': text,
-	'devIP': text,
 	'serial': text, 
-	'description': text, 
-	'puzzle': text,
 	'pubkey': text,
+	('name': text,)
+	('description': text,) 
+	('puzzle': text,) default:0
 	('is_event_device': bool)
 }
 

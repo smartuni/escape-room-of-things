@@ -3,13 +3,13 @@ from .shared import db
 
 class Device(db.Model):
     id = db.Column(db.INTEGER, primary_key=True)
-    devIP = db.Column(db.String(100), unique=False, nullable=False)
+    devIP = db.Column(db.String(100), unique=False, nullable=True)
     name = db.Column(db.String(20), unique=False, nullable=False)
     serial = db.Column(db.String(20), unique=True, nullable=False)
     description = db.Column(db.String(1000), unique=False, nullable=True)
     state = db.Column(db.String(20), unique=False, nullable=False)
     puzzle = db.Column(db.INTEGER, db.ForeignKey('puzzle.id'), nullable=False)
-    pubkey = db.Column(db.String(100), unique=False, nullable=False)
+    pubkey = db.Column(db.String(100), unique=True, nullable=False)
     node_state = db.Column(db.String(20), unique=False, nullable=False)
     is_event_device = db.Column(db.BOOLEAN)
 

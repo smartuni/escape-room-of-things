@@ -191,14 +191,16 @@ def api_add_device():
     request_data = request.get_json()
 
     is_event_device = request_data[IS_EVENT_DEVICE] if IS_EVENT_DEVICE in request_data else False
+    puzzle = request_data[PUZZLE] if PUZZLE in request_data else "0"
+    description = request_data[DESCRIPTION] if DESCRIPTION in request_data else ""
+    name = request_data[NAME] if NAME in request_data else False
 
     device = Device(
-        name=request_data[NAME],
-        devIP=request_data[DEVIP],
         serial=request_data[SERIAL],
-        description=request_data[DESCRIPTION],
-        puzzle=request_data[PUZZLE],
         pubkey=request_data[PUBKEY],
+        name=name,
+        description=description,
+        puzzle=puzzle,
         is_event_device=is_event_device,
         state=READY,
         node_state=UNCONNECTED
