@@ -14,6 +14,7 @@ import java.util.List;
 
 import de.haw.riddle.R;
 import de.haw.riddle.ui.admin.model.Device;
+import de.haw.riddle.ui.admin.riddle.RiddleDetailFragment;
 
 public class DeviceListAdapter extends RecyclerView.Adapter<DeviceListAdapter.ViewHolder> {
 
@@ -62,6 +63,8 @@ public class DeviceListAdapter extends RecyclerView.Adapter<DeviceListAdapter.Vi
         View view = LayoutInflater.from(viewGroup.getContext())
                 .inflate(R.layout.item_room_list, viewGroup, false);
 
+        view.findViewById(R.id.settingsButton).setVisibility(View.GONE);
+
         return new ViewHolder(view);
     }
 
@@ -73,13 +76,18 @@ public class DeviceListAdapter extends RecyclerView.Adapter<DeviceListAdapter.Vi
         // contents of the view with that element
         //viewHolder.getTextView().setText(device.get(position).getDevice());
 
+        final Device device = devices.get(position);
         viewHolder.getTextView().setText(devices.get(position).getName());
         viewHolder.getTextView().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                System.out.println("Click");
+                 navController.navigate(R.id.action_fragmentDevice_to_fragment_device_detail, DeviceDetailFragment.createArgs(device));
+
             }
         });
+
+
+
     }
 
     // Return the size of your dataset (invoked by the layout manager)

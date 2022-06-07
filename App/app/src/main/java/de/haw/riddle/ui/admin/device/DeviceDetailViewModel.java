@@ -2,17 +2,10 @@
 
 import androidx.lifecycle.ViewModel;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import javax.inject.Inject;
 
 import de.haw.riddle.net.admin.DeviceService;
-import de.haw.riddle.net.admin.RiddleService;
 import de.haw.riddle.ui.admin.model.Device;
-import de.haw.riddle.ui.admin.model.Resource;
-import de.haw.riddle.ui.admin.model.Riddle;
-import retrofit2.Call;
 
  public class DeviceDetailViewModel extends ViewModel {
 
@@ -21,8 +14,16 @@ import retrofit2.Call;
      private final DeviceService deviceService;
 
      private Device device;
-     private long id = -1;
-     private String name = "";
+     private String description="";
+     private long devIP=-1;
+     private long id=-1;
+     private boolean isEventDevice=false;
+     private String name="";
+     private String nodeState="";
+     private String publicKey="";
+     private long puzzles=-1;
+     private String serial="";
+     private String state="";
 
      @Inject
      public DeviceDetailViewModel(DeviceService deviceService) {
@@ -31,8 +32,16 @@ import retrofit2.Call;
 
      public void setDevice(Device device) {
          this.device = device;
-         name = device.getName();
-         id = device.getId();
+         description= device.getDescription();
+         devIP= device.getDevIP();
+         id= device.getId();
+         isEventDevice=device.isEventDevice();
+         name=device.getName();
+         nodeState=device.getNodeState();
+         publicKey=device.getPublicKey();
+         puzzles=device.getParentPuzzleId();
+         serial=device.getSerial();
+         state=device.getState();
      }
 
      public long getId() {
@@ -47,13 +56,7 @@ import retrofit2.Call;
          return name;
      }
 
-     public Call<Device> createDeviceCallIfValid() {
-         List<String> devices = device == null ? new ArrayList<>(0) : device.getResources();
-         final Device device1 = new Device(id,devices,name);
-         if (device.isValid())
-             return deviceService.createDevice(this.device);
-         else
-             return null;
-     }
+
+
 
  }

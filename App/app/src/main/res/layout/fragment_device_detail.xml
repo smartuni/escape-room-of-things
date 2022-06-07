@@ -1,54 +1,160 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/tlId"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="80dp"
-        android:hint="@string/id"
-        android:visibility="gone"
-        app:layout_constraintTop_toTopOf="parent">
+        android:layout_height="match_parent">
 
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/tfId"
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tlId"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:enabled="false"
-            android:text="@{viewModel.name}" />
+            android:layout_height="80dp"
+            android:hint="@string/id"
+            android:visibility="gone"
+            app:layout_constraintTop_toTopOf="parent">
 
-    </com.google.android.material.textfield.TextInputLayout>
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/tfId"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:enabled="false" />
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/tlName"
-        android:layout_width="match_parent"
-        android:layout_height="80dp"
-        android:hint="@string/name"
-        app:layout_constraintTop_toBottomOf="@id/tlId"
+        </com.google.android.material.textfield.TextInputLayout>
 
-        >
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/tfName"
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tlSerial"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:inputType="number" />
-    </com.google.android.material.textfield.TextInputLayout>
+            android:layout_height="80dp"
+            android:hint="Serial Number"
+            app:layout_constraintTop_toBottomOf="@id/tlId">
 
-    <Button
-        android:id="@+id/applyButton"
-        android:layout_width="100dp"
-        android:layout_height="50dp"
-        android:layout_marginBottom="20dp"
-        android:stateListAnimator="@null"
-        android:text="@string/apply"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/tfSerial"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:enabled="false" />
+        </com.google.android.material.textfield.TextInputLayout>
 
-    <include layout="@layout/progress_layout" />
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tlPublicKey"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Public Key"
+            app:layout_constraintTop_toBottomOf="@id/tlSerial">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/tfPublicKey"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:enabled="false"
+                android:minHeight="80dp" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tlName"
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            android:hint="@string/name"
+            app:layout_constraintTop_toBottomOf="@id/tlPublicKey">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/tfName"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:enabled="false" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tlDevIp"
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            android:hint="DevIp"
+            app:layout_constraintTop_toBottomOf="@id/tlDescription">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/tfDevIp"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:enabled="false" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tlIsEventDevice"
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            android:hint="Is event Device"
+            app:layout_constraintTop_toBottomOf="@id/tlDevIp">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/tfIsEventDevice"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:enabled="false" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tlNodeState"
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            android:hint="Node State"
+            app:layout_constraintTop_toBottomOf="@id/tlIsEventDevice">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/tfNodeState"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:enabled="false" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tlPuzzle"
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            android:hint="Puzzle"
+            app:layout_constraintTop_toBottomOf="@id/tlNodeState">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/tfPuzzle"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:enabled="false" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tlState"
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            android:hint="State"
+            app:layout_constraintTop_toBottomOf="@id/tlPuzzle">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/tfState"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:enabled="false" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tlDescription"
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            android:hint="Description"
+            app:layout_constraintTop_toBottomOf="@id/tlName">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/tfDescription"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:enabled="false" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</ScrollView>
+
+

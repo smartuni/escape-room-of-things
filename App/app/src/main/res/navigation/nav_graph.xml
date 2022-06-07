@@ -39,7 +39,7 @@
 
     <fragment
         android:id="@+id/fragmentQr"
-        android:name="de.haw.riddle.ui.qr.QrFragment"
+        android:name="de.haw.riddle.ui.admin.device.QrFragment"
         android:label="qr"
         tools:layout="@layout/fragment_qr" />
 
@@ -105,6 +105,9 @@
         <action
             android:id="@+id/action_fragmentDevice_to_fragmentQr"
             app:destination="@id/fragmentQr" />
+        <action
+            android:id="@+id/action_fragmentDevice_to_fragment_device_detail"
+            app:destination="@id/fragment_device_detail" />
     </fragment>
 
     <fragment
@@ -112,5 +115,11 @@
         android:name="de.haw.riddle.ui.admin.riddle.RiddleDetailFragment"
         android:label="Riddle Details"
         tools:layout="@layout/fragment_riddle_detail" />
+
+    <fragment
+        android:id="@+id/fragment_device_detail"
+        android:name="de.haw.riddle.ui.admin.device.DeviceDetailFragment"
+        android:label="Device Details"
+        tools:layout="@layout/fragment_device_detail"/>
 
 </navigation>

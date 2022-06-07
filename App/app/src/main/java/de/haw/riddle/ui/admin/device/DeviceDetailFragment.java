@@ -2,15 +2,12 @@ package de.haw.riddle.ui.admin.device;
 
 import android.os.Bundle;
 import android.text.Editable;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.navigation.fragment.NavHostFragment;
 
 import com.google.android.material.textfield.TextInputEditText;
 
@@ -19,26 +16,17 @@ import javax.inject.Inject;
 import dagger.android.support.DaggerFragment;
 import de.haw.riddle.R;
 import de.haw.riddle.ui.admin.model.Device;
-import de.haw.riddle.ui.admin.model.Riddle;
-import de.haw.riddle.ui.admin.riddle.RiddleDetailViewModel;
-import de.haw.riddle.ui.admin.riddle.RiddleViewModel;
-import de.haw.riddle.ui.admin.room.RoomDetailViewModel;
 import de.haw.riddle.util.SimpleTextWatcher;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 public class DeviceDetailFragment extends DaggerFragment {
 
     public static final String TAG = DeviceDetailViewModel.class.getSimpleName();
     private static final String KEY_DEVICE = "device";
-
-    private View progressLayout;
-
     @Inject
     DeviceViewModel deviceViewModel;
     @Inject
     DeviceDetailViewModel viewModel;
+    private View progressLayout;
 
     public static Bundle createArgs(@Nullable Device device) {
         Bundle args = new Bundle();
@@ -55,18 +43,39 @@ public class DeviceDetailFragment extends DaggerFragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        progressLayout = view.findViewById(R.id.progressLayout);
-        progressLayout.setOnTouchListener((v, event) -> {
-            v.performClick();
-            return true;
-        });
+
+        TextInputEditText tfSerial = view.findViewById(R.id.tfSerial);
+        TextInputEditText tfName = view.findViewById(R.id.tfName);
+        TextInputEditText tfPublicKey = view.findViewById(R.id.tfPublicKey);
+        TextInputEditText tfDescription = view.findViewById(R.id.tfDescription);
+        TextInputEditText tfDevIp = view.findViewById(R.id.tfDevIp);
+        TextInputEditText tfIsEventDevice = view.findViewById(R.id.tfIsEventDevice);
+        TextInputEditText tfNodeState = view.findViewById(R.id.tfNodeState);
+        TextInputEditText tfId = view.findViewById(R.id.tfId);
+        TextInputEditText tfPuzzle = view.findViewById(R.id.tfPuzzle);
+        TextInputEditText tfState = view.findViewById(R.id.tfState);
+
 
         Bundle args = getArguments();
         if (args != null) {
+            System.out.println("args = " + args.getParcelable(KEY_DEVICE));
             view.findViewById(R.id.tlId).setVisibility(View.VISIBLE);
             viewModel.setDevice(args.getParcelable(KEY_DEVICE));
+            final Device device = args.getParcelable(KEY_DEVICE);
+            tfSerial.setText(device.getSerial());
+            tfName.setText(device.getName());
+            tfPublicKey.setText(device.getPublicKey());
+            if (device.getDescription() != null)
+                tfDescription.setText(device.getDescription());
+            tfDevIp.setText(String.valueOf(device.getDevIP()));
+            tfIsEventDevice.setText(String.valueOf(device.isEventDevice()));
+            tfNodeState.setText(device.getNodeState());
+            tfId.setText(String.valueOf(device.getId()));
+            tfPuzzle.setText(String.valueOf(device.getParentPuzzleId()));
+            tfState.setText(device.getState());
+
         }
-        TextInputEditText tfName = view.findViewById(R.id.tfName);
+        //TextInputEditText tfName = view.findViewById(R.id.tfName);
 
         tfName.addTextChangedListener(new SimpleTextWatcher() {
             @Override
@@ -75,35 +84,6 @@ public class DeviceDetailFragment extends DaggerFragment {
             }
         });
 
-        view.findViewById(R.id.applyButton).setOnClickListener(v -> {
-            final Call<Device> call = viewModel.createDeviceCallIfValid();
-            if (call == null)
-                Toast.makeText(requireContext(), R.string.roomInputNotValid, Toast.LENGTH_LONG).show();
-            else {
-                progressLayout.setVisibility(View.VISIBLE);
-                call.enqueue(new Callback<Device>() {
-                    @Override
-                public void onResponse(@NonNull Call<Device> call, @NonNull Response<Device> response) {
-                        progressLayout.setVisibility(View.INVISIBLE);
-                        Log.i(TAG, "Successfully posted room to server.\nResponseBody=\n" + response.body());
-                        if (args == null)
-                            Toast.makeText(requireContext(), R.string.roomCreateSuccess, Toast.LENGTH_SHORT).show();
-                        else
-                            Toast.makeText(requireContext(), R.string.roomUpdateSuccess, Toast.LENGTH_SHORT).show();
 
-                        deviceViewModel.addDevice(response.body());
-                        NavHostFragment.findNavController(DeviceDetailFragment.this).navigateUp();
-                    }
-
-                    @Override
-                    public void onFailure(@NonNull Call<Device> call, @NonNull Throwable t) {
-                        progressLayout.setVisibility(View.INVISIBLE);
-                        Log.e(TAG, "Failed to create room.", t);
-//                        Toast.makeText(requireContext(), R.string.roomCreateFailed, Toast.LENGTH_SHORT).show();
-                        Toast.makeText(requireContext(), t.toString(), Toast.LENGTH_SHORT).show();
-                    }
-                });
-            }
-        });
     }
 }

@@ -16,10 +16,6 @@
             android:id="@id/fragmentLed"
             android:icon="@drawable/baseline_lightbulb_24"
             android:title="@string/led" />
-        <item
-            android:id="@id/fragmentQr"
-            android:icon="@drawable/baseline_qr_code_scanner_24"
-            android:title="@string/qr" />
     </group>
     <group
         android:id="@+id/groupAdmin"

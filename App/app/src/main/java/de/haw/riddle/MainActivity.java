@@ -66,7 +66,6 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
                 R.id.fragmentOverview,
                 R.id.fragmentRiddle1,
                 R.id.fragmentLed,
-                R.id.fragmentQr,
                 R.id.fragmentRoom,
                 R.id.fragmentSettings)
                 .setOpenableLayout(drawerLayout)

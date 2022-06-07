@@ -74,5 +74,7 @@ public class DeviceFragment extends DaggerFragment {
 
         Button btnAdd = view.findViewById(R.id.btnQr);
         btnAdd.setOnClickListener(v -> NavHostFragment.findNavController(this).navigate(R.id.action_fragmentDevice_to_fragmentQr));
+
+
     }
 }

@@ -3,6 +3,7 @@ package de.haw.riddle.net.admin;
 import java.util.List;
 
 import de.haw.riddle.ui.admin.model.Device;
+import de.haw.riddle.ui.admin.model.DeviceData;
 import de.haw.riddle.ui.admin.model.Room;
 import retrofit2.Call;
 import retrofit2.http.Body;
@@ -19,8 +20,8 @@ public interface DeviceService {
     @GET("/coap/device{id}")
     Call<Device> getDeviceById(@Path("id") int id);
 
-    @POST("/coap/device")
-    Call<Device> createDevice(@Body Device device);
+    @POST("/devices")
+    Call<Device> createDevice(@Body DeviceData device);
 
     @PUT("/coap/device")
     Call<Device> updateDevice(@Body Device device);

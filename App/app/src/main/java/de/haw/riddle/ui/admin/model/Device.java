@@ -3,29 +3,42 @@ package de.haw.riddle.ui.admin.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import com.google.gson.annotations.SerializedName;
 
-import de.haw.riddle.ui.admin.device.DeviceFragment;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.Getter;
 
 @Data
 @AllArgsConstructor
 public class Device implements Parcelable {
 
+    private String description;
+    private long devIP;
     private final long id;
-    private List<String>resources;
+    @SerializedName("is_event_device")
+    private boolean isEventDevice;
     private String name;
+    @SerializedName("node_state")
+    private String nodeState;
+    @SerializedName("pubkey")
+    private String publicKey;
+    @SerializedName("puzzle")
+    private long parentPuzzleId;
+    private String serial;
+    private String state;
 
 
     protected Device(Parcel in) {
-        id= in.readLong();
-        resources = in.createStringArrayList();
-        name= in.readString();
-
+        description = in.readString();
+        devIP = in.readLong();
+        id = in.readLong();
+        isEventDevice = in.readByte() != 0;
+        name = in.readString();
+        nodeState = in.readString();
+        publicKey = in.readString();
+        parentPuzzleId = in.readLong();
+        serial = in.readString();
+        state = in.readString();
     }
 
     public static final Creator<Device> CREATOR = new Creator<Device>() {
@@ -35,9 +48,14 @@ public class Device implements Parcelable {
         }
 
         @Override
-        public Device[] newArray(int size) {return new Device[size];
+        public Device[] newArray(int size) {
+            return new Device[size];
         }
     };
+
+    public boolean isValid() {
+        return name != null && !name.isEmpty();
+    }
 
     @Override
     public int describeContents() {
@@ -46,12 +64,15 @@ public class Device implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeString(description);
+        parcel.writeLong(devIP);
         parcel.writeLong(id);
-        parcel.writeStringList(resources);
+        parcel.writeByte((byte) (isEventDevice ? 1 : 0));
         parcel.writeString(name);
-    }
-
-    public boolean isValid() {
-        return name != null && !name.isEmpty();
+        parcel.writeString(nodeState);
+        parcel.writeString(publicKey);
+        parcel.writeLong(parentPuzzleId);
+        parcel.writeString(serial);
+        parcel.writeString(state);
     }
 }
