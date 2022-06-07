@@ -13,17 +13,18 @@ import retrofit2.http.Path;
 
 public interface RoomService {
     @GET("/rooms")
-    Call<List<Room>> getRooms();
+    Call<GetRoomResponse> getRooms();
 
     @GET("/rooms{id}")
     Call<Room> getRoomById(@Path("id") long id);
 
     @POST("/rooms")
-    Call<Room> createRoom(@Body Room room);
+    Call<Room> createRoom(@Body CreateRoomDto room);
 
     @PUT("/rooms")
     Call<Room> updateRoom(@Body Room room);
 
     @DELETE("/rooms/{id}")
     Call<Room> deleteRoom(@Path("id") long id);
+
 }

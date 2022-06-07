@@ -13,11 +13,17 @@ import lombok.Data;
 public class Riddle implements Parcelable {
     private final long id;
     private String name;
+    private String description;
+    private String room;
+    private String state;
     private List<Device> devices;
 
 
     protected Riddle(Parcel in) {
         name = in.readString();
+        description = in.readString();
+        room = in.readString();
+        state= in.readString();
         devices=in.createTypedArrayList(Device.CREATOR);
         id=in.readLong();
     }
@@ -42,6 +48,9 @@ public class Riddle implements Parcelable {
     @Override
     public void writeToParcel(Parcel parcel, int i) {
         parcel.writeString(name);
+        parcel.writeString(room);
+        parcel.writeString(description);
+        parcel.writeString(state);
         parcel.writeTypedList(devices);
         parcel.writeLong(id);
     }

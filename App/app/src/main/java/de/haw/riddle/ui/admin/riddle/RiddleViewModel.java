@@ -16,7 +16,9 @@ import java.util.Objects;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import de.haw.riddle.net.admin.GetRiddleResponse;
 import de.haw.riddle.net.admin.RiddleService;
+import de.haw.riddle.ui.admin.device.DeviceDetailViewModel;
 import de.haw.riddle.ui.admin.model.Riddle;
 import de.haw.riddle.ui.admin.model.Room;
 import retrofit2.Call;
@@ -30,6 +32,7 @@ public class RiddleViewModel extends ViewModel {
 
     private final MutableLiveData<List<Riddle>> riddles = new MutableLiveData<>(new ArrayList<>(0));
     private final RiddleService riddleService;
+    private Room parentRoom;
 
     @Inject
     public RiddleViewModel(RiddleService riddleService) {
@@ -37,15 +40,15 @@ public class RiddleViewModel extends ViewModel {
     }
 
     public void sync(SwipeRefreshLayout swipeRefreshLayout) {
-        riddleService.getRiddles().enqueue(new Callback<List<Riddle>>() {
+        riddleService.getRiddles().enqueue(new Callback<GetRiddleResponse>() {
             @Override
-            public void onResponse(@NonNull Call<List<Riddle>> call, @NonNull Response<List<Riddle>> response) {
-                riddles.setValue(response.body());
+            public void onResponse(@NonNull Call<GetRiddleResponse> call, @NonNull Response<GetRiddleResponse> response) {
+                riddles.setValue(response.body().getPuzzles());
                 swipeRefreshLayout.setRefreshing(false);
             }
 
             @Override
-            public void onFailure(@NonNull Call<List<Riddle>> call, @NonNull Throwable t) {
+            public void onFailure(@NonNull Call<GetRiddleResponse> call, @NonNull Throwable t) {
                 Log.e(TAG, "Failed to get rooms from api", t);
                 swipeRefreshLayout.setRefreshing(false);
                 Toast.makeText(swipeRefreshLayout.getContext(), t.toString(), Toast.LENGTH_SHORT).show();
@@ -55,11 +58,8 @@ public class RiddleViewModel extends ViewModel {
     }
 
     public void setRoom(Room room) {
-        List<Riddle> riddles = this.riddles.getValue();
-        assert riddles != null;
-        riddles.clear();
-        riddles.addAll(room.getRiddles());
-        this.riddles.setValue(riddles);
+        this.parentRoom=room;
+        this.riddles.setValue(room.getRiddles());
     }
 
     public void addRiddle(Riddle riddle) {
@@ -73,4 +73,14 @@ public class RiddleViewModel extends ViewModel {
     }
 
 
+    public boolean removeRiddle(Riddle riddle) {
+        List<Riddle> riddles = Objects.requireNonNull(this.riddles.getValue());
+        final boolean isRemoved = riddles.remove(riddle);
+        this.riddles.setValue(riddles);
+        return isRemoved;
+    }
+
+    public Room getParentRoom() {
+        return parentRoom;
+    }
 }

@@ -19,6 +19,7 @@ import java.util.Objects;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import de.haw.riddle.net.admin.GetRoomResponse;
 import de.haw.riddle.net.admin.RoomService;
 import de.haw.riddle.ui.admin.model.Config;
 import de.haw.riddle.ui.admin.model.Device;
@@ -40,21 +41,22 @@ public class RoomViewModel extends ViewModel {
     @Inject
     public RoomViewModel(RoomService roomService) {
         this.roomService = roomService;
-        Config dummyData = createDummyData();
-        rooms.setValue(dummyData.getRooms());
+        //Config dummyData = createDummyData();
+
+        //rooms.setValue(dummyData.getRooms());
     }
 
     public void sync(@Nullable SwipeRefreshLayout swipeRefreshLayout) {
-        roomService.getRooms().enqueue(new Callback<List<Room>>() {
+        roomService.getRooms().enqueue(new Callback <GetRoomResponse>() {
             @Override
-            public void onResponse(@NonNull Call<List<Room>> call, @NonNull Response<List<Room>> response) {
-                rooms.setValue(response.body());
+            public void onResponse(@NonNull Call<GetRoomResponse> call, @NonNull Response<GetRoomResponse> response) {
+                rooms.setValue(response.body().getRooms());
                 if (swipeRefreshLayout != null)
                     swipeRefreshLayout.setRefreshing(false);
             }
 
             @Override
-            public void onFailure(@NonNull Call<List<Room>> call, @NonNull Throwable t) {
+            public void onFailure(@NonNull Call<GetRoomResponse> call, @NonNull Throwable t) {
                 Log.e(TAG, "Failed to get rooms from api", t);
                 if (swipeRefreshLayout != null) {
                     swipeRefreshLayout.setRefreshing(false);
@@ -139,10 +141,10 @@ public class RoomViewModel extends ViewModel {
         deviceList1.add(device3);
         deviceList1.add(device4);
 
-        Riddle puzzle1 = new Riddle(1,"1",deviceList1);
-        Riddle puzzle2 = new Riddle(2,"2",deviceList1);
-        Riddle puzzle3 = new Riddle(3,"3",deviceList1);
-        Riddle puzzle4 = new Riddle(4,"4",deviceList1);
+        Riddle puzzle1 = new Riddle(1,"Riddle1","Description1","Room1","Ready",deviceList1);
+        Riddle puzzle2 = new Riddle(2,"Riddle2","Description2","Room2","Ready",deviceList1);
+        Riddle puzzle3 = new Riddle(3,"Riddle3","Description3","Room3","Ready",deviceList1);
+        Riddle puzzle4 = new Riddle(4,"Riddle4","Description4","Room4","Ready",deviceList1);
 
         List<Riddle> puzzleList = new ArrayList<>();
         puzzleList.add(puzzle1);

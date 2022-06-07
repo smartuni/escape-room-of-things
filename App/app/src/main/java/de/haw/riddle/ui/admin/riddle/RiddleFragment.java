@@ -9,14 +9,17 @@ import android.widget.Button;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.lifecycle.LiveData;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import java.util.List;
+import java.util.Objects;
 
 import javax.inject.Inject;
 
@@ -59,17 +62,22 @@ public class RiddleFragment extends DaggerFragment {
         super.onViewCreated(view, savedInstanceState);
 
         final LiveData<List<Riddle>> riddles = riddleViewModel.getRiddle();
-        final RiddleListAdapter adapter = new RiddleListAdapter(riddles.getValue(), NavHostFragment.findNavController(this));
+        final RiddleListAdapter adapter = new RiddleListAdapter(riddles.getValue(), NavHostFragment.findNavController(this),riddleViewModel.getParentRoom().getId());
         riddles.observe(getViewLifecycleOwner(), adapter::updateRiddle);
 
         final RecyclerView recyclerView = view.findViewById(R.id.recyclerView);
-        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(adapter);
 
+        final DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(requireContext(), layoutManager.getOrientation());
+        dividerItemDecoration.setDrawable(Objects.requireNonNull(ContextCompat.getDrawable(requireContext(), R.drawable.list_item_divider)));
+        recyclerView.addItemDecoration(dividerItemDecoration);
+
         Button btnAdd = view.findViewById(R.id.btnAdd);
         btnAdd.setOnClickListener(v -> NavHostFragment.findNavController(this).navigate(R.id.action_fragmentPuzzle_to_fragment_riddle_detail));
+
 
         final SwipeRefreshLayout swipeRefreshLayout = view.findViewById(R.id.swipeRefreshLayout);
         swipeRefreshLayout.setOnRefreshListener(() -> riddleViewModel.sync(swipeRefreshLayout));

@@ -3,6 +3,8 @@ package de.haw.riddle.ui.admin.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,6 +19,7 @@ public class Room implements Parcelable {
     private String name;
     private String description;
     private String state; //TODO convert to enum or int constants as soon as we know all possible states
+    @SerializedName("puzzles")
     private List<Riddle> riddles;
 
     protected Room(Parcel in) {
@@ -53,7 +56,5 @@ public class Room implements Parcelable {
         parcel.writeTypedList(riddles);
     }
 
-    public boolean isValid() {
-        return name != null && !name.isEmpty();
-    }
+
 }

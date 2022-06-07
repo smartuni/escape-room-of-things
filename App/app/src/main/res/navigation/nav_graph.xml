@@ -83,10 +83,18 @@
         tools:layout="@layout/fragment_puzzle" >
         <action
             android:id="@+id/action_fragmentPuzzle_to_fragmentDevice"
-            app:destination="@id/fragmentDevice" />
+            app:destination="@id/fragmentDevice"
+            app:enterAnim="@anim/enter_from_right"
+            app:exitAnim="@anim/exit_to_left"
+            app:popEnterAnim="@anim/enter_from_left"
+            app:popExitAnim="@anim/exit_to_right"/>
         <action
             android:id="@+id/action_fragmentPuzzle_to_fragment_riddle_detail"
-            app:destination="@id/fragment_riddle_detail" />
+            app:destination="@id/fragment_riddle_detail"
+            app:enterAnim="@anim/enter_from_right"
+            app:exitAnim="@anim/exit_to_left"
+            app:popEnterAnim="@anim/enter_from_left"
+            app:popExitAnim="@anim/exit_to_right"/>
     </fragment>
 
     <fragment
@@ -98,7 +106,7 @@
     <fragment
         android:id="@+id/fragment_riddle_detail"
         android:name="de.haw.riddle.ui.admin.riddle.RiddleDetailFragment"
-        android:label="Device"
+        android:label="Riddle Details"
         tools:layout="@layout/fragment_riddle_detail" />
 
 </navigation>

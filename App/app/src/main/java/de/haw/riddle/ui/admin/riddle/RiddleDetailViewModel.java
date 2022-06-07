@@ -7,6 +7,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import de.haw.riddle.net.admin.CreateRiddleDto;
 import de.haw.riddle.net.admin.RiddleService;
 import de.haw.riddle.net.admin.RoomService;
 import de.haw.riddle.ui.admin.model.Device;
@@ -23,16 +24,23 @@ public class RiddleDetailViewModel extends ViewModel {
     private Riddle riddle;
     private long id = -1;
     private String name = "";
+    private String description="";
+    private long parentRoomId;
+    private String state="ready";
+
 
     @Inject
     public RiddleDetailViewModel(RiddleService riddleService) {
         this.riddleService = riddleService;
     }
 
-    public void setRiddle(Riddle riddle) {
+    public void setData(Riddle riddle,long parentRoomId) {
         this.riddle = riddle;
         name = riddle.getName();
         id = riddle.getId();
+        this.parentRoomId= parentRoomId;
+        description=riddle.getDescription();
+        state=riddle.getState();
     }
 
     public long getId() {
@@ -47,13 +55,22 @@ public class RiddleDetailViewModel extends ViewModel {
         return name;
     }
 
+    public String getDescription(){ return description;}
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
     public Call<Riddle> createRiddleCallIfValid() {
         List<Device> devices = riddle == null ? new ArrayList<>(0) : riddle.getDevices();
-        final Riddle riddle = new Riddle(id,name, devices);
+        final CreateRiddleDto riddle = new CreateRiddleDto(name,description,parentRoomId);
         if (riddle.isValid())
-            return riddleService.createRiddle(this.riddle);
+            return riddleService.createRiddle(riddle);
         else
             return null;
     }
 
+    public Call<Riddle> deleteRiddle() {
+        return riddleService.deleteRiddle(riddle.getId());
+    }
 }

@@ -7,13 +7,16 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.lifecycle.LiveData;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
+import java.util.Objects;
 
 import javax.inject.Inject;
 
@@ -36,6 +39,12 @@ public class DeviceFragment extends DaggerFragment {
         return args;
     }
 
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        viewModel.setRiddle(requireArguments().getParcelable(KEY_RIDDLE));
+    }
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -48,11 +57,18 @@ public class DeviceFragment extends DaggerFragment {
 
         final LiveData<List<Device>> devices = viewModel.getDevice();
         RecyclerView recyclerView = view.findViewById(R.id.recyclerView);
+
+
         Riddle riddle = requireArguments().getParcelable(KEY_RIDDLE);
         DeviceListAdapter adapter = new DeviceListAdapter(devices.getValue(), NavHostFragment.findNavController(this));
-        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
+        devices.observe(getViewLifecycleOwner(), adapter::updateDevices);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(adapter);
+
+        final DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(requireContext(), layoutManager.getOrientation());
+        dividerItemDecoration.setDrawable(Objects.requireNonNull(ContextCompat.getDrawable(requireContext(), R.drawable.list_item_divider)));
+        recyclerView.addItemDecoration(dividerItemDecoration);
     }
 }

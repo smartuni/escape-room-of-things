@@ -17,8 +17,7 @@
             android:id="@+id/tfId"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:enabled="false"
-            android:text="@{viewModel.name}" />
+            android:enabled="false" />
 
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -32,20 +31,76 @@
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/tfName"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:inputType="number" />
+            android:layout_height="match_parent" />
     </com.google.android.material.textfield.TextInputLayout>
 
-    <Button
-        android:id="@+id/applyButton"
-        android:layout_width="100dp"
-        android:layout_height="50dp"
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/tlDescription"
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:hint="@string/description"
+        app:layout_constraintTop_toBottomOf="@id/tlName">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/tfDescription"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/tlState"
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:hint="@string/state"
+        app:layout_constraintTop_toBottomOf="@id/tlRoom">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/tfState"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:enabled="false" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/tlRoom"
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:hint="Room"
+        app:layout_constraintTop_toBottomOf="@id/tlDescription">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/tfRoom"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_marginBottom="20dp"
-        android:stateListAnimator="@null"
-        android:text="@string/apply"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        android:gravity="center"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <Button
+            android:id="@+id/deleteButton"
+            android:layout_width="100dp"
+            android:layout_height="50dp"
+            android:visibility="gone"
+            android:layout_marginEnd="@dimen/margin_large"
+            android:backgroundTint="@android:color/holo_red_light"
+            android:stateListAnimator="@null"
+            android:text="@string/delete" />
+
+        <Button
+            android:id="@+id/applyButton"
+            android:layout_width="100dp"
+            android:layout_height="50dp"
+            android:backgroundTint="@android:color/holo_green_light"
+            android:stateListAnimator="@null"
+            android:text="@string/apply" />
+
+    </LinearLayout>
 
     <include layout="@layout/progress_layout" />
 

@@ -53,16 +53,7 @@ public class LedFragment extends DaggerFragment {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
                 Log.i(TAG,"Response Body = "+response.body());
-                if(response.body().equals("0"))
-                {
-                    ledButton.setBackgroundResource(R.drawable.led_button_off);
 
-                }
-                else
-                {
-                    ledButton.setBackgroundResource(R.drawable.led_button_on);
-                    led0IsOn=true;
-                }
 
             }
 

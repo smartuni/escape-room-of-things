@@ -1,5 +1,6 @@
 package de.haw.riddle.ui.admin.device;
 
+import android.os.Parcelable;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -34,7 +35,7 @@ public class DeviceViewModel extends ViewModel {
 
     private static final String TAG = DeviceViewModel.class.getSimpleName();
 
-    private final MutableLiveData<List<Device>> device = new MutableLiveData<>(new ArrayList<>(0));
+    private final MutableLiveData<List<Device>> devices = new MutableLiveData<>(new ArrayList<>(0));
     private final DeviceService deviceService;
 
     @Inject
@@ -46,7 +47,7 @@ public class DeviceViewModel extends ViewModel {
         deviceService.getDevice().enqueue(new Callback<List<Device>>() {
             @Override
             public void onResponse(@NonNull Call<List<Device>> call, @NonNull Response<List<Device>> response) {
-                device.setValue(response.body());
+                devices.setValue(response.body());
                 swipeRefreshLayout.setRefreshing(false);
             }
 
@@ -61,14 +62,17 @@ public class DeviceViewModel extends ViewModel {
     }
 
     public void addDevice(Device device) {
-        List<Device> devices = Objects.requireNonNull(this.device.getValue());
+        List<Device> devices = Objects.requireNonNull(this.devices.getValue());
         devices.add(device);
-        this.device.setValue(devices);
+        this.devices.setValue(devices);
     }
 
     public LiveData<List<Device>> getDevice() {
-        return device;
+        return devices;
     }
 
 
+    public void setRiddle(Riddle riddle) {
+        devices.setValue(riddle.getDevices());
+    }
 }

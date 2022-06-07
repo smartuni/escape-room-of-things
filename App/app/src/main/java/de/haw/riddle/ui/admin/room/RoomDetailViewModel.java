@@ -7,6 +7,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import de.haw.riddle.net.admin.CreateRoomDto;
 import de.haw.riddle.net.admin.RoomService;
 import de.haw.riddle.ui.admin.model.Riddle;
 import de.haw.riddle.ui.admin.model.Room;
@@ -61,9 +62,9 @@ public class RoomDetailViewModel extends ViewModel {
 
     public Call<Room> createRoomCallIfValid() {
         List<Riddle> puzzles = room == null ? new ArrayList<>(0) : room.getRiddles();
-        final Room room = new Room(id, name, description, state, puzzles);
+        final CreateRoomDto room = new CreateRoomDto(name,description);
         if (room.isValid())
-            return roomService.createRoom(this.room);
+            return roomService.createRoom(room);
         else
             return null;
     }

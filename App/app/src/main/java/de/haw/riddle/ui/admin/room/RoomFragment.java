@@ -35,6 +35,7 @@ public class RoomFragment extends DaggerFragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        roomViewModel.sync(null);
     }
 
     @Nullable

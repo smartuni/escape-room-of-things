@@ -3,6 +3,7 @@ package de.haw.riddle.ui.admin.riddle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -14,6 +15,8 @@ import de.haw.riddle.R;
 import de.haw.riddle.ui.admin.device.DeviceFragment;
 import de.haw.riddle.ui.admin.model.Riddle;
 import de.haw.riddle.ui.admin.model.Room;
+import de.haw.riddle.ui.admin.room.RoomDetailFragment;
+import lombok.Getter;
 
 import java.util.List;
 
@@ -21,12 +24,13 @@ public class RiddleListAdapter extends RecyclerView.Adapter<RiddleListAdapter.Vi
 
 
     private final NavController navController;
-    private final List<Riddle> puzzles;
+    private  List<Riddle> puzzles;
+    private final long parentRoomId;
 
-
-    public RiddleListAdapter(List<Riddle> puzzles, NavController navController) {
+    public RiddleListAdapter(List<Riddle> puzzles, NavController navController, long parentRoomId) {
         this.puzzles = puzzles;
         this.navController = navController;
+        this.parentRoomId= parentRoomId;
     }
 
     public void updateRiddle(@NonNull List<Riddle> updatedRiddles) {
@@ -50,7 +54,12 @@ public class RiddleListAdapter extends RecyclerView.Adapter<RiddleListAdapter.Vi
             public boolean areContentsTheSame(int oldItemPosition, int newItemPosition) {
                 return puzzles.get(oldItemPosition).equals(updatedRiddles.get(newItemPosition));
             }
+
+
         });
+
+        puzzles = updatedRiddles;
+        diffResult.dispatchUpdatesTo(this);
     }
 
     // Create new views (invoked by the layout manager)
@@ -72,7 +81,10 @@ public class RiddleListAdapter extends RecyclerView.Adapter<RiddleListAdapter.Vi
         viewHolder.getTextView().setText(riddle.getName());
 
 
-        viewHolder.getTextView().setOnClickListener(view -> navController.navigate(R.id.action_fragmentPuzzle_to_fragmentDevice, DeviceFragment.createArgs(riddle)));
+
+        viewHolder.itemView.setOnClickListener(view -> navController.navigate(R.id.action_fragmentPuzzle_to_fragmentDevice, DeviceFragment.createArgs(riddle)));
+        viewHolder.getSettingsButton().setOnClickListener(view -> navController.navigate(R.id.action_fragmentPuzzle_to_fragment_riddle_detail, RiddleDetailFragment.createArgs(riddle,parentRoomId)));
+
     }
 
     // Return the size of your dataset (invoked by the layout manager)
@@ -85,18 +97,17 @@ public class RiddleListAdapter extends RecyclerView.Adapter<RiddleListAdapter.Vi
      * Provide a reference to the type of views that you are using
      * (custom ViewHolder).
      */
+    @Getter
     public static class ViewHolder extends RecyclerView.ViewHolder {
         private final TextView textView;
+        private final ImageButton settingsButton;
 
         public ViewHolder(View view) {
             super(view);
             // Define click listener for the ViewHolder's View
 
             textView = view.findViewById(R.id.textView);
-        }
-
-        public TextView getTextView() {
-            return textView;
+            settingsButton = view.findViewById(R.id.settingsButton);
         }
     }
 }

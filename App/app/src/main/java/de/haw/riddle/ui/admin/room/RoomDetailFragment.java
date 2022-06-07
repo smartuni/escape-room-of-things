@@ -15,6 +15,8 @@ import androidx.navigation.fragment.NavHostFragment;
 
 import com.google.android.material.textfield.TextInputEditText;
 
+import java.io.IOException;
+
 import javax.inject.Inject;
 
 import dagger.android.support.DaggerFragment;
@@ -55,6 +57,7 @@ public class RoomDetailFragment extends DaggerFragment {
         TextInputEditText tfName = view.findViewById(R.id.tfName);
         TextInputEditText tfDescription = view.findViewById(R.id.tfDescription);
 
+
         progressLayout = view.findViewById(R.id.progressLayout);
         progressLayout.setOnTouchListener((v, event) -> {
             v.performClick();
@@ -79,6 +82,13 @@ public class RoomDetailFragment extends DaggerFragment {
         });
         ((TextInputEditText) view.findViewById(R.id.tfState)).setText(viewModel.getState());
 
+        tfDescription.addTextChangedListener(new SimpleTextWatcher() {
+            @Override
+            public void afterTextChanged(Editable s) {
+                viewModel.setDescription(s.toString());
+            }
+        });
+
         view.findViewById(R.id.applyButton).setOnClickListener(v -> {
             final Call<Room> call = viewModel.createRoomCallIfValid();
             if (call == null)
@@ -89,7 +99,21 @@ public class RoomDetailFragment extends DaggerFragment {
                     @Override
                     public void onResponse(@NonNull Call<Room> call, @NonNull Response<Room> response) {
                         progressLayout.setVisibility(View.INVISIBLE);
+
+                        if(!response.isSuccessful())
+                        {
+                            Toast.makeText(requireContext(),"Room hasn´t been created", Toast.LENGTH_SHORT).show();
+                            try {
+                                Log.e(TAG,response.errorBody().string());
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+
+                            return;
+                        }
+
                         Log.i(TAG, "Successfully posted room to server.\nResponseBody=\n" + response.body());
+
                         if (args == null)
                             Toast.makeText(requireContext(), R.string.roomCreateSuccess, Toast.LENGTH_SHORT).show();
                         else

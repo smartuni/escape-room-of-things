@@ -12,18 +12,18 @@ import retrofit2.http.PUT;
 import retrofit2.http.Path;
 
 public interface RiddleService {
-    @GET("/riddle")
-    Call<List<Riddle>> getRiddles();
+    @GET("/puzzles")
+    Call<GetRiddleResponse> getRiddles();
 
-    @GET("/riddle{id}")
-    Call<Riddle> getRiddleById(@Path("id") int id);
+    @GET("/puzzles/{id}")
+    Call<Riddle> getRiddleById(@Path("id") long id);
 
-    @POST("/riddle")
-    Call<Riddle> createRiddle(@Body Riddle riddle);
+    @POST("/puzzles")
+    Call<Riddle> createRiddle(@Body CreateRiddleDto riddle);
 
-    @PUT("/riddle")
+    @PUT("/puzzles")
     Call<Riddle> updateRiddle(@Body Riddle riddle);
 
-    @DELETE("/riddle")
-    Call<Riddle> deleteRiddle(@Body Riddle riddle);
+    @DELETE("/puzzles/{id}")
+    Call<Riddle> deleteRiddle(@Path("id") long id);
 }
