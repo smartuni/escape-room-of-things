@@ -399,7 +399,6 @@ Res{
 
 ## ToDo:
 - Admin Authentication(Flask-Auth.)
-- Observe rd for devices(disconnected devices) 
 - implement a way to change the device states by the server (solved -> ready / * -> maintainance)
 - parse device coap answer in device observe and trigger check_game_state
 - decode pubkey(base64) from FE before saving in db?
@@ -414,3 +413,4 @@ Res{
 - Delete Puzzles on room delete and move devices to default Puzzle
 - Update API to send complete responses (Puzzle -> isVictory, Device -> is_event_device, pubkey, nodestate, Room -> puzzles) + README(API)
 - Update rd-observe(instead add device/update device)
+- Observe rd for devices(disconnected devices) 
