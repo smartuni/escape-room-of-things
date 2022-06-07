@@ -2,6 +2,7 @@ package de.haw.riddle.net.admin;
 
 import java.util.List;
 
+import de.haw.riddle.net.ApiResponse;
 import de.haw.riddle.ui.admin.model.Room;
 import retrofit2.Call;
 import retrofit2.http.Body;
@@ -13,7 +14,7 @@ import retrofit2.http.Path;
 
 public interface RoomService {
     @GET("/rooms")
-    Call<GetRoomResponse> getRooms();
+    Call<ApiResponse<List<Room>>> getRooms();
 
     @GET("/rooms{id}")
     Call<Room> getRoomById(@Path("id") long id);

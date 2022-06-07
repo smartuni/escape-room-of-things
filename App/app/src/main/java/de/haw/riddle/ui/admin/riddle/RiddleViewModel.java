@@ -16,9 +16,8 @@ import java.util.Objects;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import de.haw.riddle.net.admin.GetRiddleResponse;
+import de.haw.riddle.net.ApiResponse;
 import de.haw.riddle.net.admin.RiddleService;
-import de.haw.riddle.ui.admin.device.DeviceDetailViewModel;
 import de.haw.riddle.ui.admin.model.Riddle;
 import de.haw.riddle.ui.admin.model.Room;
 import retrofit2.Call;
@@ -40,16 +39,16 @@ public class RiddleViewModel extends ViewModel {
     }
 
     public void sync(SwipeRefreshLayout swipeRefreshLayout) {
-        riddleService.getRiddles().enqueue(new Callback<GetRiddleResponse>() {
+        riddleService.getRiddles().enqueue(new Callback<ApiResponse<List<Riddle>>>() {
             @Override
-            public void onResponse(@NonNull Call<GetRiddleResponse> call, @NonNull Response<GetRiddleResponse> response) {
-                riddles.setValue(response.body().getPuzzles());
+            public void onResponse(@NonNull Call<ApiResponse<List<Riddle>>> call, @NonNull Response<ApiResponse<List<Riddle>>> response) {
+                riddles.setValue(response.body().getData());
                 if(swipeRefreshLayout!=null)
                 swipeRefreshLayout.setRefreshing(false);
             }
 
             @Override
-            public void onFailure(@NonNull Call<GetRiddleResponse> call, @NonNull Throwable t) {
+            public void onFailure(@NonNull Call<ApiResponse<List<Riddle>>> call, @NonNull Throwable t) {
                 Log.e(TAG, "Failed to get puzzles from api", t);
                 if(swipeRefreshLayout!=null) {
                     swipeRefreshLayout.setRefreshing(false);

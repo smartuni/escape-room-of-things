@@ -2,6 +2,7 @@ package de.haw.riddle.net.admin;
 
 import java.util.List;
 
+import de.haw.riddle.net.ApiResponse;
 import de.haw.riddle.ui.admin.model.Riddle;
 import retrofit2.Call;
 import retrofit2.http.Body;
@@ -13,7 +14,7 @@ import retrofit2.http.Path;
 
 public interface RiddleService {
     @GET("/puzzles")
-    Call<GetRiddleResponse> getRiddles();
+    Call<ApiResponse<List<Riddle>>> getRiddles();
 
     @GET("/puzzles/{id}")
     Call<Riddle> getRiddleById(@Path("id") long id);
