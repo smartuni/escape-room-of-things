@@ -44,14 +44,17 @@ public class RiddleViewModel extends ViewModel {
             @Override
             public void onResponse(@NonNull Call<GetRiddleResponse> call, @NonNull Response<GetRiddleResponse> response) {
                 riddles.setValue(response.body().getPuzzles());
+                if(swipeRefreshLayout!=null)
                 swipeRefreshLayout.setRefreshing(false);
             }
 
             @Override
             public void onFailure(@NonNull Call<GetRiddleResponse> call, @NonNull Throwable t) {
-                Log.e(TAG, "Failed to get rooms from api", t);
-                swipeRefreshLayout.setRefreshing(false);
-                Toast.makeText(swipeRefreshLayout.getContext(), t.toString(), Toast.LENGTH_SHORT).show();
+                Log.e(TAG, "Failed to get puzzles from api", t);
+                if(swipeRefreshLayout!=null) {
+                    swipeRefreshLayout.setRefreshing(false);
+                    Toast.makeText(swipeRefreshLayout.getContext(), t.toString(), Toast.LENGTH_SHORT).show();
+                }
             }
         });
         //TODO load new data from api

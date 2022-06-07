@@ -101,7 +101,11 @@
         android:id="@+id/fragmentDevice"
         android:name="de.haw.riddle.ui.admin.device.DeviceFragment"
         android:label="Device"
-        tools:layout="@layout/fragment_device" />
+        tools:layout="@layout/fragment_device" >
+        <action
+            android:id="@+id/action_fragmentDevice_to_fragmentQr"
+            app:destination="@id/fragmentQr" />
+    </fragment>
 
     <fragment
         android:id="@+id/fragment_riddle_detail"

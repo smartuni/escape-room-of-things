@@ -20,6 +20,22 @@
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
 
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/btnQr"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginBottom="20dp"
+        android:background="@drawable/selector_button_round"
+        android:gravity="center"
+        android:text="+"
+        android:textColor="@color/white"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
