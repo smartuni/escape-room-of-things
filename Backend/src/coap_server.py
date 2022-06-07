@@ -44,12 +44,13 @@ class WhoAmI(resource.Resource):
 class coap_server:
     async def init(self):
         self.connectedDevices = []
+        self.get_devices_from_db()
         root = resource.Site()
         self.con = await Context.create_server_context(root, bind=('::1', 5555))
 
     async def device_connected(self, devices):
         for dev in devices:
-            if "base=" in dev:
+            if "base=" in dev and "ep=" in dev:
                 matches = re.search('ep="(.+?)";base="coap://(.+?)";', dev)
                 with db_app.app_context():
                     d = Device.query.filter_by(serial=matches.group(1)).first()
@@ -59,26 +60,32 @@ class coap_server:
                         db.session.commit()
                         if matches.group(1) not in self.connectedDevices:
                             self.connectedDevices.append(matches.group(1))
-                        await self.observe_device(d)
+                            print(matches.group(1) + " connected")
+                        # await self.observe_device(d)
 
     def device_disconnected(self, devices):
-        print("disc check")
         con_serials = []
+        removed_serials = []
         for dev in devices:
-            matches = re.search('ep="(.+?)";base="coap://(.+?)";', dev)
-            con_serials.append(matches.group(1))
+            if "ep=" in dev:
+                matches = re.search('ep="(.+?)";', dev)
+                con_serials.append(matches.group(1))
+        print(con_serials)
         for serial in self.connectedDevices:
             if serial not in con_serials:
                 with db_app.app_context():
                     d = Device.query.filter_by(serial=serial).first()
                     d.node_state = "disconnected"
                     db.session.commit()
-                    self.connectedDevices.remove(serial)
+                removed_serials.append(serial)
+                print(serial + " disconnected")
+        self.connectedDevices = [
+            x for x in self.connectedDevices if x not in removed_serials]
 
     def get_devices_from_db(self):
         with db_app.app_context():
             devs = Device.query.all()
-        self.connectedDevices = [d.devIP for d in devs]
+        self.connectedDevices = [d.serial for d in devs]
 
     async def observe_device(self, device):
         print(device.name)
@@ -98,6 +105,30 @@ class coap_server:
             # parse answer, CBOR?
             # implement if
             # check_game_state(device)
+
+    async def observe_rd(self):
+        request = Message(code=GET, uri="coap://[::1]:5683/endpoint-lookup/",
+                          observe=0)
+        req = self.con.request(request)
+        res = await req.response
+        cachedli = res.payload.decode('utf-8').split(",")
+        await self.device_connected(cachedli)
+
+        print("start observe loop")
+        async for r in req.observation:
+            li = r.payload.decode('utf-8').split(",")
+            await self.device_connected(li)
+
+    async def poll_rd(self):
+        print("start poll loop")
+        while True:
+            connect_check_request = Message(code=GET, uri="coap://[::1]:5683/endpoint-lookup/",
+                                            observe=1)
+            con_req = self.con.request(connect_check_request)
+            con_res = await con_req.response
+            con_devices = con_res.payload.decode('utf-8').split(",")
+            self.device_disconnected(con_devices)
+            await asyncio.sleep(30)
 
 
 async def victory(room, con):
@@ -160,29 +191,9 @@ async def trigger_event(puzzle, con):
 async def main():
     server = coap_server()
     await server.init()
-    # 127.0.0.1:5683
-    request = Message(code=GET, uri="coap://[::1]:5683/endpoint-lookup/",
-                      observe=0)
-    req = server.con.request(request)
-    res = await req.response
-    cachedli = res.payload.decode('utf-8').split(",")
-    await server.device_connected(cachedli)
 
-    print("start observe loop")
-    async for r in req.observation:
-        print('kappa')
-        li = r.payload.decode('utf-8').split(",")
-        await server.device_connected(li)
-
-    # print("start check loop")
-    # while await True:
-    #     connect_check_request = Message(code=GET, uri="coap://fd00:dead:beef::1]:5683/endpoint-lookup/",
-    #                                     observe=1)
-    #     con_req = server.con.request(connect_check_request)
-    #     con_res = await con_req.response
-    #     con_devices = con_res.payload.decode('utf-8').split(",")
-    #     server.device_disconnected(con_devices)
-    #     await asyncio.sleep(30)
+    tasks = map(asyncio.create_task, [server.observe_rd(), server.poll_rd()])
+    await asyncio.wait(tasks)
 
     print("server running now")
     await asyncio.get_running_loop().create_future()
