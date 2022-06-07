@@ -2,6 +2,8 @@ package de.haw.riddle.di;
 
 import android.content.Context;
 
+import dagger.Provides;
+import dagger.android.AndroidInjectionModule;
 import de.haw.riddle.RiddleApplication;
 
 import javax.inject.Singleton;
@@ -15,7 +17,8 @@ import de.haw.riddle.ui.riddle1.Riddle1Fragment;
 @Singleton
 @Component(
         modules = {
-                AndroidSupportInjectionModule.class,
+                AndroidInjectionModule.class,
+                ApplicationModule.class,
                 OverviewModule.class,
                 Riddle1Module.class,
                 NetworkModule.class,
@@ -29,6 +32,6 @@ public interface ApplicationComponent extends AndroidInjector<RiddleApplication>
 
     @Component.Factory
     interface Factory {
-        ApplicationComponent create(@BindsInstance Context applicationContext);
+        ApplicationComponent create(@BindsInstance RiddleApplication application);
     }
 }

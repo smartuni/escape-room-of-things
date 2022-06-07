@@ -8,6 +8,6 @@ import dagger.android.support.DaggerApplication;
 public class RiddleApplication extends DaggerApplication {
     @Override
     protected AndroidInjector<? extends DaggerApplication> applicationInjector() {
-        return DaggerApplicationComponent.factory().create(getApplicationContext());
+        return DaggerApplicationComponent.factory().create(this);
     }
 }
