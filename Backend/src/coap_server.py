@@ -6,6 +6,7 @@ import re
 import aiocoap.resource as resource
 from aiocoap import *
 from flask import Flask
+from aiocoap.numbers.codes import GET, PUT
 
 from orm_classes.Device import Device
 from orm_classes.Puzzle import Puzzle
@@ -38,6 +39,65 @@ class WhoAmI(resource.Resource):
 
         return Message(content_format=0,
                        payload="\n".join(text).encode('utf8'))
+
+
+class coap_server:
+    async def init(self):
+        self.connectedDevices = []
+        root = resource.Site()
+        self.con = await Context.create_server_context(root, bind=('::1', 5555))
+
+    async def device_connected(self, devices):
+        for dev in devices:
+            if "base=" in dev:
+                matches = re.search('ep="(.+?)";base="coap://(.+?)";', dev)
+                with db_app.app_context():
+                    d = Device.query.filter_by(serial=matches.group(1)).first()
+                    if d is not None:
+                        d.devIP = matches.group(2)
+                        d.node_state = "connected"
+                        db.session.commit()
+                        if matches.group(1) not in self.connectedDevices:
+                            self.connectedDevices.append(matches.group(1))
+                        await self.observe_device(d)
+
+    def device_disconnected(self, devices):
+        print("disc check")
+        con_serials = []
+        for dev in devices:
+            matches = re.search('ep="(.+?)";base="coap://(.+?)";', dev)
+            con_serials.append(matches.group(1))
+        for serial in self.connectedDevices:
+            if serial not in con_serials:
+                with db_app.app_context():
+                    d = Device.query.filter_by(serial=serial).first()
+                    d.node_state = "disconnected"
+                    db.session.commit()
+                    self.connectedDevices.remove(serial)
+
+    def get_devices_from_db(self):
+        with db_app.app_context():
+            devs = Device.query.all()
+        self.connectedDevices = [d.devIP for d in devs]
+
+    async def observe_device(self, device):
+        print(device.name)
+        request = Message(code=GET, uri=f"coap://{device.devIP}/node/info",
+                          observe=0)
+        req = self.con.request(request)
+        res = await req.response
+        print(res)
+        print(res.payload)
+
+        print("observe: {}".format(device.devIP))
+        async for r in req.observation:
+            device.state = SOLVED
+            db.session.commit()
+            print(r)
+            print(r.payload)
+            # parse answer, CBOR?
+            # implement if
+            # check_game_state(device)
 
 
 async def victory(room, con):
@@ -97,78 +157,37 @@ async def trigger_event(puzzle, con):
             await req.response
 
 
-async def device_connected(devices, ips, con):
-    print(devices)
-    for dev in devices:
-        if "base=" in dev:
-            matches = re.search('ep="(.+?)";base="coap://(.+?)";', dev)
-            if matches.group(2) not in ips:
-                with db_app.app_context():
-                    d = Device.query.filter_by(serial=matches.group(1)).first()
-                    d.devIP = matches.group(2)
-                    d.node_state = "connected"
-                    db.session.commit()
-                    ips.append(matches.group(2))
-                    await observe_device(d, con)
-    return ips
-
-
-def get_devices_from_db():
-    with db_app.app_context():
-        devs = Device.query.all()
-        return [d.devIP for d in devs]
-
-
-async def observe_device(device, con):
-    print(device.name)
-    request = Message(code=GET, uri=f"coap://{device.devIP}/node/info",
-                      observe=0)
-    print(request)
-    req = con.request(request)
-    res = await req.response
-    print(res)
-    print(res.payload)
-
-    print("observe: {}".format(device.devIP))
-    async for r in req.observation:
-        device.state = SOLVED
-        db.session.commit()
-        print(r)
-        print(r.payload)
-        # parse answer, CBOR?
-        # implement if
-        # check_game_state(device)
-
-
 async def main():
-    connectedIps = []
-    # connectedIps = get_devices_from_db()
-    root = resource.Site()
-
-    root.add_resource(['.well-known', 'core'],
-                      resource.WKCResource(root.get_resources_as_linkheader))
-    root.add_resource(['whoami'], WhoAmI())
-
-    con = await Context.create_server_context(root, bind=('fd00:dead:beef', 5555))
+    server = coap_server()
+    await server.init()
     # 127.0.0.1:5683
-    request = Message(code=GET, uri="coap://fd00:dead:beef::1]:5683/endpoint-lookup/",
+    request = Message(code=GET, uri="coap://[::1]:5683/endpoint-lookup/",
                       observe=0)
-    req = con.request(request)
+    req = server.con.request(request)
     res = await req.response
     cachedli = res.payload.decode('utf-8').split(",")
-    connectedIps = await device_connected(cachedli, connectedIps, con)
+    await server.device_connected(cachedli)
 
-    print("start async loop")
+    print("start observe loop")
     async for r in req.observation:
+        print('kappa')
         li = r.payload.decode('utf-8').split(",")
+        await server.device_connected(li)
 
-        connectedIps = await device_connected(li, connectedIps, con)
+    # print("start check loop")
+    # while await True:
+    #     connect_check_request = Message(code=GET, uri="coap://fd00:dead:beef::1]:5683/endpoint-lookup/",
+    #                                     observe=1)
+    #     con_req = server.con.request(connect_check_request)
+    #     con_res = await con_req.response
+    #     con_devices = con_res.payload.decode('utf-8').split(",")
+    #     server.device_disconnected(con_devices)
+    #     await asyncio.sleep(30)
 
-    # Run forever
     print("server running now")
     await asyncio.get_running_loop().create_future()
 
 
 if __name__ == '__main__':
-    # asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
+    asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
     asyncio.run(main())

@@ -19,7 +19,7 @@ PUZZLE = "puzzle"
 IS_EVENT_DEVICE = "is_event_device"
 SERIAL = "serial"
 CONNECTED = 'connected'
-UNCONNECTED = 'unconnected'
+DISCONNECTED = 'disconnected'
 DEVIP = 'devIP'
 PUBKEY = 'pubkey'
 config = configparser.ConfigParser()
@@ -203,7 +203,7 @@ def api_add_device():
         puzzle=puzzle,
         is_event_device=is_event_device,
         state=READY,
-        node_state=UNCONNECTED
+        node_state=DISCONNECTED
     )
     db.session.add(device)
     db.session.commit()

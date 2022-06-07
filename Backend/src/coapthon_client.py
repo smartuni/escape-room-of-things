@@ -45,15 +45,16 @@ def set_box(box, value):
 
 
 def regdev():
-    dev = "horaa"
-    ip = "127.0.0.1:6666"
-    path = "rd?ep={}&con=coap://{}".format(dev,ip)
+    dev = "blub"
+    ip = "[::1]:6666"
+    path = "rd?ep={}".format(dev)
     ct = {'content_type': defines.Content_types["application/link-format"]}
-    
-    client = HelperClient(server=("127.0.0.1", 5683))
-    response = client.post(path,'',None,None,**ct)
+
+    client = HelperClient(server=("::1", 5683))
+    response = client.post(path, '', None, None, **ct)
     client.stop()
     print(response)
+
 
 if __name__ == '__main__':
     regdev()
