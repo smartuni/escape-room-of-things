@@ -391,11 +391,11 @@ Res{
 ## ToDo:
 - Admin Authentication(Flask-Auth.)
 - Observe rd for devices(disconnected devices) 
-- key exchange with devices
 - implement a way to change the device states by the server (solved -> ready / * -> maintainance)
 - parse device coap answer in device observe and trigger check_game_state
-- decode pubkey(bae64) from FE before saving in db?
+- decode pubkey(base64) from FE before saving in db?
 - authenticate devices (pubkey - private key), on observe? on connect to rd?
+-> key exchange with devices
 
 ## Done:
 - Post Device(Name, Description, pubkey)

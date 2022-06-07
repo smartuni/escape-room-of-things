@@ -104,7 +104,7 @@ async def device_connected(devices, ips, con):
             matches = re.search('ep="(.+?)";base="coap://(.+?)";', dev)
             if matches.group(2) not in ips:
                 with db_app.app_context():
-                    d = Device.query.filter_by(id=matches.group(1)).first()
+                    d = Device.query.filter_by(serial=matches.group(1)).first()
                     d.devIP = matches.group(2)
                     d.node_state = "connected"
                     db.session.commit()
