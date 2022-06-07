@@ -376,7 +376,6 @@ Res{
 
 ## ToDo:
 - Update API to send complete responses (Puzzle -> isVictory, Device -> is_event_device, pubkey, nodestate, Room -> puzzles) + README(API)
-- Delete Puzzles on room delete and move devices to default Puzzle
 - Admin Authentication(Flask-Auth.)
 - Update rd-observe(instead add device/update device)
 - Observe rd for devices(disconnected devices) 
@@ -388,3 +387,4 @@ Res{
 - Put Device(is_event_device)
 - add serial column to device
 - State change for devices(like room and puzzle)
+- Delete Puzzles on room delete and move devices to default Puzzle

@@ -105,7 +105,15 @@ def api_update_room(roomid):
 
 @app.route('/rooms/<roomid>', methods=['DELETE'])
 def api_delete_room(roomid):
+    if roomid == "0":
+        return "Can't delete default room", 400
     room = Room.query.filter_by(id=roomid).first()
+    for puzzle in room.puzzles:
+        for dev in puzzle.devices:
+            dev.puzzle = "0"
+        db.session.commit()
+        db.session.delete(puzzle)
+    db.session.commit()
     roomcopy = room.serialize()
     db.session.delete(room)
     db.session.commit()
@@ -152,7 +160,12 @@ def api_update_puzzle(puzzleid):
 
 @app.route('/puzzles/<puzzleid>', methods=['DELETE'])
 def api_delete_puzzle(puzzleid):
+    if puzzleid == "0":
+        return "Can't delete default puzzle", 400
     puzzle = Puzzle.query.filter_by(id=puzzleid).first()
+    for dev in puzzle.devices:
+        dev.puzzle = "0"
+    db.session.commit()
     puzzlecopy = puzzle.serialize()
     db.session.delete(puzzle)
     db.session.commit()
