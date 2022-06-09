@@ -27,9 +27,9 @@
 
     <fragment
         android:id="@+id/fragmentRiddle1"
-        android:name="de.haw.riddle.ui.riddle1.Riddle1Fragment"
+        android:name="de.haw.riddle.ui.water.WaterRiddleFragment"
         android:label="riddle1"
-        tools:layout="@layout/fragment_riddle1" />
+        tools:layout="@layout/fragment_water" />
 
     <fragment
         android:id="@+id/fragmentLed"

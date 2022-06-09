@@ -5,7 +5,7 @@
     android:id="@+id/fragmentLed"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.riddle1.Riddle1Fragment">
+    tools:context=".ui.water.WaterRiddleFragment">
 
     <TextView
         android:id="@+id/stub1_text2"
@@ -37,15 +37,14 @@ You have to fill the \n0.5l bottle with exactly 0.4l of water. "
         app:layout_constraintTop_toBottomOf="@id/stub1_text2" />
 
     <Button
-        android:id="@+id/riddle1"
+        android:id="@+id/btnTip"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="596dp"
+        android:layout_marginBottom="40dp"
         android:text="Take a tip"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.914"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:layout_marginEnd="20dp"
+        app:layout_constraintBottom_toBottomOf="parent"/>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
