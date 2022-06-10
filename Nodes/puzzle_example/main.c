@@ -21,10 +21,9 @@
 #include "shell.h"
 #include "xtimer.h"
 
-#include "keys.h"
 #include "puzzle_coap.h"
 
-#define STARTUP_DELAY   (1U)
+#define STARTUP_DELAY   (2U)
 #define MAIN_QUEUE_SIZE (4)
 static msg_t _main_msg_queue[MAIN_QUEUE_SIZE];
 
@@ -40,7 +39,7 @@ static const puzzle_t puzzle = {
     .set_ready_handler = _set_ready,
     .name = RIOT_APPLICATION,
     .resource_dir_uri = "coap://[fd00:dead:beef::1]:5683",
-    .serial = SERIAL_UUID,
+    .serial = SERIAL_UUID, /* is provided via the build system! */
 };
 
 static bool _is_solved = false;

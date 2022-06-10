@@ -27,8 +27,8 @@ extern "C" {
 /* the default CONFIG_GCOAP_PDU_BUF_SIZE is 128 */
 #define CBOR_BUF_SIZE 100
 
-extern unsigned char prvkey_der[];
-extern unsigned int prvkey_der_len;
+static const uint8_t psk_id[] = PSK_ID;
+static const uint8_t psk_key[] = PSK;
 
 /**
  * Puzzle info structure 

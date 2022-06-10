@@ -63,9 +63,15 @@ static gcoap_listener_t _unsecure_listener = {
     NULL
 };
 
-static credman_credential_t credential = {
-    .type = CREDMAN_TYPE_ECDSA,
+static const credman_credential_t credential = {
+    .type = CREDMAN_TYPE_PSK,
     .tag = DTLS_TAG,
+    .params = {
+        .psk = {
+            .key = { .s = psk_key, .len = sizeof(psk_key) - 1, },
+            .id = { .s = psk_id, .len = sizeof(psk_id) - 1, },
+        }
+    },
 };
 
 static int _make_sock_ep(sock_udp_ep_t *ep, uri_parser_result_t *uri)
@@ -171,13 +177,6 @@ void puzzle_init(const puzzle_t *puzzle)
     assert(uri_parser_is_absolute_string(puzzle->resource_dir_uri));
     assert(uri_parser_process_string(&uri_result, puzzle->resource_dir_uri) == 0);
     assert(_make_sock_ep(&remote, &uri_result) == 0);
-
-
-    res = credman_load_private_ecc_key(prvkey_der, prvkey_der_len, &credential);
-    if (res != CREDMAN_OK) {
-        puts("Oof!");
-        return;
-    }
 
     res = credman_add(&credential);
     if (res < 0 && res != CREDMAN_EXIST) {
