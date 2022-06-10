@@ -104,6 +104,7 @@ static size_t _send(uint8_t *buf, size_t len, char *addr_str, char *port_str)
     sock_udp_ep_t remote;
     gcoap_socket_type_t type;
 
+
     if (!_parse_endpoint(&remote, addr_str, port_str)) {
         return 0;
     }

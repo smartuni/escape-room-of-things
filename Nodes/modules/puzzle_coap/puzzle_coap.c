@@ -133,6 +133,7 @@ static size_t _puzzle_build_cbor_buffer(uint8_t *cborbuf, size_t len)
     return cbor_encoder_get_buffer_size(&encoder, cborbuf);
 }
 
+
 static ssize_t _build_cbor_coap_packet(coap_pkt_t *pdu, uint8_t *buf, size_t len)
 {
     uint8_t cborbuf[CBOR_BUF_SIZE];

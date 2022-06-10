@@ -4,6 +4,7 @@
 USEMODULE += gcoap
 USEMODULE += cord_ep_standalone
 USEMODULE += uri_parser
+
 USEMODULE += credman
 USEMODULE += credman_load
 USEMODULE += prng_sha1prng

@@ -26,7 +26,6 @@ extern "C" {
 /* 119 is the max size without touching the gcoap.h */
 /* the default CONFIG_GCOAP_PDU_BUF_SIZE is 128 */
 #define CBOR_BUF_SIZE 100
-
 static const uint8_t psk_id[] = PSK_ID;
 static const uint8_t psk_key[] = PSK;
 

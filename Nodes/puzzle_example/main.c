@@ -23,6 +23,7 @@
 
 #include "puzzle_coap.h"
 
+
 #define STARTUP_DELAY   (2U)
 #define MAIN_QUEUE_SIZE (4)
 static msg_t _main_msg_queue[MAIN_QUEUE_SIZE];
