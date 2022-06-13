@@ -337,7 +337,8 @@ Res:
 Req. Payload:
 { 
 	'serial': text, 
-	'pubkey': text,
+	'psk': text,
+	('qrid': text,)
 	('name': text,)
 	('description': text,) 
 	('puzzle': text,) default:0
