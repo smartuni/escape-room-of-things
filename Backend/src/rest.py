@@ -90,7 +90,7 @@ def admin_token_required(f):
 # misc
 
 @app.route('/rooms/state/<roomid>', methods=['PUT'])
-@admin_token_required
+#@admin_token_required
 def api_update_room_state(roomid):
     request_data = request.get_json()
     room = Room.query.filter_by(id=roomid).first()
@@ -100,7 +100,7 @@ def api_update_room_state(roomid):
 
 
 @app.route('/puzzles/state/<puzzleid>', methods=['PUT'])
-@admin_token_required
+#@admin_token_required
 def api_update_puzzle_state(puzzleid):
     request_data = request.get_json()
     puzzle = Puzzle.query.filter_by(id=puzzleid).first()
@@ -110,7 +110,7 @@ def api_update_puzzle_state(puzzleid):
 
 
 @app.route('/devices/state/<deviceid>', methods=['PUT'])
-@admin_token_required
+#@admin_token_required
 def api_update_device_state(deviceid):
     request_data = request.get_json()
     device = Device.query.filter_by(id=deviceid).first()
@@ -121,21 +121,21 @@ def api_update_device_state(deviceid):
 
 # rooms
 @app.route('/rooms', methods=['GET'])
-@admin_token_required
+#@admin_token_required
 def api_get_rooms():
     rooms = Room.query.all()
     return jsonify({'rooms': serialize_rooms(rooms)})
 
 
 @app.route('/rooms/<roomid>', methods=['GET'])
-@admin_token_required
+#@admin_token_required
 def api_get_room(roomid):
     room = Room.query.filter_by(id=roomid).first()
     return jsonify(room.serialize())
 
 
 @app.route('/rooms', methods=['POST'])
-@admin_token_required
+#@admin_token_required
 def api_add_room():
     request_data = request.get_json()
     room = Room(name=request_data[NAME],
@@ -154,7 +154,7 @@ def api_add_room():
 
 
 @app.route('/rooms/<roomid>', methods=['PUT'])
-@admin_token_required
+#@admin_token_required
 def api_update_room(roomid):
     request_data = request.get_json()
     room = Room.query.filter_by(id=roomid).first()
@@ -165,7 +165,7 @@ def api_update_room(roomid):
 
 
 @app.route('/rooms/<roomid>', methods=['DELETE'])
-@admin_token_required
+#@admin_token_required
 def api_delete_room(roomid):
     if roomid == "0":
         return "Can't delete default room", 400
@@ -185,21 +185,21 @@ def api_delete_room(roomid):
 # puzzles
 
 @app.route('/puzzles', methods=['GET'])
-@admin_token_required
+#@admin_token_required
 def api_get_puzzles():
     puzzles = Puzzle.query.all()
     return jsonify({'puzzles': serialize_puzzles(puzzles)})
 
 
 @app.route('/puzzles/<puzzleid>', methods=['GET'])
-@admin_token_required
+#@admin_token_required
 def api_get_puzzle(puzzleid):
     puzzle = Puzzle.query.filter_by(id=puzzleid).first()
     return jsonify(serialize_puzzles([puzzle])[0])
 
 
 @app.route('/puzzles', methods=['POST'])
-@admin_token_required
+#@admin_token_required
 def api_add_puzzle():
     request_data = request.get_json()
     puzzle = Puzzle(name=request_data[NAME],
@@ -213,7 +213,7 @@ def api_add_puzzle():
 
 
 @app.route('/puzzles/<puzzleid>', methods=['PUT'])
-@admin_token_required
+#@admin_token_required
 def api_update_puzzle(puzzleid):
     request_data = request.get_json()
     puzzle = Puzzle.query.filter_by(id=puzzleid).first()
@@ -225,7 +225,7 @@ def api_update_puzzle(puzzleid):
 
 
 @app.route('/puzzles/<puzzleid>', methods=['DELETE'])
-@admin_token_required
+#@admin_token_required
 def api_delete_puzzle(puzzleid):
     if puzzleid == "0":
         return "Can't delete default puzzle", 400
@@ -242,21 +242,21 @@ def api_delete_puzzle(puzzleid):
 # devices
 
 @app.route('/devices', methods=['GET'])
-@admin_token_required
+#@admin_token_required
 def api_get_devices():
     devices = Device.query.all()
     return jsonify({'devices': serialize_devices(devices)})
 
 
 @app.route('/devices/<deviceid>', methods=['GET'])
-@admin_token_required
+#@admin_token_required
 def api_get_device(deviceid):
     device = Device.query.filter_by(id=deviceid).first()
     return jsonify(device.serialize())
 
 
 @app.route('/devices', methods=['POST'])
-@admin_token_required
+#@admin_token_required
 def api_add_device():
     request_data = request.get_json()
 
@@ -281,7 +281,7 @@ def api_add_device():
 
 
 @app.route('/devices/<deviceid>', methods=['PUT'])
-@admin_token_required
+#@admin_token_required
 def api_update_device(deviceid):
     request_data = request.get_json()
     device = Device.query.filter_by(id=deviceid).first()
@@ -293,7 +293,7 @@ def api_update_device(deviceid):
 
 
 @app.route('/devices/<deviceid>', methods=['DELETE'])
-@admin_token_required
+#@admin_token_required
 def api_delete_device(deviceid):
     device = Device.query.filter_by(id=deviceid).first()
     devicecopy = device.serialize()
@@ -336,14 +336,14 @@ def login():
 
 
 @app.route('/users', methods=['GET'])
-@admin_token_required
+#@admin_token_required
 def get_all_users():
     users = User.query.all()
     return jsonify({'users': serialize_users(users)})
 
 
 @app.route('/users/<userid>', methods=['DELETE'])
-@admin_token_required
+#@admin_token_required
 def delete_user(userid):
     if userid == "0":
         return "Can't delete default admin", 400
@@ -355,7 +355,7 @@ def delete_user(userid):
 
 
 @app.route('/users/<userid>', methods=['PUT'])
-@admin_token_required
+#@admin_token_required
 def change_admin_att(userid):
     request_data = request.get_json()
     user = db.query.filter_by(id=userid).first()
