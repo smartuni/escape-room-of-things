@@ -3,12 +3,9 @@ package de.haw.riddle.ui.water;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.navigation.NavController;
-import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
@@ -17,12 +14,13 @@ import java.util.List;
 import de.haw.riddle.R;
 import lombok.Getter;
 
-public class TipsList extends RecyclerView.Adapter<TipsList.ViewHolder> {
+public class TipsListAdapter extends RecyclerView.Adapter<TipsListAdapter.ViewHolder> {
 
     private final List<String> tips = new ArrayList<>(0);
 
     public void addTip(String tip){
         tips.add(tip);
+        System.out.println("tip = " + tip);
         notifyDataSetChanged();
     }
 
@@ -35,13 +33,14 @@ public class TipsList extends RecyclerView.Adapter<TipsList.ViewHolder> {
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
         View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.item_tip, viewGroup, false);
-
+        System.out.println("viewGroup = " + viewGroup + ", viewType = " + viewType);
         return new ViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(ViewHolder viewHolder, final int position) {
         viewHolder.getTextView().setText(tips.get(position));
+        System.out.println("viewHolder = " + viewHolder + ", position = " + position);
     }
 
     @Override
