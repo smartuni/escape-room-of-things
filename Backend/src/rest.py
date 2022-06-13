@@ -329,7 +329,7 @@ def login():
     user = User.query.filter_by(username=auth.username).first()
     if check_password_hash(user.password, auth.password):
         token = jwt.encode(
-            {'public_id': user.public_id, 'exp': datetime.datetime.utcnow() + datetime.timedelta(hours=1)},
+            {'public_id': user.public_id, 'exp': datetime.datetime.utcnow() + datetime.timedelta(hours=6)},
             app.config['SECRET_KEY'], "HS256")
         return jsonify({'token': token.decode('UTF-8')})
     return make_response('could not verify', 401, {'Authentication': '"login required"'})
