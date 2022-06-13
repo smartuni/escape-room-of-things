@@ -91,7 +91,7 @@ class coap_server:
         self.connectedDevices = [d.serial for d in devs]
 
     async def observe_device(self, device):
-        print(device.name)
+        print('start observe on ' + device.serial)
         request = Message(code=GET, uri=f"coap://{device.devIP}/node/info",
                           observe=0)
         req = self.con.request(request)
@@ -99,7 +99,6 @@ class coap_server:
         print(res)
         print(res.payload)
 
-        print("observe: {}".format(device.devIP))
         async for r in req.observation:
             device.state = SOLVED
             db.session.commit()
