@@ -132,7 +132,7 @@ class coap_server:
             con_devices = con_res.payload.decode('utf-8').split(",")
             print(con_devices)
             self.device_disconnected(con_devices)
-            self.device_connected(con_devices)
+            await self.device_connected(con_devices)
             await asyncio.sleep(30)
 
 
