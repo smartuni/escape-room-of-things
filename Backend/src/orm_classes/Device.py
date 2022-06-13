@@ -10,7 +10,7 @@ class Device(db.Model):
     state = db.Column(db.String(20), unique=False, nullable=False)
     puzzle = db.Column(db.INTEGER, db.ForeignKey('puzzle.id'), nullable=False)
     psk = db.Column(db.String(100), unique=True, nullable=False)
-    qrid = db.colum(db.String, unique=False, nullable=True)
+    qrid = db.Column(db.String(100), unique=False, nullable=True)
     node_state = db.Column(db.String(20), unique=False, nullable=False)
     is_event_device = db.Column(db.BOOLEAN)
 
