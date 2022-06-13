@@ -16,7 +16,7 @@ public interface RiddleService {
     Call<GetRiddleResponse> getRiddles();
 
     @GET("/puzzles/{id}")
-    Call<Riddle> getRiddleById(@Path("id") long id);
+    Call<Riddle> getRiddles(@Path("id") long id);
 
     @POST("/puzzles")
     Call<Riddle> createRiddle(@Body CreateRiddleDto riddle);

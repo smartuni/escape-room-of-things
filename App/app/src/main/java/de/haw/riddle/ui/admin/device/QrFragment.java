@@ -60,6 +60,7 @@ public class QrFragment extends DaggerFragment {
 
             Gson gson= new Gson();
                     DeviceData deviceData = gson.fromJson(result.getText(), DeviceData.class);
+                    System.out.println(gson.toJson(deviceData));
                     deviceService.createDevice(deviceData).enqueue(new Callback<Device>() {
                         @Override
                         public void onResponse(Call<Device> call, Response<Device> response) {

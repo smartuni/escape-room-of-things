@@ -111,17 +111,22 @@
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
+            style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.ExposedDropdownMenu"
+
             android:id="@+id/tlPuzzle"
             android:layout_width="match_parent"
-            android:layout_height="80dp"
+            android:layout_height="wrap_content"
             android:hint="Puzzle"
             app:layout_constraintTop_toBottomOf="@id/tlNodeState">
 
-            <com.google.android.material.textfield.TextInputEditText
+            <AutoCompleteTextView
                 android:id="@+id/tfPuzzle"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:enabled="false" />
+                android:layout_height="wrap_content"
+                android:inputType="none"
+                android:maxLines="1"
+                android:ellipsize="end"
+                />
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
@@ -152,6 +157,23 @@
                 android:enabled="false" />
         </com.google.android.material.textfield.TextInputLayout>
 
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            android:gravity="center"
+            app:layout_constraintBottom_toBottomOf="@id/tlState">
+
+            <Button
+                android:id="@+id/applyButton"
+                android:layout_width="100dp"
+                android:layout_height="50dp"
+                android:backgroundTint="@android:color/holo_green_light"
+                android:stateListAnimator="@null"
+                android:text="@string/apply" />
+
+        </LinearLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

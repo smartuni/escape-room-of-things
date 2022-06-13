@@ -10,6 +10,7 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -20,6 +21,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import de.haw.riddle.net.admin.DeviceService;
+import de.haw.riddle.net.admin.RiddleService;
 import de.haw.riddle.net.admin.RoomService;
 import de.haw.riddle.ui.admin.model.Config;
 import de.haw.riddle.ui.admin.model.Device;
@@ -37,28 +39,51 @@ public class DeviceViewModel extends ViewModel {
 
     private final MutableLiveData<List<Device>> devices = new MutableLiveData<>(new ArrayList<>(0));
     private final DeviceService deviceService;
+    private final RiddleService riddleService;
+    private Riddle parentRiddle;
 
     @Inject
-    public DeviceViewModel(DeviceService deviceService) {
+    public DeviceViewModel(DeviceService deviceService, RiddleService riddleService) {
         this.deviceService = deviceService;
+        this.riddleService=riddleService;
     }
 
     public void sync(SwipeRefreshLayout swipeRefreshLayout) {
-        deviceService.getDevice().enqueue(new Callback<List<Device>>() {
+        riddleService.getRiddles(parentRiddle.getId()).enqueue(new Callback<Riddle>() {
             @Override
-            public void onResponse(@NonNull Call<List<Device>> call, @NonNull Response<List<Device>> response) {
-                devices.setValue(response.body());
+            public void onResponse(Call<Riddle> call, Response<Riddle> response) {
+
                 swipeRefreshLayout.setRefreshing(false);
+
+                if(response.isSuccessful())
+                {
+                    System.out.println(response.body());
+                    devices.setValue(response.body().getDevices());
+
+                }
+                else
+                {
+                    try {
+                        final String errorBody = response.errorBody().string();
+                        Log.e(TAG,errorBody);
+                        Toast.makeText(swipeRefreshLayout.getContext(),errorBody,Toast.LENGTH_SHORT).show();
+                        // TODO getContext via Application
+
+                    } catch (IOException e) {
+                        Log.wtf(TAG, "Failed to parse errorBody", e);
+                    }
+                }
             }
 
             @Override
-            public void onFailure(@NonNull Call<List<Device>> call, @NonNull Throwable t) {
-                Log.e(TAG, "Failed to get rooms from api", t);
-                swipeRefreshLayout.setRefreshing(false);
+            public void onFailure(Call<Riddle> call, Throwable t) {
+
+                if (swipeRefreshLayout != null) {
+                    swipeRefreshLayout.setRefreshing(false);
+                }
                 Toast.makeText(swipeRefreshLayout.getContext(), t.toString(), Toast.LENGTH_SHORT).show();
             }
         });
-        //TODO load new data from api
     }
 
     public void addDevice(Device device) {
@@ -73,6 +98,14 @@ public class DeviceViewModel extends ViewModel {
 
 
     public void setRiddle(Riddle riddle) {
+
+        this.parentRiddle= riddle;
         devices.setValue(riddle.getDevices());
     }
+
+    public Riddle getParentRiddle() {
+        return parentRiddle;
+    }
+
+
 }

@@ -81,5 +81,6 @@ public class RiddleFragment extends DaggerFragment {
 
         final SwipeRefreshLayout swipeRefreshLayout = view.findViewById(R.id.swipeRefreshLayout);
         swipeRefreshLayout.setOnRefreshListener(() -> riddleViewModel.sync(swipeRefreshLayout));
+
     }
 }

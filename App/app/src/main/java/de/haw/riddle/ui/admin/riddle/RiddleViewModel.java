@@ -9,6 +9,7 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -18,6 +19,7 @@ import javax.inject.Singleton;
 
 import de.haw.riddle.net.admin.GetRiddleResponse;
 import de.haw.riddle.net.admin.RiddleService;
+import de.haw.riddle.net.admin.RoomService;
 import de.haw.riddle.ui.admin.device.DeviceDetailViewModel;
 import de.haw.riddle.ui.admin.model.Riddle;
 import de.haw.riddle.ui.admin.model.Room;
@@ -33,30 +35,51 @@ public class RiddleViewModel extends ViewModel {
     private final MutableLiveData<List<Riddle>> riddles = new MutableLiveData<>(new ArrayList<>(0));
     private final RiddleService riddleService;
     private Room parentRoom;
+    private RoomService roomService;
 
     @Inject
-    public RiddleViewModel(RiddleService riddleService) {
+    public RiddleViewModel(RiddleService riddleService, RoomService roomService) {
         this.riddleService = riddleService;
+        this.roomService= roomService;
     }
 
     public void sync(SwipeRefreshLayout swipeRefreshLayout) {
-        riddleService.getRiddles().enqueue(new Callback<GetRiddleResponse>() {
+        roomService.getRoomById(parentRoom.getId()).enqueue(new Callback<Room>() {
             @Override
-            public void onResponse(@NonNull Call<GetRiddleResponse> call, @NonNull Response<GetRiddleResponse> response) {
-                riddles.setValue(response.body().getPuzzles());
-                if(swipeRefreshLayout!=null)
+            public void onResponse(Call<Room> call, Response<Room> response) {
                 swipeRefreshLayout.setRefreshing(false);
+
+                if(response.isSuccessful())
+                {
+                    System.out.println(response.body());
+                    riddles.setValue(response.body().getRiddles());
+
+                }
+                else
+                {
+                    try {
+                        final String errorBody = response.errorBody().string();
+                        Log.e(TAG,errorBody);
+                        Toast.makeText(swipeRefreshLayout.getContext(),errorBody,Toast.LENGTH_SHORT).show();
+                        // TODO getContext via Application
+
+                    } catch (IOException e) {
+                        Log.wtf(TAG, "Failed to parse errorBody", e);
+                    }
+                }
             }
 
             @Override
-            public void onFailure(@NonNull Call<GetRiddleResponse> call, @NonNull Throwable t) {
-                Log.e(TAG, "Failed to get puzzles from api", t);
-                if(swipeRefreshLayout!=null) {
+            public void onFailure(Call<Room> call, Throwable t) {
+
+                if (swipeRefreshLayout != null) {
                     swipeRefreshLayout.setRefreshing(false);
-                    Toast.makeText(swipeRefreshLayout.getContext(), t.toString(), Toast.LENGTH_SHORT).show();
                 }
+                Toast.makeText(swipeRefreshLayout.getContext(), t.toString(), Toast.LENGTH_SHORT).show();
             }
         });
+
+
         //TODO load new data from api
     }
 
