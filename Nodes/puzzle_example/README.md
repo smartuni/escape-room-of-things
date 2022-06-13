@@ -9,6 +9,12 @@ make qr
 ```
 This also creates `qrcode.png` which can be scanned by the android app. It contains a json of the serial number, puzzle name and the psk & psk_id.
 
+If you want to start over and discard the currently generated artefacts, delete them:
+```sh
+rm node.json qrcode.png uuid.txt
+```
+(ToDo: Move into makefile or override existing artefacts)
+
 
 Puzzles are defined with this struct:
 ```C++
