@@ -26,7 +26,7 @@
         tools:layout="@layout/fragment_overview" />
 
     <fragment
-        android:id="@+id/fragmentRiddle1"
+        android:id="@+id/fragmentWaterRiddle"
         android:name="de.haw.riddle.ui.water.WaterRiddleFragment"
         android:label="riddle1"
         tools:layout="@layout/fragment_water" >
@@ -121,11 +121,11 @@
         android:name="de.haw.riddle.ui.CongratulationsWindow"
         android:label="CongratulationsWindow" >
         <action
-            android:id="@+id/action_congratulationsWindow_to_legoRiddleFragment"
-            app:destination="@id/legoRiddleFragment" />
+            android:id="@+id/action_congratulationsWindow_to_fragmentLegoRiddle"
+            app:destination="@id/fragmentLegoRiddle" />
     </dialog>
     <fragment
-        android:id="@+id/legoRiddleFragment"
+        android:id="@+id/fragmentLegoRiddle"
         android:name="de.haw.riddle.ui.lego.LegoRiddleFragment"
         android:label="LegoRiddleFragment" />
 

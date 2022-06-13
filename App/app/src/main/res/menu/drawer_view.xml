@@ -9,9 +9,13 @@
             android:icon="@drawable/baseline_overview_24"
             android:title="Overview" />
         <item
-            android:id="@id/fragmentRiddle1"
+            android:id="@id/fragmentWaterRiddle"
             android:icon="@drawable/baseline_riddle_24"
-            android:title="Riddle1" />
+            android:title="Water Riddle" />
+        <item
+            android:id="@id/fragmentLegoRiddle"
+            android:icon="@drawable/baseline_riddle_24"
+            android:title="Lego Riddle" />
         <item
             android:id="@id/fragmentLed"
             android:icon="@drawable/baseline_lightbulb_24"

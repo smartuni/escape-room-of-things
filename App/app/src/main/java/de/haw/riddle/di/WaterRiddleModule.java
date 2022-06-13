@@ -11,7 +11,7 @@ import de.haw.riddle.ui.overview.OverviewViewModel;
 import de.haw.riddle.ui.water.WaterRiddleFragment;
 
 @Module
-public abstract class Riddle1Module {
+public abstract class WaterRiddleModule {
 
     @ContributesAndroidInjector(modules = {
             ViewModelBuilder.class

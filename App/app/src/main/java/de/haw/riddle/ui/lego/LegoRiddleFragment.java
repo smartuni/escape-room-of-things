@@ -1,4 +1,4 @@
-package de.haw.riddle.ui.water;
+package de.haw.riddle.ui.lego;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -9,7 +9,6 @@ import android.widget.Button;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
-import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -18,11 +17,10 @@ import java.util.LinkedList;
 import java.util.Queue;
 
 import dagger.android.support.DaggerFragment;
-import de.haw.riddle.MainActivity;
 import de.haw.riddle.R;
-import de.haw.riddle.ui.CongratulationsWindow;
+import de.haw.riddle.ui.water.TipsListAdapter;
 
-public class WaterRiddleFragment extends DaggerFragment {
+public class LegoRiddleFragment extends DaggerFragment {
 
     private final Queue<String> tips = new LinkedList<>();
     private final TipsListAdapter adapter = new TipsListAdapter();
@@ -31,15 +29,15 @@ public class WaterRiddleFragment extends DaggerFragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        tips.add("fill the 0.3l bottle with water.");
-        tips.add("pour your 0.3l into the 0.5l bottle. \nThen fill the 0.3l bottle again an \nuse it to fill the 0.5l.");
-        tips.add("empty the 0.5l bottle and pour the \n0.3l bottle’s remaining 0.1 liter in. \nRefill the 0.3l bottle and pour it into \nthe 0.5l bottle. ");
+        tips.add("text");
+        tips.add("text");
+        tips.add("text");
     }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_water, container, false);
+        return inflater.inflate(R.layout.fragment_lego, container, false);
     }
 
     @Override
@@ -58,12 +56,6 @@ public class WaterRiddleFragment extends DaggerFragment {
                 .setPositiveButton(R.string.confirm, (dialogInterface, i) -> showNextTip())
                 .create()
                 .show());
-
-        final Button congrats = view.findViewById(R.id.congrats);
-        congrats.setOnClickListener(v -> {
-            NavHostFragment.findNavController(this).navigate(R.id.action_fragmentRiddle1_to_congratulationsWindow, CongratulationsWindow.createArgs(R.id.action_congratulationsWindow_to_fragmentLegoRiddle));
-            ((MainActivity) requireActivity()).showDrawerAndMenu();
-        });
     }
 
     @Override

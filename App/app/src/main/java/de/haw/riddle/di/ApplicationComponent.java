@@ -16,7 +16,8 @@ import dagger.android.support.AndroidSupportInjectionModule;
         modules = {
                 AndroidSupportInjectionModule.class,
                 OverviewModule.class,
-                Riddle1Module.class,
+                WaterRiddleModule.class,
+                LegoRiddleModule.class,
                 NetworkModule.class,
                 QrModule.class,
                 LedModule.class,
