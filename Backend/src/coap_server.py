@@ -1,6 +1,7 @@
 import asyncio
 import configparser
 import os
+import platform
 import re
 
 import aiocoap.resource as resource
@@ -201,5 +202,6 @@ async def main():
 
 
 if __name__ == '__main__':
-    asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
+    if platform.system() == 'Windows':
+        asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
     asyncio.run(main())
