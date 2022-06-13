@@ -3,6 +3,7 @@ import configparser
 import os
 import platform
 import re
+import cbor2
 
 import aiocoap.resource as resource
 from aiocoap import *
@@ -102,11 +103,10 @@ class coap_server:
             print(res.payload)
 
             async for r in req.observation:
-               device.state = SOLVED
-               db.session.commit()
-               print(r)
-               print(r.payload)
-                # parse answer, CBOR?
+                unpacked = cbor2.loads(r.payload)
+                print(unpacked)
+                device.state = unpacked.puzzlestate
+                db.session.commit()
                 # implement if
                 # check_game_state(device)
         except Exception as e:
