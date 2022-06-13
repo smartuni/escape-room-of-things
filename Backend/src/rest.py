@@ -59,7 +59,7 @@ def user_token_required(f):
         except:
             return jsonify({'message': 'token is invalid'})
 
-        return f(current_user, *args, **kwargs)
+        return f(*args, **kwargs)
 
     return decorator
 
@@ -82,7 +82,7 @@ def admin_token_required(f):
         except:
             return jsonify({'message': 'token is invalid'})
 
-        return f(current_user, *args, **kwargs)
+        return f(*args, **kwargs)
 
     return decorator
 
@@ -90,6 +90,7 @@ def admin_token_required(f):
 # misc
 
 @app.route('/rooms/state/<roomid>', methods=['PUT'])
+@admin_token_required
 def api_update_room_state(roomid):
     request_data = request.get_json()
     room = Room.query.filter_by(id=roomid).first()
@@ -99,6 +100,7 @@ def api_update_room_state(roomid):
 
 
 @app.route('/puzzles/state/<puzzleid>', methods=['PUT'])
+@admin_token_required
 def api_update_puzzle_state(puzzleid):
     request_data = request.get_json()
     puzzle = Puzzle.query.filter_by(id=puzzleid).first()
@@ -108,6 +110,7 @@ def api_update_puzzle_state(puzzleid):
 
 
 @app.route('/devices/state/<deviceid>', methods=['PUT'])
+@admin_token_required
 def api_update_device_state(deviceid):
     request_data = request.get_json()
     device = Device.query.filter_by(id=deviceid).first()
@@ -117,20 +120,22 @@ def api_update_device_state(deviceid):
 
 
 # rooms
-
 @app.route('/rooms', methods=['GET'])
+@user_token_required
 def api_get_rooms():
     rooms = Room.query.all()
     return jsonify({'rooms': serialize_rooms(rooms)})
 
 
 @app.route('/rooms/<roomid>', methods=['GET'])
+@admin_token_required
 def api_get_room(roomid):
     room = Room.query.filter_by(id=roomid).first()
     return jsonify(room.serialize())
 
 
 @app.route('/rooms', methods=['POST'])
+@admin_token_required
 def api_add_room():
     request_data = request.get_json()
     room = Room(name=request_data[NAME],
@@ -149,6 +154,7 @@ def api_add_room():
 
 
 @app.route('/rooms/<roomid>', methods=['PUT'])
+@admin_token_required
 def api_update_room(roomid):
     request_data = request.get_json()
     room = Room.query.filter_by(id=roomid).first()
@@ -159,6 +165,7 @@ def api_update_room(roomid):
 
 
 @app.route('/rooms/<roomid>', methods=['DELETE'])
+@admin_token_required
 def api_delete_room(roomid):
     if roomid == "0":
         return "Can't delete default room", 400
@@ -178,18 +185,21 @@ def api_delete_room(roomid):
 # puzzles
 
 @app.route('/puzzles', methods=['GET'])
+@admin_token_required
 def api_get_puzzles():
     puzzles = Puzzle.query.all()
     return jsonify({'puzzles': serialize_puzzles(puzzles)})
 
 
 @app.route('/puzzles/<puzzleid>', methods=['GET'])
+@admin_token_required
 def api_get_puzzle(puzzleid):
     puzzle = Puzzle.query.filter_by(id=puzzleid).first()
     return jsonify(serialize_puzzles([puzzle])[0])
 
 
 @app.route('/puzzles', methods=['POST'])
+@admin_token_required
 def api_add_puzzle():
     request_data = request.get_json()
     puzzle = Puzzle(name=request_data[NAME],
@@ -203,6 +213,7 @@ def api_add_puzzle():
 
 
 @app.route('/puzzles/<puzzleid>', methods=['PUT'])
+@admin_token_required
 def api_update_puzzle(puzzleid):
     request_data = request.get_json()
     puzzle = Puzzle.query.filter_by(id=puzzleid).first()
@@ -214,6 +225,7 @@ def api_update_puzzle(puzzleid):
 
 
 @app.route('/puzzles/<puzzleid>', methods=['DELETE'])
+@admin_token_required
 def api_delete_puzzle(puzzleid):
     if puzzleid == "0":
         return "Can't delete default puzzle", 400
@@ -230,18 +242,21 @@ def api_delete_puzzle(puzzleid):
 # devices
 
 @app.route('/devices', methods=['GET'])
+@admin_token_required
 def api_get_devices():
     devices = Device.query.all()
     return jsonify({'devices': serialize_devices(devices)})
 
 
 @app.route('/devices/<deviceid>', methods=['GET'])
+@admin_token_required
 def api_get_device(deviceid):
     device = Device.query.filter_by(id=deviceid).first()
     return jsonify(device.serialize())
 
 
 @app.route('/devices', methods=['POST'])
+@admin_token_required
 def api_add_device():
     request_data = request.get_json()
 
@@ -266,6 +281,7 @@ def api_add_device():
 
 
 @app.route('/devices/<deviceid>', methods=['PUT'])
+@admin_token_required
 def api_update_device(deviceid):
     request_data = request.get_json()
     device = Device.query.filter_by(id=deviceid).first()
@@ -277,6 +293,7 @@ def api_update_device(deviceid):
 
 
 @app.route('/devices/<deviceid>', methods=['DELETE'])
+@admin_token_required
 def api_delete_device(deviceid):
     device = Device.query.filter_by(id=deviceid).first()
     devicecopy = device.serialize()
@@ -294,31 +311,32 @@ def signup_user():
     hashed_password = generate_password_hash(request_data['password'], method='sha256')
 
     new_user = User(username=request_data['username'],
-                    public_id=uuid.uuid4(),
+                    public_id=str(uuid.uuid4()),
                     password=hashed_password,
                     admin=False)
-    userdata = new_user.serialize()
     db.session.add(new_user)
     db.session.commit()
-    return jsonify(userdata)
+    return jsonify(new_user.serialize())
 
 
 @app.route('/login', methods=['POST'])
 def login():
     auth = request.authorization
+    print(auth)
     if not auth or not auth.username or not auth.password:
         return make_response('could not verify', 401, {'Authentication': 'login required"'})
 
     user = User.query.filter_by(username=auth.username).first()
     if check_password_hash(user.password, auth.password):
         token = jwt.encode(
-            {'public_id': user.public_id, 'exp': datetime.datetime.utcnow() + datetime.timedelta(hours=4)},
+            {'public_id': user.public_id, 'exp': datetime.datetime.utcnow() + datetime.timedelta(hours=1)},
             app.config['SECRET_KEY'], "HS256")
-        return jsonify({'token': token})
+        return jsonify({'token': token.decode('UTF-8')})
     return make_response('could not verify', 401, {'Authentication': '"login required"'})
 
 
 @app.route('/users', methods=['GET'])
+@admin_token_required
 def get_all_users():
     users = User.query.all()
     return jsonify({'users': serialize_users(users)})
@@ -344,7 +362,7 @@ def change_admin_att(userid):
 
 # function to add the default room and default puzzle for unassigned devices
 
-def add_default_room_and_puzzle():
+def add_default_room_and_puzzle_and_admin():
     room = Room(id="0",
                 name="default",
                 description="Default room for unassigned devices",
@@ -354,8 +372,15 @@ def add_default_room_and_puzzle():
                     description="Default puzzle for unassigned devices",
                     room="0",
                     state=READY)
+    hashed_password = generate_password_hash('admin', method='sha256')
+    admin = User(id="0",
+                 public_id=str(uuid.uuid4()),
+                 username="admin",
+                 password=hashed_password,
+                 admin=True)
     db.session.add(room)
     db.session.add(puzzle)
+    db.session.add(admin)
     db.session.commit()
 
 
@@ -433,5 +458,5 @@ if __name__ == "__main__":
     if len(sys.argv) > 1:
         with app.app_context():
             db.create_all()
-            add_default_room_and_puzzle()
+            add_default_room_and_puzzle_and_admin()
     app.run(host="0.0.0.0")
