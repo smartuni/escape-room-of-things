@@ -29,7 +29,11 @@
         android:id="@+id/fragmentRiddle1"
         android:name="de.haw.riddle.ui.water.WaterRiddleFragment"
         android:label="riddle1"
-        tools:layout="@layout/fragment_water" />
+        tools:layout="@layout/fragment_water" >
+        <action
+            android:id="@+id/action_fragmentRiddle1_to_congratulationsWindow"
+            app:destination="@id/congratulationsWindow" />
+    </fragment>
 
     <fragment
         android:id="@+id/fragmentLed"
@@ -112,5 +116,17 @@
         android:name="de.haw.riddle.ui.admin.riddle.RiddleDetailFragment"
         android:label="Riddle Details"
         tools:layout="@layout/fragment_riddle_detail" />
+    <dialog
+        android:id="@+id/congratulationsWindow"
+        android:name="de.haw.riddle.ui.CongratulationsWindow"
+        android:label="CongratulationsWindow" >
+        <action
+            android:id="@+id/action_congratulationsWindow_to_legoRiddleFragment"
+            app:destination="@id/legoRiddleFragment" />
+    </dialog>
+    <fragment
+        android:id="@+id/legoRiddleFragment"
+        android:name="de.haw.riddle.ui.lego.LegoRiddleFragment"
+        android:label="LegoRiddleFragment" />
 
 </navigation>

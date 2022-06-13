@@ -9,6 +9,7 @@ import android.widget.Button;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
+import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -17,6 +18,7 @@ import java.util.LinkedList;
 import java.util.Queue;
 
 import dagger.android.support.DaggerFragment;
+import de.haw.riddle.MainActivity;
 import de.haw.riddle.R;
 
 public class WaterRiddleFragment extends DaggerFragment {
@@ -55,6 +57,12 @@ public class WaterRiddleFragment extends DaggerFragment {
                 .setPositiveButton(R.string.confirm, (dialogInterface, i) -> showNextTip())
                 .create()
                 .show());
+
+        final Button congrats = view.findViewById(R.id.congrats);
+        congrats.setOnClickListener(v -> {
+            NavHostFragment.findNavController(this).navigate(R.id.action_fragmentRiddle1_to_congratulationsWindow);
+            ((MainActivity) requireActivity()).showDrawerAndMenu();
+        });
     }
 
     @Override

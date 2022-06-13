@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_marginStart="30dp"
+    android:layout_marginEnd="30dp"
+    android:padding="@dimen/padding_dialog"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/stub1_text2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="40dp"
+        android:fontFamily="Montserrat"
+        android:text="Congratulations! \nYou solved the riddle."
+        android:textColor="#FF473A"
+        android:textSize="26dp" />
+
+    <ImageView
+        android:id="@+id/imgTop"
+        android:layout_width="match_parent"
+        android:layout_height="120dp"
+        android:scaleType="centerCrop"
+        android:layout_marginTop="20dp"
+        android:src="@drawable/congratulations_hands" />
+
+    <TextView
+        android:id="@+id/tvcongratilations"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="28dp"
+        android:fontFamily="Montserrat"
+        android:text="Press confirm to start with the next riddle"
+        android:textColor="#979797"
+        android:textSize="15dp" />
+
+    <Button
+        android:id="@+id/btnConfirm"
+        android:layout_width="wrap_content"
+        android:layout_height="42dp"
+        android:padding="5dp"
+        android:layout_gravity="end"
+        android:text="@string/confirm"
+        android:fontFamily="Montserrat"
+        android:textColor="#FFFFFF"
+        android:layout_marginTop="20dp"/>
+
+</LinearLayout>

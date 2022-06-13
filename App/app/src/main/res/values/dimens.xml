@@ -3,4 +3,5 @@
     <dimen name="list_item_height">10dp</dimen>
     <dimen name="margin_medium">10dp</dimen>
     <dimen name="margin_large">60dp</dimen>
+    <dimen name="padding_dialog">10dp</dimen>
 </resources>
