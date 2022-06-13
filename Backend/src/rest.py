@@ -345,6 +345,8 @@ def get_all_users():
 @app.route('/users/<userid>', methods=['DELETE'])
 @admin_token_required
 def delete_user(userid):
+    if userid == "0":
+        return "Can't delete default admin", 400
     user = db.query.filter_by(id=userid).first()
     user_copy = user.serialize()
     db.session.delete(user)

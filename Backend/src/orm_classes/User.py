@@ -1,6 +1,6 @@
 from .shared import db
 
-#test
+
 class User(db.Model):
     id = db.Column(db.INTEGER, primary_key=True)
     public_id = db.Column(db.String(50), unique=True)
