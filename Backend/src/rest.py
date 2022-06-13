@@ -3,7 +3,7 @@ import datetime
 import os
 import sys
 import uuid
-smaimport jwt
+import jwt
 from functools import wraps
 from flask import Flask, request, jsonify, make_response
 from flask_cors import CORS
