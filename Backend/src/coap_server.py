@@ -128,6 +128,7 @@ class coap_server:
             con_res = await con_req.response
             con_devices = con_res.payload.decode('utf-8').split(",")
             self.device_disconnected(con_devices)
+            self.device_connected(con_devices)
             await asyncio.sleep(30)
 
 
@@ -192,7 +193,7 @@ async def main():
     server = coap_server()
     await server.init()
 
-    tasks = map(asyncio.create_task, [server.observe_rd(), server.poll_rd()])
+    tasks = map(asyncio.create_task, [server.poll_rd()])
     await asyncio.wait(tasks)
 
     print("server running now")

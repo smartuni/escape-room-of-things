@@ -21,7 +21,8 @@ SERIAL = "serial"
 CONNECTED = 'connected'
 DISCONNECTED = 'disconnected'
 DEVIP = 'devIP'
-PUBKEY = 'pubkey'
+PSK = 'psk'
+QRID = 'id'
 config = configparser.ConfigParser()
 config.read(os.path.join(os.path.dirname(__file__), 'restconfig.ini'))
 
@@ -194,10 +195,12 @@ def api_add_device():
     puzzle = request_data[PUZZLE] if PUZZLE in request_data else "0"
     description = request_data[DESCRIPTION] if DESCRIPTION in request_data else ""
     name = request_data[NAME] if NAME in request_data else False
+    QRid = request_data[QRID] if QRID in request_data else False
 
     device = Device(
         serial=request_data[SERIAL],
-        pubkey=request_data[PUBKEY],
+        psk=request_data[PSK],
+        qrid=QRid,
         name=name,
         description=description,
         puzzle=puzzle,

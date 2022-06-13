@@ -9,7 +9,8 @@ class Device(db.Model):
     description = db.Column(db.String(1000), unique=False, nullable=True)
     state = db.Column(db.String(20), unique=False, nullable=False)
     puzzle = db.Column(db.INTEGER, db.ForeignKey('puzzle.id'), nullable=False)
-    pubkey = db.Column(db.String(100), unique=True, nullable=False)
+    psk = db.Column(db.String(100), unique=True, nullable=False)
+    qrid = db.colum(db.String, unique=False, nullable=True)
     node_state = db.Column(db.String(20), unique=False, nullable=False)
     is_event_device = db.Column(db.BOOLEAN)
 
@@ -29,5 +30,5 @@ class Device(db.Model):
             'puzzle': self.puzzle,
             'node_state': self.node_state,
             'is_event_device': self.is_event_device,
-            'pubkey': self.pubkey
+            'psk': self.psk
         }
