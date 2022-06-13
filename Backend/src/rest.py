@@ -72,8 +72,8 @@ def api_get_rooms():
 
 @app.route('/rooms/<roomid>', methods=['GET'])
 def api_get_room(roomid):
-    room = Room.query.filter_by(id=roomid).first()
-    return jsonify(room.serialize())
+    room = [Room.query.filter_by(id=roomid).first()]
+    return jsonify(serialize_rooms(room))
 
 
 @app.route('/rooms', methods=['POST'])
