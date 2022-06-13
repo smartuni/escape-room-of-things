@@ -50,6 +50,7 @@ class coap_server:
         self.con = await Context.create_server_context(root, bind=('::1', 5555))
 
     async def device_connected(self, devices):
+        print('check for divices to connect')
         for dev in devices:
             if "base=" in dev and "ep=" in dev:
                 matches = re.search('ep="(.+?)";base="coap://(.+?)";', dev)
@@ -62,9 +63,10 @@ class coap_server:
                         if matches.group(1) not in self.connectedDevices:
                             self.connectedDevices.append(matches.group(1))
                             print(matches.group(1) + " connected")
-                        # await self.observe_device(d)
+                        await self.observe_device(d)
 
     def device_disconnected(self, devices):
+        print('check for divices to disconnect')
         con_serials = []
         removed_serials = []
         for dev in devices:
@@ -128,6 +130,7 @@ class coap_server:
             con_req = self.con.request(connect_check_request)
             con_res = await con_req.response
             con_devices = con_res.payload.decode('utf-8').split(",")
+            print(con_devices)
             self.device_disconnected(con_devices)
             self.device_connected(con_devices)
             await asyncio.sleep(30)
