@@ -3,13 +3,11 @@ import datetime
 import os
 import sys
 import uuid
+smaimport jwt
 from functools import wraps
-
-import jwt
 from flask import Flask, request, jsonify, make_response
 from flask_cors import CORS
 from werkzeug.security import generate_password_hash, check_password_hash
-
 from orm_classes.Device import Device
 from orm_classes.Puzzle import Puzzle
 from orm_classes.Room import Room
@@ -134,7 +132,7 @@ def api_get_rooms():
 #@admin_token_required
 def api_get_room(roomid):
     room = [Room.query.filter_by(id=roomid).first()]
-    return jsonify(serialize_rooms(room))
+    return jsonify(serialize_rooms(room)[0])
 
 
 @app.route('/rooms', methods=['POST'])
