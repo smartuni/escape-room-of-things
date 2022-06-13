@@ -53,6 +53,15 @@ starting rest.py with arguments ( e.g: 1) now creates db and default room+puzzle
   'puzzle': text
 }
 
+## User:
+{
+	'id': Integer, 
+	'username':text, 
+	'password': text, 
+	'public_id': text (uuid),
+	'admin': bool
+}
+
 # Discovery of devices
 
 There will be a default room with id=0 and a default puzzle with id=0 in which we will store devices which want to integrated in our IoT network.
@@ -396,7 +405,47 @@ Res{
 	'pubkey': text
 }
 
+## User
 
+/users (GET)
+-> returns all Users (JSON)
+{'users': [{
+					'id': Integer, 
+					'username':text, 
+					'password': text, 
+					'public_id': text (uuid),
+					'admin': bool 
+			},...]
+}
+
+/register (POST)
+-> create new User, returns User JSON
+req Payload:
+{
+'username': username,
+'password': password
+}
+
+/login (POST)
+-> login as a User, returns a JTW-Token.
+Basic Authentication
+
+/users/{userID} (PUT)
+-> change admin attribute from userID - Returns the User.
+Req. Payload:
+{
+	'admin':bool
+}
+
+/users/{userID} (DELETE)
+-> Deletes User (UserID), Returns the deleted User.
+			{
+					'id': Integer, 
+					'username':text, 
+					'password': text, 
+					'public_id': text (uuid),
+					'admin': bool 
+			}
 
 ## ToDo:
 - Admin Authentication(Flask-Auth.)
