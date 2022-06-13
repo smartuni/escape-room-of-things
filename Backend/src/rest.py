@@ -121,7 +121,7 @@ def api_update_device_state(deviceid):
 
 # rooms
 @app.route('/rooms', methods=['GET'])
-@user_token_required
+@admin_token_required
 def api_get_rooms():
     rooms = Room.query.all()
     return jsonify({'rooms': serialize_rooms(rooms)})
