@@ -108,7 +108,7 @@ def get_devices_from_db(self):
 async def observe_device(self, device):
     print('start observe on ' + device.serial)
     try:
-        con, uri = get_client_con(device, "info")
+        con, uri = await get_client_con(device, "info")
         request = Message(code=GET, uri=uri, observe=0)
         req = con.request(request)
 
@@ -119,7 +119,7 @@ async def observe_device(self, device):
         db.session.commit()
         # trigger cascading logic to check for solved
         if unpacked["puzzleState"] == "solved":
-            check_game_state(device)
+            await check_game_state(device)
 
         async for r in req.observation:
             unpacked = cbor2.loads(r.payload)
@@ -128,7 +128,7 @@ async def observe_device(self, device):
             db.session.commit()
             # trigger cascading logic to check for solved
             if unpacked["puzzleState"] == "solved":
-                check_game_state(device)
+                await check_game_state(device)
     except Exception as e:
         print('device observe troubles')
         print(e)
@@ -167,7 +167,7 @@ async def victory(room):
         filter(lambda puzzle: puzzle.isVictory.isTrue, room.puzzles))
 
     for device in victory_puzzle:
-        con, uri = get_client_con(device, "maintenance")
+        con, uri = await get_client_con(device, "maintenance")
         request = Message(code=PUT, uri=uri,
                           observe=1, payload=None)
         req = con.request(request)
@@ -215,14 +215,14 @@ async def trigger_event(puzzle):
         filter(lambda device: device.is_event_device, puzzle.devices))
     if len(event_devices) != 0:
         for dev in event_devices:
-            con, uri = get_client_con(dev, "maintenance")
+            con, uri = await get_client_con(dev, "maintenance")
             request = Message(code=PUT, uri=uri,
                               observe=1, payload=None)
             req = con.request(request)
             await req.response
 
 
-def get_client_con(device, path):
+async def get_client_con(device, path):
     con = await Context.create_client_context()
     uri = f"coaps://{device.devIP}:5684/node/{path}"
     print(device.psk + ' ' + device.qrid)
