@@ -22,6 +22,8 @@ pip install -U Flask-SQLAlchemy
 pip3 install linkheader
 # install cbor2
 pip install cbor2
+# install jwt
+pip install jwt
 
 starting rest.py with arguments ( e.g: 1) now creates db and default room+puzzle, without argument it expects them to exist
 
@@ -47,12 +49,17 @@ starting rest.py with arguments ( e.g: 1) now creates db and default room+puzzle
 
 ## Device:
 { 
-  'id': text, 
+  'id': integer, 
   'devIP': text, 
+  'qrid': text,
+  'serial': text,
   'name': text, 
   'description': text,
   'state': text, 
-  'puzzle': text
+  'puzzle': integer,
+  'node_state': text,
+  'is_event_device': bool,
+  'psk': text
 }
 
 ## User:
@@ -79,10 +86,12 @@ Req:{Request}
 Res:{Response}
 JSON fields in () are optional fields
 
+PUT POST DELETE operations need an Admin Token in Header: "x-access-tokens" = token
+
 ## States
 
 /rooms/state/{roomid} (PUT) 
--> admin puts a specific room into a new state (states either "ready" or "maintainance")
+-> admin puts a specific room into a new state (states either "ready" or "maintenance")
 Req. Payload: {'state': text}
 
 Res:
@@ -105,6 +114,7 @@ Res:
 	'description': text,
 	'state': text,
 	'room': text,
+	'isVictory': bool,
 	'devices':[...]
 }
 
@@ -114,19 +124,20 @@ Req. Payload: {'state': text}
 
 Res:
 {
-	'id': text, 
+						'id': text, 
 						'devIP': text, 
 						'name': text,
+						'qrid': text,						
 						'serial': text 
 						'description': text,
 						'state': text, 
 						'puzzle': text,
 						'node_state': text,
 						'is_event_device': bool,
-						'pubkey': text
+						'psk': text
 }
 
-##rooms
+## Rooms
 
 /rooms (GET)
 ->returns all rooms with puzzles and devices
@@ -148,12 +159,13 @@ Res:
 						'devIP': text, 
 						'name': text,
 						'serial': text 
+						'qrid': text,						
 						'description': text,
 						'state': text, 
 						'puzzle': text,
 						'node_state': text,
 						'is_event_device': bool,
-						'pubkey': text
+						'psk': text
 					},...]
 			},...]
 		},...]
@@ -232,12 +244,13 @@ Res:
 					'devIP': text, 
 					'name': text,
 					'serial': text 
+					'qrid': text,					
 					'description': text,
 					'state': text, 
 					'puzzle': text,
 					'node_state': text,
 					'is_event_device': bool,
-					'pubkey': text
+					'psk': text
 				},...]
 			},...]
 }
@@ -315,15 +328,16 @@ Res{
 ->returns all devices
 {'devices': [{
 				'id': text, 
-					'devIP': text, 
-					'name': text,
-					'serial': text 
-					'description': text,
-					'state': text, 
-					'puzzle': text,
-					'node_state': text,
-					'is_event_device': bool,
-					'pubkey': text		
+				'devIP': text, 
+				'name': text,
+				'serial': text 
+				'qrid': text,					
+				'description': text,
+				'state': text, 
+				'puzzle': text,
+				'node_state': text,
+				'is_event_device': bool,
+				'psk': text		
 			},...]
 }
 
@@ -335,12 +349,13 @@ Res:
 	'devIP': text, 
 	'name': text,
 	'serial': text 
+	'qrid': text,					
 	'description': text,
 	'state': text, 
 	'puzzle': text,
 	'node_state': text,
 	'is_event_device': bool,
-	'pubkey': text
+	'psk': text		
 }
 
 /devices (POST)
@@ -362,12 +377,13 @@ Res:
 	'devIP': text, 
 	'name': text,
 	'serial': text 
+	'qrid': text,					
 	'description': text,
 	'state': text, 
 	'puzzle': text,
 	'node_state': text,
 	'is_event_device': bool,
-	'pubkey': text
+	'psk': text		
 }
 
 /devices/{deviceid} (PUT)
@@ -384,12 +400,13 @@ Res:
 	'devIP': text, 
 	'name': text,
 	'serial': text 
+	'qrid': text,					
 	'description': text,
 	'state': text, 
 	'puzzle': text,
 	'node_state': text,
 	'is_event_device': bool,
-	'pubkey': text
+	'psk': text		
 }
 
 /devices/{deviceid} (DELETE)
@@ -399,12 +416,13 @@ Res{
 	'devIP': text, 
 	'name': text,
 	'serial': text 
+	'qrid': text,					
 	'description': text,
 	'state': text, 
 	'puzzle': text,
 	'node_state': text,
 	'is_event_device': bool,
-	'pubkey': text
+	'psk': text		
 }
 
 ## User
@@ -427,10 +445,22 @@ req Payload:
 'username': username,
 'password': password
 }
+response:
+{
+	'id': Integer, 
+	'username':text, 
+	'password': text, 
+	'public_id': text (uuid),
+	'admin': bool 
+}
 
 /login (POST)
 -> login as a User, returns a JTW-Token.
 Basic Authentication
+response:
+{
+'token': text
+}
 
 /users/{userID} (PUT)
 -> change admin attribute from userID - Returns the User.
@@ -438,16 +468,25 @@ Req. Payload:
 {
 	'admin':bool
 }
+response:
+{
+	'id': Integer, 
+	'username':text, 
+	'password': text, 
+	'public_id': text (uuid),
+	'admin': bool 
+}
 
 /users/{userID} (DELETE)
 -> Deletes User (UserID), Returns the deleted User.
-			{
-					'id': Integer, 
-					'username':text, 
-					'password': text, 
-					'public_id': text (uuid),
-					'admin': bool 
-			}
+response:
+{
+		'id': Integer, 
+		'username':text, 
+		'password': text, 
+		'public_id': text (uuid),
+		'admin': bool 
+}
 
 ## ToDo:
 - Admin Authentication(Flask-Auth.)
