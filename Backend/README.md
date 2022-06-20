@@ -452,10 +452,7 @@ Req. Payload:
 ## ToDo:
 - Admin Authentication(Flask-Auth.)
 - implement a way to change the device states by the server (solved -> ready / * -> maintainance)
-- parse device coap answer in device observe and trigger check_game_state
-- decode pubkey(base64) from FE before saving in db?
-- authenticate devices (pubkey - private key), on observe? on connect to rd?
--> key exchange with devices
+
 
 ## Done:
 - Post Device(Name, Description, pubkey)
@@ -466,3 +463,6 @@ Req. Payload:
 - Update API to send complete responses (Puzzle -> isVictory, Device -> is_event_device, pubkey, nodestate, Room -> puzzles) + README(API)
 - Update rd-observe(instead add device/update device)
 - Observe rd for devices(disconnected devices) 
+- parse device coap answer in device observe and trigger check_game_state
+- authenticate devices (pubkey - private key), on observe device
+-> key exchange with devices
