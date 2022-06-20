@@ -7,7 +7,6 @@ import re
 import aiocoap.resource as resource
 import cbor2
 from aiocoap import *
-from aiocoap.credentials import CredentialsMap
 from aiocoap.numbers.codes import GET, PUT
 from flask import Flask
 
@@ -16,6 +15,8 @@ from orm_classes.Puzzle import Puzzle
 from orm_classes.Room import Room
 from orm_classes.shared import db
 
+READY = "ready"
+MAINTENANCE = "maintenance"
 SOLVED = "solved"
 config = configparser.ConfigParser()
 config.read(os.path.join(os.path.dirname(__file__), 'restconfig.ini'))
@@ -44,22 +45,11 @@ class WhoAmI(resource.Resource):
                        payload="\n".join(text).encode('utf8'))
 
 
-class DTLSCredential(CredentialsMap):
-    psk = ""
-
-    def credentials_from_request(self, msg):
-        print("START DTLS connection")
-        print(msg)
-        print(self.psk)
-        return self.psk
-
-
 class coap_server:
     async def init(self):
         self.connectedDevices = []
         # self.get_devices_from_db()
         root = resource.Site()
-        server_credentials = DTLSCredential()
         self.con = await Context.create_server_context(root, bind=('::1', 5555))
 
     async def device_connected(self, devices):
@@ -162,13 +152,8 @@ class coap_server:
 async def victory(room):
     victory_puzzle = next(
         filter(lambda puzzle: puzzle.isVictory.isTrue, room.puzzles))
-
     for device in victory_puzzle:
-        con, uri = await get_client_con(device, "maintenance")
-        request = Message(code=PUT, uri=uri,
-                          observe=1, payload=None)
-        req = con.request(request)
-        await req.response
+        await set_device_state(device, MAINTENANCE)
 
 
 async def check_game_state(device):
@@ -195,8 +180,11 @@ def check_room_state(room):
 
 def check_puzzle_state(puzzle):
     for dev in puzzle.devices:
+        if dev.is_event_device:
+            continue
         if dev.state != SOLVED:
             return False
+    trigger_event(puzzle)
     puzzle.state = SOLVED
     db.session.commit()
     return True
@@ -212,11 +200,25 @@ async def trigger_event(puzzle):
         filter(lambda device: device.is_event_device, puzzle.devices))
     if len(event_devices) != 0:
         for dev in event_devices:
-            con, uri = await get_client_con(dev, "maintenance")
-            request = Message(code=PUT, uri=uri,
-                              observe=1, payload=None)
-            req = con.request(request)
-            await req.response
+            await set_device_state(dev, MAINTENANCE)
+
+
+async def set_device_state(device, state):
+    con, uri = get_client_con(device, state)
+    request = Message(code=PUT, uri=uri,
+                      observe=1, payload=None)
+    req = con.request(request)
+    await req.response
+
+
+async def set_puzzle_state(puzzle, state):
+    for dev in puzzle:
+        await set_device_state(dev, state)
+
+
+async def set_room_state(room, state):
+    for puz in room:
+        await set_puzzle_state(puz, state)
 
 
 async def get_client_con(device, path):

@@ -4,6 +4,7 @@ import os
 import sys
 import uuid
 import jwt
+import coap_server
 from functools import wraps
 from flask import Flask, request, jsonify, make_response
 from flask_cors import CORS
@@ -91,31 +92,40 @@ def admin_token_required(f):
 
 @app.route('/rooms/state/<roomid>', methods=['PUT'])
 #@admin_token_required
-def api_update_room_state(roomid):
+async def api_update_room_state(roomid):
     request_data = request.get_json()
+    if request_data[STATE] != ("maintenance" or "ready"):
+        return "Unknown State", 400
     room = Room.query.filter_by(id=roomid).first()
     room.state = request_data[STATE]
     db.session.commit()
+    await coap_server.set_room_state(room, request_data[STATE])
     return jsonify(serialize_rooms([room])[0])
 
 
 @app.route('/puzzles/state/<puzzleid>', methods=['PUT'])
 #@admin_token_required
-def api_update_puzzle_state(puzzleid):
+async def api_update_puzzle_state(puzzleid):
     request_data = request.get_json()
+    if request_data[STATE] != ("maintenance" or "ready"):
+        return "Unknown State", 400
     puzzle = Puzzle.query.filter_by(id=puzzleid).first()
     puzzle.state = request_data[STATE]
     db.session.commit()
+    await coap_server.set_puzzle_state(puzzle, request_data[STATE])
     return jsonify(serialize_puzzles([puzzle])[0])
 
 
 @app.route('/devices/state/<deviceid>', methods=['PUT'])
 #@admin_token_required
-def api_update_device_state(deviceid):
+async def api_update_device_state(deviceid):
     request_data = request.get_json()
+    if request_data[STATE] != ("maintenance" or "ready"):
+        return "Unknown State", 400
     device = Device.query.filter_by(id=deviceid).first()
     device.state = request_data[STATE]
     db.session.commit()
+    await coap_server.set_device_state(device, request_data[STATE])
     return jsonify(device.serialize())
 
 
