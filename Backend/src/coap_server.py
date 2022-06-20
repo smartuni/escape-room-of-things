@@ -75,7 +75,7 @@ class coap_server:
                         db.session.commit()
                         self.connectedDevices.append(matches.group(1))
                         print(matches.group(1) + " connected")
-                        tasks.append(asyncio.create_task(self.observe_device(d)))
+                        await self.observe_device(d)
 
     def device_disconnected(self, devices):
         print('check for divices to disconnect')
@@ -157,6 +157,8 @@ class coap_server:
             await asyncio.sleep(30)
 
 
+# PUZZLE LOGIC----------------------------------------
+
 async def victory(room):
     victory_puzzle = next(
         filter(lambda puzzle: puzzle.isVictory.isTrue, room.puzzles))
@@ -226,14 +228,11 @@ async def get_client_con(device, path):
     return con, uri
 
 
-tasks = []
-
-
 async def main():
     server = coap_server()
     await server.init()
 
-    tasks.append(asyncio.create_task(server.poll_rd()))
+    tasks = map(asyncio.create_task, [server.poll_rd()])
     await asyncio.wait(tasks)
 
     print("server running now")
