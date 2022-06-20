@@ -9,6 +9,7 @@ import android.widget.Button;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
+import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -17,10 +18,12 @@ import java.util.LinkedList;
 import java.util.Queue;
 
 import dagger.android.support.DaggerFragment;
+import de.haw.riddle.MainActivity;
 import de.haw.riddle.R;
+import de.haw.riddle.ui.CongratulationsWindow;
 import de.haw.riddle.ui.water.TipsListAdapter;
 
-public class LegoRiddleFragment extends DaggerFragment {
+public class LegoRiddleFragmentPart2 extends DaggerFragment {
 
     private final Queue<String> tips = new LinkedList<>();
     private final TipsListAdapter adapter = new TipsListAdapter();
@@ -37,7 +40,7 @@ public class LegoRiddleFragment extends DaggerFragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_lego, container, false);
+        return inflater.inflate(R.layout.fragment_lego_part2, container, false);
     }
 
     @Override
@@ -56,6 +59,12 @@ public class LegoRiddleFragment extends DaggerFragment {
                 .setPositiveButton(R.string.confirm, (dialogInterface, i) -> showNextTip())
                 .create()
                 .show());
+
+        final Button congrats = view.findViewById(R.id.congrats);
+        congrats.setOnClickListener(v -> {
+            NavHostFragment.findNavController(this).navigate(R.id.action_legoRiddleFragmentPart2_to_congratulationsWindow, CongratulationsWindow.createArgs(R.id.action_legoRiddleFragmentPart2_to_congratulationsWindow));
+            ((MainActivity) requireActivity()).showDrawerAndMenu();
+        });
     }
 
     @Override

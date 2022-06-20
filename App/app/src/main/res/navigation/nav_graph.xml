@@ -121,12 +121,24 @@
         android:name="de.haw.riddle.ui.CongratulationsWindow"
         android:label="CongratulationsWindow" >
         <action
-            android:id="@+id/action_congratulationsWindow_to_fragmentLegoRiddle"
-            app:destination="@id/fragmentLegoRiddle" />
+            android:id="@+id/action_congratulationsWindow_to_legoRiddleFragmentPart1"
+            app:destination="@id/legoRiddleFragmentPart1" />
     </dialog>
     <fragment
-        android:id="@+id/fragmentLegoRiddle"
-        android:name="de.haw.riddle.ui.lego.LegoRiddleFragment"
-        android:label="LegoRiddleFragment" />
+        android:id="@+id/legoRiddleFragmentPart1"
+        android:name="de.haw.riddle.ui.lego.LegoRiddleFragmentPart1"
+        android:label="LegoRiddleFragmentPart1" >
+        <action
+            android:id="@+id/action_legoRiddleFragmentPart1_to_legoRiddleFragmentPart2"
+            app:destination="@id/legoRiddleFragmentPart2" />
+    </fragment>
+    <fragment
+        android:id="@+id/legoRiddleFragmentPart2"
+        android:name="de.haw.riddle.ui.lego.LegoRiddleFragmentPart2"
+        android:label="LegoRiddleFragmentPart2" >
+        <action
+            android:id="@+id/action_legoRiddleFragmentPart2_to_congratulationsWindow"
+            app:destination="@id/congratulationsWindow" />
+    </fragment>
 
 </navigation>

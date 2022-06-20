@@ -43,6 +43,26 @@
         android:layout_marginTop="25dp"/>
 
     <Button
+        android:id="@+id/btnPart2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="120dp"
+        android:text="Go to part 2"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginEnd="20dp"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+
+    <Button
+        android:id="@+id/btnCode"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="80dp"
+        android:text="Enter the code"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginEnd="20dp"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+
+    <Button
         android:id="@+id/btnTip"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
