@@ -3,6 +3,7 @@ import configparser
 import os
 import platform
 import re
+import sys
 
 import aiocoap.resource as resource
 import cbor2
@@ -105,7 +106,10 @@ class coap_server:
     async def observe_device(self, device):
         print('start observe on ' + device.serial)
         try:
-            con, uri = await get_client_con(device, "info")
+            if dtls:
+                con, uri = await get_client_con_dtls(device, "info")
+            else:
+                con, uri = await get_client_con(device, "info")
             request = Message(code=GET, uri=uri, observe=0)
             req = con.request(request)
 
@@ -163,8 +167,11 @@ async def victory(room):
     victory_puzzle = next(
         filter(lambda puzzle: puzzle.isVictory.isTrue, room.puzzles))
 
-    for device in victory_puzzle:
-        con, uri = await get_client_con(device, "maintenance")
+    for dev in victory_puzzle:
+        if dtls:
+            con, uri = await get_client_con_dtls(dev, "maintenance")
+        else:
+            con, uri = await get_client_con(dev, "maintenance")
         request = Message(code=PUT, uri=uri,
                           observe=1, payload=None)
         req = con.request(request)
@@ -212,19 +219,29 @@ async def trigger_event(puzzle):
         filter(lambda device: device.is_event_device, puzzle.devices))
     if len(event_devices) != 0:
         for dev in event_devices:
-            con, uri = await get_client_con(dev, "maintenance")
+            if dtls:
+                con, uri = await get_client_con_dtls(dev, "maintenance")
+            else:
+                con, uri = await get_client_con(dev, "maintenance")
             request = Message(code=PUT, uri=uri,
                               observe=1, payload=None)
             req = con.request(request)
             await req.response
 
 
-async def get_client_con(device, path):
+async def get_client_con_dtls(device, path):
     con = await Context.create_client_context()
     uri = f"coaps://{device.devIP}:5684/node/{path}"
     print(device.psk + ' ' + device.qrid)
     con.client_credentials.load_from_dict(
         {uri: {'dtls': {'psk': device.psk.encode(), 'client-identity': device.qrid.encode()}}})
+    return con, uri
+
+
+async def get_client_con(device, path):
+    con = await Context.create_client_context()
+    uri = f"coaps://{device.devIP}:5684/node/{path}"
+    print(device.psk + ' ' + device.qrid)
     return con, uri
 
 
@@ -238,8 +255,10 @@ async def main():
     print("server running now")
     await asyncio.get_running_loop().create_future()
 
-
+dtls = False
 if __name__ == '__main__':
+    if len(sys.argv) > 1:
+        dtls = True
     if platform.system() == 'Windows':
         asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
     asyncio.run(main())
