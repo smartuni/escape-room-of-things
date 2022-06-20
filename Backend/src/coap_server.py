@@ -77,89 +77,84 @@ class coap_server:
                         print(matches.group(1) + " connected")
                         tasks.append(asyncio.create_task(self.observe_device(d)))
 
+    def device_disconnected(self, devices):
+        print('check for divices to disconnect')
+        con_serials = []
+        removed_serials = []
+        for dev in devices:
+            if "ep=" in dev:
+                matches = re.search('ep="(.+?)";', dev)
+                con_serials.append(matches.group(1))
+        print(con_serials)
+        for serial in self.connectedDevices:
+            if serial not in con_serials:
+                with db_app.app_context():
+                    d = Device.query.filter_by(serial=serial).first()
+                    d.node_state = "disconnected"
+                    db.session.commit()
+                removed_serials.append(serial)
+                print(serial + " disconnected")
+        self.connectedDevices = [
+            x for x in self.connectedDevices if x not in removed_serials]
 
-def device_disconnected(self, devices):
-    print('check for divices to disconnect')
-    con_serials = []
-    removed_serials = []
-    for dev in devices:
-        if "ep=" in dev:
-            matches = re.search('ep="(.+?)";', dev)
-            con_serials.append(matches.group(1))
-    print(con_serials)
-    for serial in self.connectedDevices:
-        if serial not in con_serials:
-            with db_app.app_context():
-                d = Device.query.filter_by(serial=serial).first()
-                d.node_state = "disconnected"
-                db.session.commit()
-            removed_serials.append(serial)
-            print(serial + " disconnected")
-    self.connectedDevices = [
-        x for x in self.connectedDevices if x not in removed_serials]
+    def get_devices_from_db(self):
+        with db_app.app_context():
+            devs = Device.query.all()
+        self.connectedDevices = [d.serial for d in devs]
 
+    async def observe_device(self, device):
+        print('start observe on ' + device.serial)
+        try:
+            con, uri = await get_client_con(device, "info")
+            request = Message(code=GET, uri=uri, observe=0)
+            req = con.request(request)
 
-def get_devices_from_db(self):
-    with db_app.app_context():
-        devs = Device.query.all()
-    self.connectedDevices = [d.serial for d in devs]
-
-
-async def observe_device(self, device):
-    print('start observe on ' + device.serial)
-    try:
-        con, uri = await get_client_con(device, "info")
-        request = Message(code=GET, uri=uri, observe=0)
-        req = con.request(request)
-
-        res = await req.response
-        unpacked = cbor2.loads(res.payload)
-        print(unpacked)
-        device.state = unpacked["puzzleState"]
-        db.session.commit()
-        # trigger cascading logic to check for solved
-        if unpacked["puzzleState"] == "solved":
-            await check_game_state(device)
-
-        async for r in req.observation:
-            unpacked = cbor2.loads(r.payload)
+            res = await req.response
+            unpacked = cbor2.loads(res.payload)
             print(unpacked)
             device.state = unpacked["puzzleState"]
             db.session.commit()
             # trigger cascading logic to check for solved
             if unpacked["puzzleState"] == "solved":
                 await check_game_state(device)
-    except Exception as e:
-        print('device observe troubles')
-        print(e)
 
+            async for r in req.observation:
+                unpacked = cbor2.loads(r.payload)
+                print(unpacked)
+                device.state = unpacked["puzzleState"]
+                db.session.commit()
+                # trigger cascading logic to check for solved
+                if unpacked["puzzleState"] == "solved":
+                    await check_game_state(device)
+        except Exception as e:
+            print('device observe troubles')
+            print(e)
 
-async def observe_rd(self):
-    request = Message(code=GET, uri="coap://[::1]:5683/endpoint-lookup/",
-                      observe=0)
-    req = self.con.request(request)
-    res = await req.response
-    cachedli = res.payload.decode('utf-8').split(",")
-    await self.device_connected(cachedli)
+    async def observe_rd(self):
+        request = Message(code=GET, uri="coap://[::1]:5683/endpoint-lookup/",
+                          observe=0)
+        req = self.con.request(request)
+        res = await req.response
+        cachedli = res.payload.decode('utf-8').split(",")
+        await self.device_connected(cachedli)
 
-    print("start observe loop")
-    async for r in req.observation:
-        li = r.payload.decode('utf-8').split(",")
-        await self.device_connected(li)
+        print("start observe loop")
+        async for r in req.observation:
+            li = r.payload.decode('utf-8').split(",")
+            await self.device_connected(li)
 
-
-async def poll_rd(self):
-    print("start poll loop")
-    while True:
-        connect_check_request = Message(code=GET, uri="coap://[::1]:5683/endpoint-lookup/",
-                                        observe=1)
-        con_req = self.con.request(connect_check_request)
-        con_res = await con_req.response
-        con_devices = con_res.payload.decode('utf-8').split(",")
-        print(con_devices)
-        self.device_disconnected(con_devices)
-        await self.device_connected(con_devices)
-        await asyncio.sleep(30)
+    async def poll_rd(self):
+        print("start poll loop")
+        while True:
+            connect_check_request = Message(code=GET, uri="coap://[::1]:5683/endpoint-lookup/",
+                                            observe=1)
+            con_req = self.con.request(connect_check_request)
+            con_res = await con_req.response
+            con_devices = con_res.payload.decode('utf-8').split(",")
+            print(con_devices)
+            self.device_disconnected(con_devices)
+            await self.device_connected(con_devices)
+            await asyncio.sleep(30)
 
 
 async def victory(room):
