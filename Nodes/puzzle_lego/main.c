@@ -70,10 +70,16 @@ void *lego_handler(void *arg) {
     while (1){;
         if (gpio_read(input1) == 0 && gpio_read(input2) == 0 && gpio_read(input3) == 0){
             gpio_clear(led0);
-            _is_solved = true;
+            if _is_solved == false {
+                _is_solved = true;
+                puzzle_update();
+            }
             /*puts("All magnets detected");*/}
         else{
-            _is_solved = false;
+            if _is_solved == true {
+                _is_solved = false;
+                puzzle_update();
+            }
             gpio_set(led0);
             /*puts("Not all magnets detected");*/
         }
