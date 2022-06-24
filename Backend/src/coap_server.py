@@ -4,6 +4,8 @@ import os
 import platform
 import re
 import sys
+import time
+import random
 
 import aiocoap.resource as resource
 import cbor2
@@ -24,7 +26,7 @@ db_app = Flask(__name__)
 db_app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + \
                                            config.get('database', 'path')
 db.init_app(db_app)
-
+observe_tasks = {}
 
 class WhoAmI(resource.Resource):
     async def render_get(self, request):
@@ -73,10 +75,13 @@ class coap_server:
                     if d is not None and matches.group(1) not in self.connectedDevices:
                         d.devIP = matches.group(2)
                         d.node_state = "connected"
-                        db.session.commit()
                         self.connectedDevices.append(matches.group(1))
                         print(matches.group(1) + " connected")
-                        await self.observe_device(d)
+                        task = asyncio.create_task(self.observe_device(d.serial), name=d.name)
+                        observe_tasks[d.serial] = task
+                    db.session.commit()
+                    time.sleep(0.5 + random.random())
+                        #await self.observe_device(d.serial)
 
     def device_disconnected(self, devices):
         print('check for divices to disconnect')
@@ -103,36 +108,60 @@ class coap_server:
             devs = Device.query.all()
         self.connectedDevices = [d.serial for d in devs]
 
-    async def observe_device(self, device):
-        print('start observe on ' + device.serial)
-        try:
-            if dtls:
-                con, uri = await get_client_con_dtls(device, "info")
-            else:
-                con, uri = await get_client_con(device, "info")
-            request = Message(code=GET, uri=uri, observe=0)
-            req = con.request(request)
+    async def observe_device(self, serial):
+        print('start observe on ' + serial)
+        with db_app.app_context():
+            try:
+                device = Device.query.filter_by(serial=serial).first()
+                deviceIp = device.devIP
+                devicePsk = device.psk
+                deviceQrid = device.qrid
+                db.session.commit()
+                if dtls:
+                    con, uri = await get_client_con_dtls(deviceIp, devicePsk, deviceQrid , "info")
+                else:
+                    con, uri = await get_client_con(device, "info")
+            except Exception as e:
+                print('make con troubles')
+                print(e)
+        request = Message(code=GET, uri=uri, observe=0)
+        req = con.request(request)
 
-            res = await req.response
-            unpacked = cbor2.loads(res.payload)
-            print(unpacked)
-            device.state = unpacked["puzzleState"]
-            db.session.commit()
-            # trigger cascading logic to check for solved
-            if unpacked["puzzleState"] == "solved":
-                await check_game_state(device)
-
-            async for r in req.observation:
-                unpacked = cbor2.loads(r.payload)
-                print(unpacked)
+        res = await req.response
+        unpacked = cbor2.loads(res.payload)
+        print(unpacked)
+        with db_app.app_context():
+            try:
+                device = Device.query.filter_by(serial=serial).first()
                 device.state = unpacked["puzzleState"]
                 db.session.commit()
-                # trigger cascading logic to check for solved
-                if unpacked["puzzleState"] == "solved":
+            except Exception as e:
+                print('setting state troubles')
+                print(e)
+        # trigger cascading logic to check for solved
+        if unpacked["puzzleState"] == "solved":
+            with db_app.app_context():
+                try:
+                    device = Device.query.filter_by(serial=serial).first()
                     await check_game_state(device)
-        except Exception as e:
-            print('device observe troubles')
-            print(e)
+                    db.session.commit()
+                except Exception as e:
+                    print('setting game state troubles')
+                    print(e)
+
+        async for r in req.observation:
+            unpacked = cbor2.loads(r.payload)
+            print(unpacked)
+            with db_app.app_context():
+                device = Device.query.filter_by(serial=serial).first()
+                device.state = unpacked["puzzleState"]
+                db.session.commit()
+            # trigger cascading logic to check for solved
+            if unpacked["puzzleState"] == "solved":
+                with db_app.app_context():
+                    device = Device.query.filter_by(serial=serial).first()
+                    await check_game_state(device)
+                    db.session.commit()
 
     async def observe_rd(self):
         request = Message(code=GET, uri="coap://[::1]:5683/endpoint-lookup/",
@@ -158,7 +187,7 @@ class coap_server:
             print(con_devices)
             self.device_disconnected(con_devices)
             await self.device_connected(con_devices)
-            await asyncio.sleep(30)
+            await asyncio.sleep(15)
 
 
 # PUZZLE LOGIC----------------------------------------
@@ -229,12 +258,12 @@ async def trigger_event(puzzle):
             await req.response
 
 
-async def get_client_con_dtls(device, path):
+async def get_client_con_dtls(deviceIP, devicePsk, devoceQrid, path):
     con = await Context.create_client_context()
-    uri = f"coaps://{device.devIP}:5684/node/{path}"
-    print(device.psk + ' ' + device.qrid)
+    uri = f"coaps://{deviceIP}:5684/node/{path}"
+    print(devicePsk+ ' ' + devoceQrid)
     con.client_credentials.load_from_dict(
-        {uri: {'dtls': {'psk': device.psk.encode(), 'client-identity': device.qrid.encode()}}})
+        {uri: {'dtls': {'psk': devicePsk.encode(), 'client-identity': devoceQrid.encode()}}})
     return con, uri
 
 
