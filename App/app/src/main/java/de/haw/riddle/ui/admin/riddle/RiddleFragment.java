@@ -1,7 +1,6 @@
 package de.haw.riddle.ui.admin.riddle;
 
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,13 +22,10 @@ import java.util.Objects;
 
 import javax.inject.Inject;
 
+import dagger.android.support.DaggerFragment;
 import de.haw.riddle.R;
 import de.haw.riddle.ui.admin.model.Riddle;
 import de.haw.riddle.ui.admin.model.Room;
-
-import dagger.android.support.DaggerFragment;
-import de.haw.riddle.ui.admin.room.RoomListAdapter;
-import de.haw.riddle.ui.admin.room.RoomViewModel;
 
 public class RiddleFragment extends DaggerFragment {
 
@@ -81,5 +77,6 @@ public class RiddleFragment extends DaggerFragment {
 
         final SwipeRefreshLayout swipeRefreshLayout = view.findViewById(R.id.swipeRefreshLayout);
         swipeRefreshLayout.setOnRefreshListener(() -> riddleViewModel.sync(swipeRefreshLayout));
+
     }
 }

@@ -16,7 +16,7 @@ public interface RoomService {
     @GET("/rooms")
     Call<ApiResponse<List<Room>>> getRooms();
 
-    @GET("/rooms{id}")
+    @GET("/rooms/{id}")
     Call<Room> getRoomById(@Path("id") long id);
 
     @POST("/rooms")

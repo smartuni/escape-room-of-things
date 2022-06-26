@@ -5,6 +5,7 @@ import java.util.List;
 import de.haw.riddle.ui.admin.model.Device;
 import de.haw.riddle.ui.admin.model.DeviceData;
 import de.haw.riddle.ui.admin.model.Room;
+import de.haw.riddle.ui.admin.model.UpdateDeviceDto;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.DELETE;
@@ -23,8 +24,8 @@ public interface DeviceService {
     @POST("/devices")
     Call<Device> createDevice(@Body DeviceData device);
 
-    @PUT("/coap/device")
-    Call<Device> updateDevice(@Body Device device);
+    @PUT("/devices/{id}")
+    Call<Device> updateDevice(@Path("id") long id,@Body UpdateDeviceDto device);
 
     @DELETE("/coap/device")
     Call<Device> deleteDevice(@Body Device device);

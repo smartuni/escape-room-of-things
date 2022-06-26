@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import java.util.List;
 import java.util.Objects;
@@ -74,6 +75,9 @@ public class DeviceFragment extends DaggerFragment {
 
         Button btnAdd = view.findViewById(R.id.btnQr);
         btnAdd.setOnClickListener(v -> NavHostFragment.findNavController(this).navigate(R.id.action_fragmentDevice_to_fragmentQr));
+
+        final SwipeRefreshLayout swipeRefreshLayout = view.findViewById(R.id.swipeRefreshLayout);
+        swipeRefreshLayout.setOnRefreshListener(() -> viewModel.sync(swipeRefreshLayout));
 
 
     }

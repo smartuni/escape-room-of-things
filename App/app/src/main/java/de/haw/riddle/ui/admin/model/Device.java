@@ -13,14 +13,14 @@ import lombok.Data;
 public class Device implements Parcelable {
 
     private String description;
-    private long devIP;
+    private String devIP;
     private final long id;
     @SerializedName("is_event_device")
     private boolean isEventDevice;
     private String name;
     @SerializedName("node_state")
     private String nodeState;
-    @SerializedName("pubkey")
+    @SerializedName("psk")
     private String publicKey;
     @SerializedName("puzzle")
     private long parentPuzzleId;
@@ -30,7 +30,7 @@ public class Device implements Parcelable {
 
     protected Device(Parcel in) {
         description = in.readString();
-        devIP = in.readLong();
+        devIP = in.readString();
         id = in.readLong();
         isEventDevice = in.readByte() != 0;
         name = in.readString();
@@ -65,7 +65,7 @@ public class Device implements Parcelable {
     @Override
     public void writeToParcel(Parcel parcel, int i) {
         parcel.writeString(description);
-        parcel.writeLong(devIP);
+        parcel.writeString(devIP);
         parcel.writeLong(id);
         parcel.writeByte((byte) (isEventDevice ? 1 : 0));
         parcel.writeString(name);
