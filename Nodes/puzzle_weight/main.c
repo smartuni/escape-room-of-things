@@ -28,8 +28,8 @@
 
 #include "puzzle_coap.h"
 
-#define weight 55 /*wanted weight*/
-#define tolerance 0.1f /*tolerance of wanted weight*/
+#define weight 422 /*wanted weight*/
+#define tolerance 0.2f /*tolerance of wanted weight*/
 
 #define STARTUP_DELAY   (1U)
 #define MAIN_QUEUE_SIZE (4)
@@ -48,7 +48,7 @@ static const puzzle_t puzzle = {
     .get_ready_handler = _ready,
     .set_ready_handler = _set_ready,
     .name = "Weight puzzle",
-    .resource_dir_uri = "coap://[fd00:dead:beef::1]",
+    .resource_dir_uri = "coap://[fd00:dead:beef::1]:5555",
 };
 
 static bool _is_solved = false;
@@ -59,7 +59,7 @@ void *meassure_weight(void *arg)
     (void) arg;
     int cnt = 0; /*counter*/
     static hx711_t dev;
-    uint8_t times = 10;
+    uint8_t times = 5;
 
     puts("In thread");
     /*initialize LED*/
@@ -81,7 +81,7 @@ void *meassure_weight(void *arg)
     while (1) {
         /* int32_t value = hx711_get_value(&dev, times); */
         int32_t units = hx711_get_units(&dev, times);
-
+        printf("%ld\n", units);
         /*check if measurement is within the borders*/
         if ((units > weight - weight * tolerance) && (units < weight + weight * tolerance)) {
             cnt = cnt + 1; 
