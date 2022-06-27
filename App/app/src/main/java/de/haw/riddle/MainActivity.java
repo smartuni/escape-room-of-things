@@ -31,6 +31,7 @@ import de.haw.riddle.net.login.Token;
 import de.haw.riddle.net.login.User;
 import de.haw.riddle.ui.admin.AdminLoginDialog;
 import de.haw.riddle.util.Preferences;
+import okhttp3.Credentials;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -92,7 +93,9 @@ public class MainActivity extends DaggerAppCompatActivity implements SharedPrefe
         NavigationUI.setupWithNavController(navigationView, navController);
 
         configureAdminOptions(prefs.getBoolean(Preferences.IS_ADMIN, false));
-        loginService.login(new User("admin", "admin")).enqueue(new Callback<Token>() {
+        String credentials = Credentials.basic("admin", "admin");
+        System.out.println("credentials = " + credentials);
+        loginService.login(credentials).enqueue(new Callback<Token>() {
             @Override
             public void onResponse(@NonNull Call<Token> call, @NonNull Response<Token> response) {
                 if (response.isSuccessful()) {
