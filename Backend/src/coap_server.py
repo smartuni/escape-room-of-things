@@ -66,7 +66,7 @@ class coap_server:
         self.con = await Context.create_server_context(root, bind=('::1', 5555))
 
     async def device_connected(self, devices):
-        print('check for divices to connect')
+        # print('check for divices to connect')
         for dev in devices:
             if "base=" in dev and "ep=" in dev:
                 matches = re.search('ep="(.+?)";base="coap://(.+?)";', dev)
@@ -76,22 +76,22 @@ class coap_server:
                         d.devIP = matches.group(2)
                         d.node_state = "connected"
                         self.connectedDevices.append(matches.group(1))
-                        print(matches.group(1) + " connected")
+                        # print(matches.group(1) + " connected")
                         task = asyncio.create_task(self.observe_device(d.serial), name=d.name)
                         observe_tasks[d.serial] = task
                     db.session.commit()
-                    time.sleep(0.5 + random.random())
+                    await asyncio.sleep(2 + random.random())
                         #await self.observe_device(d.serial)
 
     def device_disconnected(self, devices):
-        print('check for divices to disconnect')
+        # print('check for divices to disconnect')
         con_serials = []
         removed_serials = []
         for dev in devices:
             if "ep=" in dev:
                 matches = re.search('ep="(.+?)";', dev)
                 con_serials.append(matches.group(1))
-        print(con_serials)
+        # print(con_serials)
         for serial in self.connectedDevices:
             if serial not in con_serials:
                 with db_app.app_context():
@@ -99,7 +99,7 @@ class coap_server:
                     d.node_state = "disconnected"
                     db.session.commit()
                 removed_serials.append(serial)
-                print(serial + " disconnected")
+                # print(serial + " disconnected")
         self.connectedDevices = [
             x for x in self.connectedDevices if x not in removed_serials]
 
@@ -184,10 +184,10 @@ class coap_server:
             con_req = self.con.request(connect_check_request)
             con_res = await con_req.response
             con_devices = con_res.payload.decode('utf-8').split(",")
-            print(con_devices)
+            # print(con_devices)
             self.device_disconnected(con_devices)
             await self.device_connected(con_devices)
-            await asyncio.sleep(15)
+            await asyncio.sleep(3)
 
 
 # PUZZLE LOGIC----------------------------------------
@@ -261,7 +261,7 @@ async def trigger_event(puzzle):
 async def get_client_con_dtls(deviceIP, devicePsk, devoceQrid, path):
     con = await Context.create_client_context()
     uri = f"coaps://{deviceIP}:5684/node/{path}"
-    print(devicePsk+ ' ' + devoceQrid)
+    # print(devicePsk+ ' ' + devoceQrid)
     con.client_credentials.load_from_dict(
         {uri: {'dtls': {'psk': devicePsk.encode(), 'client-identity': devoceQrid.encode()}}})
     return con, uri
@@ -270,7 +270,7 @@ async def get_client_con_dtls(deviceIP, devicePsk, devoceQrid, path):
 async def get_client_con(device, path):
     con = await Context.create_client_context()
     uri = f"coaps://{device.devIP}:5684/node/{path}"
-    print(device.psk + ' ' + device.qrid)
+    # print(device.psk + ' ' + device.qrid)
     return con, uri
 
 
