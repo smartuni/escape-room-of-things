@@ -53,13 +53,13 @@ def user_token_required(f):
             token = request.headers['x-access-tokens']
 
         if not token:
-            return jsonify({'message': 'a valid token is missing'})
+            return 401, 'token missing'
         try:
             data = jwt.decode(token, app.config['SECRET_KEY'], algorithms=["HS256"])
             current_user = User.query.filter_by(public_id=data['public_id']).first()
 
         except:
-            return jsonify({'message': 'token is invalid'})
+            return 401, "unauthorized access"
 
         return f(*args, **kwargs)
 
@@ -74,12 +74,12 @@ def admin_token_required(f):
             token = request.headers['x-access-tokens']
 
         if not token:
-            return jsonify({'message': 'a valid token is missing'})
+            return 401, "token missing"
         try:
             data = jwt.decode(token, app.config['SECRET_KEY'], algorithms=["HS256"])
             current_user = User.query.filter_by(public_id=data['public_id']).first()
             if not current_user.admin:
-                return jsonify({'message': '403 Forbidden access'})
+                return 401, "unauthorized access"
 
         except:
             return jsonify({'message': 'token is invalid'})
@@ -319,7 +319,6 @@ def signup_user():
 @app.route('/login', methods=['POST'])
 def login():
     auth = request.authorization
-    print(auth)
     if not auth or not auth.username or not auth.password:
         return make_response('could not verify', 401, {'Authentication': 'login required"'})
 
@@ -328,8 +327,6 @@ def login():
         token = jwt.encode(
             {'public_id': user.public_id, 'exp': datetime.datetime.utcnow() + datetime.timedelta(hours=6)},
             app.config['SECRET_KEY'], "HS256")
-        print(token)
-        print(type(token))
         return jsonify({'token': token})
     return make_response('could not verify', 401, {'Authentication': '"login required"'})
 
