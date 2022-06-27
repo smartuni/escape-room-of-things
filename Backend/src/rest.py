@@ -3,11 +3,13 @@ import datetime
 import os
 import sys
 import uuid
-import jwt
 from functools import wraps
+
+import jwt
 from flask import Flask, request, jsonify, make_response
 from flask_cors import CORS
 from werkzeug.security import generate_password_hash, check_password_hash
+
 from orm_classes.Device import Device
 from orm_classes.Puzzle import Puzzle
 from orm_classes.Room import Room
@@ -122,14 +124,12 @@ def api_update_device_state(deviceid):
 # rooms
 
 @app.route('/rooms', methods=['GET'])
-
 def api_get_rooms():
     rooms = Room.query.all()
     return jsonify({'rooms': serialize_rooms(rooms)})
 
 
 @app.route('/rooms/<roomid>', methods=['GET'])
-
 def api_get_room(roomid):
     room = [Room.query.filter_by(id=roomid).first()]
     return jsonify(serialize_rooms(room)[0])
@@ -186,14 +186,12 @@ def api_delete_room(roomid):
 # puzzles
 
 @app.route('/puzzles', methods=['GET'])
-
 def api_get_puzzles():
     puzzles = Puzzle.query.all()
     return jsonify({'puzzles': serialize_puzzles(puzzles)})
 
 
 @app.route('/puzzles/<puzzleid>', methods=['GET'])
-
 def api_get_puzzle(puzzleid):
     puzzle = Puzzle.query.filter_by(id=puzzleid).first()
     return jsonify(serialize_puzzles([puzzle])[0])
@@ -243,14 +241,12 @@ def api_delete_puzzle(puzzleid):
 # devices
 
 @app.route('/devices', methods=['GET'])
-
 def api_get_devices():
     devices = Device.query.all()
     return jsonify({'devices': serialize_devices(devices)})
 
 
 @app.route('/devices/<deviceid>', methods=['GET'])
-
 def api_get_device(deviceid):
     device = Device.query.filter_by(id=deviceid).first()
     return jsonify(device.serialize())
@@ -332,7 +328,9 @@ def login():
         token = jwt.encode(
             {'public_id': user.public_id, 'exp': datetime.datetime.utcnow() + datetime.timedelta(hours=6)},
             app.config['SECRET_KEY'], "HS256")
-        return jsonify({'token': token.decode('UTF-8')})
+        print(token)
+        print(type(token))
+        return jsonify({'token': token})
     return make_response('could not verify', 401, {'Authentication': '"login required"'})
 
 
