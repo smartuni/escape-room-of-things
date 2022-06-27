@@ -12,7 +12,6 @@ import dagger.BindsInstance;
 import dagger.Component;
 import dagger.android.AndroidInjector;
 import dagger.android.support.AndroidSupportInjectionModule;
-import de.haw.riddle.ui.riddle1.Riddle1Fragment;
 
 @Singleton
 @Component(
@@ -20,7 +19,9 @@ import de.haw.riddle.ui.riddle1.Riddle1Fragment;
                 AndroidInjectionModule.class,
                 ApplicationModule.class,
                 OverviewModule.class,
-                Riddle1Module.class,
+                WaterRiddleModule.class,
+                LegoRiddleModule1.class,
+                LegoRiddleModule2.class,
                 NetworkModule.class,
                 QrModule.class,
                 LedModule.class,

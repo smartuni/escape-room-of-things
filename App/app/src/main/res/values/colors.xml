@@ -10,4 +10,5 @@
     <color name="white_veil">#AAFFFFFF</color>
     <color name="light_gray">#DDDDDD</color>
     <color name="orange">#FF473A</color>
+    <color name="grey">#FF4734</color>
 </resources>

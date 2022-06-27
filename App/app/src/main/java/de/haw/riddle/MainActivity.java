@@ -64,7 +64,8 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         appBarConfiguration = new AppBarConfiguration.Builder(
                 R.id.fragmentInfo,
                 R.id.fragmentOverview,
-                R.id.fragmentRiddle1,
+                R.id.fragmentWaterRiddle,
+                R.id.fragmentLegoRiddle,
                 R.id.fragmentLed,
                 R.id.fragmentRoom,
                 R.id.fragmentSettings)

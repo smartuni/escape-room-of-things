@@ -26,10 +26,14 @@
         tools:layout="@layout/fragment_overview" />
 
     <fragment
-        android:id="@+id/fragmentRiddle1"
-        android:name="de.haw.riddle.ui.riddle1.Riddle1Fragment"
+        android:id="@+id/fragmentWaterRiddle"
+        android:name="de.haw.riddle.ui.water.WaterRiddleFragment"
         android:label="riddle1"
-        tools:layout="@layout/fragment_riddle1" />
+        tools:layout="@layout/fragment_water" >
+        <action
+            android:id="@+id/action_fragmentRiddle1_to_congratulationsWindow"
+            app:destination="@id/congratulationsWindow" />
+    </fragment>
 
     <fragment
         android:id="@+id/fragmentLed"
@@ -115,6 +119,30 @@
         android:name="de.haw.riddle.ui.admin.riddle.RiddleDetailFragment"
         android:label="Riddle Details"
         tools:layout="@layout/fragment_riddle_detail" />
+    <dialog
+        android:id="@+id/congratulationsWindow"
+        android:name="de.haw.riddle.ui.CongratulationsWindow"
+        android:label="CongratulationsWindow" >
+        <action
+            android:id="@+id/action_congratulationsWindow_to_legoRiddleFragmentPart1"
+            app:destination="@id/legoRiddleFragmentPart1" />
+    </dialog>
+    <fragment
+        android:id="@+id/legoRiddleFragmentPart1"
+        android:name="de.haw.riddle.ui.lego.LegoRiddleFragmentPart1"
+        android:label="LegoRiddleFragmentPart1" >
+        <action
+            android:id="@+id/action_legoRiddleFragmentPart1_to_legoRiddleFragmentPart2"
+            app:destination="@id/legoRiddleFragmentPart2" />
+    </fragment>
+    <fragment
+        android:id="@+id/legoRiddleFragmentPart2"
+        android:name="de.haw.riddle.ui.lego.LegoRiddleFragmentPart2"
+        android:label="LegoRiddleFragmentPart2" >
+        <action
+            android:id="@+id/action_legoRiddleFragmentPart2_to_congratulationsWindow"
+            app:destination="@id/congratulationsWindow" />
+    </fragment>
 
     <fragment
         android:id="@+id/fragment_device_detail"

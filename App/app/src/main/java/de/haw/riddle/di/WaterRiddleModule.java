@@ -7,17 +7,16 @@ import dagger.Module;
 import dagger.android.ContributesAndroidInjector;
 import dagger.multibindings.IntoMap;
 import de.haw.riddle.ui.led.MainViewModel;
-import de.haw.riddle.ui.overview.OverviewFragment;
 import de.haw.riddle.ui.overview.OverviewViewModel;
-import de.haw.riddle.ui.riddle1.Riddle1Fragment;
+import de.haw.riddle.ui.water.WaterRiddleFragment;
 
 @Module
-public abstract class Riddle1Module {
+public abstract class WaterRiddleModule {
 
     @ContributesAndroidInjector(modules = {
             ViewModelBuilder.class
     })
-    abstract Riddle1Fragment riddle1Fragment();
+    abstract WaterRiddleFragment riddle1Fragment();
 
     @Binds
     @IntoMap
