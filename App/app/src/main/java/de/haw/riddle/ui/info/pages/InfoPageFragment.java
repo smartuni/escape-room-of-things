@@ -70,7 +70,7 @@ public class InfoPageFragment extends Fragment {
             final Button btnStart = view.findViewById(R.id.btnStart);
             btnStart.setVisibility(View.VISIBLE);
             btnStart.setOnClickListener(v -> {
-                NavHostFragment.findNavController(this).navigate(R.id.action_fragment_info_to_fragment_overview);
+                NavHostFragment.findNavController(this).navigate(R.id.action_fragmentInfo_to_fragmentWaterRiddle);
                 ((MainActivity) requireActivity()).showDrawerAndMenu();
             });
         }

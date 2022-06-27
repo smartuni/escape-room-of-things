@@ -11,19 +11,9 @@
         android:label="info"
         tools:layout="@layout/fragment_info">
         <action
-            android:id="@+id/action_fragment_info_to_fragment_overview"
-            app:destination="@id/fragmentOverview"
-            app:enterAnim="@anim/nav_default_enter_anim"
-            app:exitAnim="@anim/nav_default_exit_anim"
-            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
-            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
+            android:id="@+id/action_fragmentInfo_to_fragmentWaterRiddle"
+            app:destination="@id/fragmentWaterRiddle" />
     </fragment>
-
-    <fragment
-        android:id="@+id/fragmentOverview"
-        android:name="de.haw.riddle.ui.overview.OverviewFragment"
-        android:label="overview"
-        tools:layout="@layout/fragment_overview" />
 
     <fragment
         android:id="@+id/fragmentWaterRiddle"
