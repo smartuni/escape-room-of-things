@@ -5,26 +5,53 @@
     android:id="@+id/fragmentLed"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.led.LedFragment">
+    tools:context=".ui.led.LedRiddleFragment">
+
 
     <TextView
-        android:id="@+id/message"
+        android:id="@+id/text1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="LedFragment"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginTop="40dp"
+        android:fontFamily="Montserrat"
+        android:text="Riddle 3. Stop the light"
+        android:textColor="#FF473A"
+        android:textSize="26dp"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.101"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/ledButton"
+    <TextView
+        android:id="@+id/text2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/led"
-        app:layout_constraintEnd_toEndOf="@id/message"
-        app:layout_constraintStart_toStartOf="@id/message"
-        app:layout_constraintTop_toBottomOf="@id/message" />
+        android:layout_marginTop="28dp"
+        android:fontFamily="Montserrat"
+        android:text="You have a strip with 9 LEDs and a button on the board. The lights are turning on and off without any order.\nIf 1=3, 2=3, 3=5, 4=4; 5=4, 6=3, then seven=?\n\nThe Answer is the LED you must stop the light on using the button. Be as quick as the lights are!"
+        android:textColor="#979797"
+        android:textSize="17dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.135"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/text1" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/list_tip"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/text2"
+        android:layout_marginTop="25dp"/>
+
+    <Button
+        android:id="@+id/btnTip"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="80dp"
+        android:text="Take a tip"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginEnd="20dp"
+        app:layout_constraintBottom_toBottomOf="parent"/>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

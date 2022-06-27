@@ -12,6 +12,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -36,9 +37,9 @@ public class LegoRiddleFragmentPart1 extends DaggerFragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        tips.add("text");
-        tips.add("text");
-        tips.add("text");
+        tips.add("Mary is going to be 64 years old in 15 years.");
+        tips.add("Cindy is going to be 31 in 15 years. 95 - 31 = ?");
+        tips.add("Follow this order: divide, multiply, subtract. Then try solving the equation by subtracting the number you got from 35.");
     }
 
     @Nullable
@@ -74,25 +75,16 @@ public class LegoRiddleFragmentPart1 extends DaggerFragment {
                     .setMessage("Which color has the LED?")
                     .setView(input)
                     .setNegativeButton(R.string.cancel, (dialogInterface, i) -> dialogInterface.cancel())
-                    .setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int whichButton) {
-                            String value = input.getText().toString();
-                            if (value.equalsIgnoreCase("red")) {
-                               // navigate to lego puzzle part 2
-                                };
-                            }
+                    .setPositiveButton("Confirm", (dialog, whichButton) -> {
+                        String value = input.getText().toString();
+                        if (value.equalsIgnoreCase("red")) {
+                           NavHostFragment.findNavController(LegoRiddleFragmentPart1.this).navigate(R.id.action_legoRiddleFragmentPart1_to_legoRiddleFragmentPart2);
+                        };
                         }
                     )
                     .create()
                     .show();
         });
-
-        final Button part2 = view.findViewById(R.id.btnPart2);
-        part2.setOnClickListener(v -> {
-            NavHostFragment.findNavController(this).navigate(R.id.action_legoRiddleFragmentPart1_to_legoRiddleFragmentPart2);
-            ((MainActivity) requireActivity()).showDrawerAndMenu();
-        });
-
     }
 
     @Override
@@ -103,13 +95,11 @@ public class LegoRiddleFragmentPart1 extends DaggerFragment {
     @Override
     public void onResume() {
         super.onResume();
-        // ToDo: pull
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        // ToDo: pull stoppen
     }
 
     @Override

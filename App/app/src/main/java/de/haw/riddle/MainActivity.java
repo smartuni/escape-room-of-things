@@ -21,15 +21,18 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.FragmentManager;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
+import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 import dagger.android.DaggerActivity;
 import dagger.android.support.DaggerAppCompatActivity;
+import de.haw.riddle.net.admin.RiddleService;
 import de.haw.riddle.net.login.LoginService;
 import de.haw.riddle.net.login.Token;
 import de.haw.riddle.net.login.User;
 import de.haw.riddle.ui.admin.AdminLoginDialog;
+import de.haw.riddle.ui.admin.model.Riddle;
 import de.haw.riddle.util.Preferences;
 import okhttp3.Credentials;
 import retrofit2.Call;
@@ -64,6 +67,8 @@ public class MainActivity extends DaggerAppCompatActivity implements SharedPrefe
 
     @Inject
     LoginService loginService;
+    @Inject
+    RiddleService riddleService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -190,6 +195,7 @@ public class MainActivity extends DaggerAppCompatActivity implements SharedPrefe
     @Override
     protected void onResume() {
         super.onResume();
+
     }
 
     @Override

@@ -51,7 +51,8 @@ You have to fill the \n0.5l bottle with exactly 0.4l of water. "
         android:text="Congrats"
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginEnd="20dp"
-        app:layout_constraintBottom_toBottomOf="parent"/>
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:visibility="gone"/>
 
     <Button
         android:id="@+id/btnTip"
