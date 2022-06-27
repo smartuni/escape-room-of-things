@@ -4,6 +4,7 @@ import java.util.List;
 
 import de.haw.riddle.net.ApiResponse;
 import de.haw.riddle.ui.admin.model.Room;
+import de.haw.riddle.ui.admin.model.UpdateStateDto;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.DELETE;
@@ -22,8 +23,8 @@ public interface RoomService {
     @POST("/rooms")
     Call<Room> createRoom(@Body CreateRoomDto room);
 
-    @PUT("/rooms")
-    Call<Room> updateRoom(@Body Room room);
+    @PUT("/rooms/state/{id}")
+    Call<Room> updateRoomState(@Path("id") long id,@Body UpdateStateDto state);
 
     @DELETE("/rooms/{id}")
     Call<Room> deleteRoom(@Path("id") long id);

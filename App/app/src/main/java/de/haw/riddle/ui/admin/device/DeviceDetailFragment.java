@@ -77,20 +77,23 @@ public class DeviceDetailFragment extends DaggerFragment {
         Bundle args = getArguments();
         if (args != null) {
             System.out.println("args = " + args.getParcelable(KEY_DEVICE));
-            view.findViewById(R.id.tlId).setVisibility(View.VISIBLE);
-            viewModel.setDevice(args.getParcelable(KEY_DEVICE));
-            final Device device = args.getParcelable(KEY_DEVICE);
-            tfSerial.setText(device.getSerial());
-            tfName.setText(device.getName());
-            tfPublicKey.setText(device.getPublicKey());
-            if (device.getDescription() != null)
-                tfDescription.setText(device.getDescription());
-            tfDevIp.setText(String.valueOf(device.getDevIP()));
-            tfIsEventDevice.setText(String.valueOf(device.isEventDevice()));
-            tfNodeState.setText(device.getNodeState());
-            tfId.setText(String.valueOf(device.getId()));
-            tfPuzzle.setText(items[0].toString(),false);
-            tfState.setText(device.getState());
+
+                view.findViewById(R.id.tlId).setVisibility(View.VISIBLE);
+                viewModel.setDevice(args.getParcelable(KEY_DEVICE));
+                final Device device = args.getParcelable(KEY_DEVICE);
+                tfSerial.setText(device.getSerial());
+                tfName.setText(device.getName());
+                tfPublicKey.setText(device.getPublicKey());
+                if (device.getDescription() != null)
+                    tfDescription.setText(device.getDescription());
+                tfDevIp.setText(String.valueOf(device.getDevIP()));
+                tfIsEventDevice.setText(String.valueOf(device.isEventDevice()));
+                tfNodeState.setText(device.getNodeState());
+                tfId.setText(String.valueOf(device.getId()));
+                tfPuzzle.setText(items[0].toString(),false);
+                tfState.setText(device.getState());
+
+
 
         }
         //TextInputEditText tfName = view.findViewById(R.id.tfName);
@@ -125,6 +128,7 @@ public class DeviceDetailFragment extends DaggerFragment {
                 }
 
                 try {
+                    if(response.errorBody()!=null)
                     Log.e(TAG,response.errorBody().string());
                 } catch (IOException e) {
                     e.printStackTrace();

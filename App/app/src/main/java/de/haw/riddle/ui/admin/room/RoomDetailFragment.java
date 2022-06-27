@@ -6,6 +6,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.Toast;
 
@@ -21,6 +23,7 @@ import javax.inject.Inject;
 
 import dagger.android.support.DaggerFragment;
 import de.haw.riddle.R;
+import de.haw.riddle.ui.admin.model.Riddle;
 import de.haw.riddle.ui.admin.model.Room;
 import de.haw.riddle.util.SimpleTextWatcher;
 import retrofit2.Call;
@@ -54,8 +57,14 @@ public class RoomDetailFragment extends DaggerFragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        String[] items= viewModel.getStateList();
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(requireContext(),R.layout.dropdown_list_item,items);
+
         TextInputEditText tfName = view.findViewById(R.id.tfName);
         TextInputEditText tfDescription = view.findViewById(R.id.tfDescription);
+        AutoCompleteTextView tfState = view.findViewById(R.id.tfState);
+
+        tfState.setAdapter(adapter);
 
 
         progressLayout = view.findViewById(R.id.progressLayout);
@@ -72,6 +81,7 @@ public class RoomDetailFragment extends DaggerFragment {
             ((TextInputEditText) view.findViewById(R.id.tfId)).setText(String.valueOf(room.getId()));
             tfName.setText(room.getName());
             tfDescription.setText(room.getDescription());
+            tfState.setText(room.getState(),false);
         }
 
         tfName.addTextChangedListener(new SimpleTextWatcher() {
@@ -80,7 +90,7 @@ public class RoomDetailFragment extends DaggerFragment {
                 viewModel.setName(s.toString());
             }
         });
-        ((TextInputEditText) view.findViewById(R.id.tfState)).setText(viewModel.getState());
+        //((AutoCompleteTextView) view.findViewById(R.id.tfState)).setText(viewModel.getState(),false);
 
         tfDescription.addTextChangedListener(new SimpleTextWatcher() {
             @Override
@@ -100,6 +110,7 @@ public class RoomDetailFragment extends DaggerFragment {
                     public void onResponse(@NonNull Call<Room> call, @NonNull Response<Room> response) {
                         progressLayout.setVisibility(View.INVISIBLE);
 
+                        Log.i(TAG, "ResponseCode= "+response.code());
                         if(!response.isSuccessful())
                         {
                             Toast.makeText(requireContext(),"Room hasn´t been created", Toast.LENGTH_SHORT).show();
@@ -159,6 +170,33 @@ public class RoomDetailFragment extends DaggerFragment {
                     }
                 });
             });
+
+            final Button btnApply = view.findViewById((R.id.applyButton));
+            btnApply.setOnClickListener(v ->{
+            viewModel.updateRoomState(tfState.getText().toString()).enqueue(new Callback<Room>() {
+                @Override
+                public void onResponse(Call<Room> call, Response<Room> response) {
+                    progressLayout.setVisibility(View.INVISIBLE);
+                    Log.i(TAG, "ResponseCode= " + response.code());
+                    System.out.println(response.body().toString());
+                    if (!response.isSuccessful()) {
+                        Toast.makeText(requireContext(), "Riddle hasn´t been updatet", Toast.LENGTH_SHORT).show();
+                        try {
+                            Log.e(TAG, response.errorBody().string());
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+
+                        return;
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<Room> call, Throwable t) {
+
+                }
+            });
+        });
         }
     }
 }

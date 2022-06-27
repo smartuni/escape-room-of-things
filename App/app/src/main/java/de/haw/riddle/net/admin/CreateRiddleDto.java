@@ -12,13 +12,13 @@ public class CreateRiddleDto {
     private final String name;
     private final String description;
     @SerializedName("room")
-    private final long roomId;
+    private final String roomId;
 
 
 
 
         public boolean isValid() {
-            return name != null && !name.isEmpty() && roomId >= 0;
+            return name != null && !name.isEmpty() && roomId != null;
 
         }
 

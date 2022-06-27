@@ -1,10 +1,8 @@
 package de.haw.riddle.ui.admin.device;
 
-import android.os.Parcelable;
 import android.util.Log;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
@@ -12,9 +10,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
 import javax.inject.Inject;
@@ -22,12 +18,8 @@ import javax.inject.Singleton;
 
 import de.haw.riddle.net.admin.DeviceService;
 import de.haw.riddle.net.admin.RiddleService;
-import de.haw.riddle.net.admin.RoomService;
-import de.haw.riddle.ui.admin.model.Config;
 import de.haw.riddle.ui.admin.model.Device;
-import de.haw.riddle.ui.admin.model.Resource;
 import de.haw.riddle.ui.admin.model.Riddle;
-import de.haw.riddle.ui.admin.model.Room;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -45,28 +37,25 @@ public class DeviceViewModel extends ViewModel {
     @Inject
     public DeviceViewModel(DeviceService deviceService, RiddleService riddleService) {
         this.deviceService = deviceService;
-        this.riddleService=riddleService;
+        this.riddleService = riddleService;
     }
 
     public void sync(SwipeRefreshLayout swipeRefreshLayout) {
         riddleService.getRiddles(parentRiddle.getId()).enqueue(new Callback<Riddle>() {
             @Override
             public void onResponse(Call<Riddle> call, Response<Riddle> response) {
-
+                Log.i(TAG, "ResponseCode= "+response.code());
                 swipeRefreshLayout.setRefreshing(false);
 
-                if(response.isSuccessful())
-                {
-                    System.out.println(response.body());
-                    devices.setValue(response.body().getDevices());
+                if (response.isSuccessful()) {
+                    if (response.body().getDevices() != null)
+                        devices.setValue(response.body().getDevices());
 
-                }
-                else
-                {
+                } else {
                     try {
                         final String errorBody = response.errorBody().string();
-                        Log.e(TAG,errorBody);
-                        Toast.makeText(swipeRefreshLayout.getContext(),errorBody,Toast.LENGTH_SHORT).show();
+                        Log.e(TAG, errorBody);
+                        Toast.makeText(swipeRefreshLayout.getContext(), errorBody, Toast.LENGTH_SHORT).show();
                         // TODO getContext via Application
 
                     } catch (IOException e) {
@@ -99,7 +88,7 @@ public class DeviceViewModel extends ViewModel {
 
     public void setRiddle(Riddle riddle) {
 
-        this.parentRiddle= riddle;
+        this.parentRiddle = riddle;
         devices.setValue(riddle.getDevices());
     }
 

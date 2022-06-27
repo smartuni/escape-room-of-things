@@ -47,8 +47,13 @@ public class RoomViewModel extends ViewModel {
         roomService.getRooms().enqueue(new Callback<ApiResponse<List<Room>>>() {
             @Override
             public void onResponse(@NonNull Call<ApiResponse<List<Room>>> call, @NonNull Response<ApiResponse<List<Room>>> response) {
+
+                Log.i(TAG, "ResponseCode= "+response.code());
                 if (response.isSuccessful()) {
-                    rooms.setValue(response.body().getData());
+                   Log.i(TAG,response.body().toString());
+                    if (response.body().getData() != null)
+                        rooms.setValue(response.body().getData());
+
                 } else {
                     try {
                         final String errorBody = response.errorBody().string();

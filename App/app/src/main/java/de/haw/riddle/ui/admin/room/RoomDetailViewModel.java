@@ -11,6 +11,8 @@ import de.haw.riddle.net.admin.CreateRoomDto;
 import de.haw.riddle.net.admin.RoomService;
 import de.haw.riddle.ui.admin.model.Riddle;
 import de.haw.riddle.ui.admin.model.Room;
+import de.haw.riddle.ui.admin.model.UpdateRiddleDto;
+import de.haw.riddle.ui.admin.model.UpdateStateDto;
 import retrofit2.Call;
 
 public class RoomDetailViewModel extends ViewModel {
@@ -69,7 +71,22 @@ public class RoomDetailViewModel extends ViewModel {
             return null;
     }
 
+   public  String[] getStateList(){
+
+
+
+       String[] roomStateList = {"ready","maintainance"};
+
+
+       return  roomStateList;
+   }
+
     public Call<Room> deleteRoom() {
         return roomService.deleteRoom(room.getId());
+    }
+
+    public Call<Room> updateRoomState(String newState){
+        return roomService.updateRoomState(id,new UpdateStateDto(newState));
+
     }
 }

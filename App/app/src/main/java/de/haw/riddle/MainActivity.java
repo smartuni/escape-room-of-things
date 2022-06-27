@@ -100,6 +100,7 @@ public class MainActivity extends DaggerAppCompatActivity implements SharedPrefe
             public void onResponse(@NonNull Call<Token> call, @NonNull Response<Token> response) {
                 if (response.isSuccessful()) {
                     assert response.body() != null;
+                    Log.i(TAG,response.body().getToken().toString());
                     prefs.edit().putString(Preferences.TOKEN, response.body().getToken()).apply();
                     Log.i(TAG, "Logged in successfully");
                 } else {

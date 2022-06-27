@@ -72,7 +72,7 @@ public class RiddleFragment extends DaggerFragment {
         recyclerView.addItemDecoration(dividerItemDecoration);
 
         Button btnAdd = view.findViewById(R.id.btnAdd);
-        btnAdd.setOnClickListener(v -> NavHostFragment.findNavController(this).navigate(R.id.action_fragmentPuzzle_to_fragment_riddle_detail));
+        btnAdd.setOnClickListener(v -> NavHostFragment.findNavController(this).navigate(R.id.action_fragmentPuzzle_to_fragment_riddle_detail,RiddleDetailFragment.createArgs(null,riddleViewModel.getParentRoom().getId())));
 
 
         final SwipeRefreshLayout swipeRefreshLayout = view.findViewById(R.id.swipeRefreshLayout);

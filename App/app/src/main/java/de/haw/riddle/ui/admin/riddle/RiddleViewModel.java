@@ -42,12 +42,16 @@ public class RiddleViewModel extends ViewModel {
     }
 
     public void sync(SwipeRefreshLayout swipeRefreshLayout) {
+
         roomService.getRoomById(parentRoom.getId()).enqueue(new Callback<Room>() {
             @Override
             public void onResponse(@NonNull Call<Room> call, @NonNull Response<Room> response) {
+
+                Log.i(TAG, "ResponseCode= "+response.code());
+                if(swipeRefreshLayout!=null)
                 swipeRefreshLayout.setRefreshing(false);
                 if (response.isSuccessful()) {
-                    System.out.println(response.body());
+                    if(response.body().getRiddles()!=null)
                     riddles.setValue(response.body().getRiddles());
                 } else {
                     try {

@@ -68,16 +68,103 @@ public class RiddleDetailFragment extends DaggerFragment {
 
         Bundle args = getArguments();
         if (args != null) {
-            view.findViewById(R.id.tlId).setVisibility(View.VISIBLE);
             final Riddle riddle= args.getParcelable(KEY_RIDDLE);
-            final long parentRoomId=args.getLong(KEY_PARENT_ROOM_ID);
-            viewModel.setData(riddle,parentRoomId);
-            view.findViewById(R.id.tlId).setVisibility(View.VISIBLE);
-            ((TextInputEditText) view.findViewById(R.id.tfId)).setText(String.valueOf(riddle.getId()));
-            tfName.setText(riddle.getName());
-            tfDescription.setText(riddle.getDescription());
-            tfState.setText(riddle.getState());
-            tfRoom.setText(riddle.getRoom());
+            if(riddle!=null){
+                view.findViewById(R.id.tlId).setVisibility(View.VISIBLE);
+
+
+                viewModel.setData(riddle,riddle.getRoom());
+                view.findViewById(R.id.tlId).setVisibility(View.VISIBLE);
+                ((TextInputEditText) view.findViewById(R.id.tfId)).setText(String.valueOf(riddle.getId()));
+                tfName.setText(riddle.getName());
+                tfDescription.setText(riddle.getDescription());
+                tfState.setText(riddle.getState());
+                tfRoom.setText((riddle.getRoom()));
+
+                view.findViewById(R.id.applyButton).setOnClickListener(v -> {
+                    Toast.makeText(requireContext(), R.string.roomUpdateSuccess, Toast.LENGTH_SHORT).show();
+                    viewModel.updateRiddle(tfRoom.getText().toString()).enqueue(new Callback<Riddle>() {
+                        @Override
+                        public void onResponse(Call<Riddle> call, Response<Riddle> response) {
+                            progressLayout.setVisibility(View.INVISIBLE);
+                            Log.i(TAG, "ResponseCode= "+response.code());
+                            if(!response.isSuccessful())
+                            {
+                                Toast.makeText(requireContext(),"Riddle hasn´t been updatet", Toast.LENGTH_SHORT).show();
+                                try {
+                                    Log.e(TAG,response.errorBody().string());
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+
+                                return;
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<Riddle> call, Throwable t) {
+
+                        }
+                    });
+
+                });
+
+
+            }
+            else {
+                final long parentRoomId=args.getLong(KEY_PARENT_ROOM_ID);
+                tfRoom.setText(String.valueOf(parentRoomId));
+                viewModel.setData(null,String.valueOf(parentRoomId));
+
+                view.findViewById(R.id.applyButton).setOnClickListener(v -> {
+                    final Call<Riddle> call = viewModel.createRiddleCallIfValid();
+                    if (call == null)
+                        Toast.makeText(requireContext(), R.string.roomInputNotValid, Toast.LENGTH_LONG).show();
+                    else {
+                        progressLayout.setVisibility(View.VISIBLE);
+                        call.enqueue(new Callback<Riddle>() {
+                            @Override
+                            public void onResponse(@NonNull Call<Riddle> call, @NonNull Response<Riddle> response) {
+                                progressLayout.setVisibility(View.INVISIBLE);
+                                Log.i(TAG, "ResponseCode= "+response.code());
+                                if(!response.isSuccessful())
+                                {
+                                    Toast.makeText(requireContext(),"Riddle hasn´t been created", Toast.LENGTH_SHORT).show();
+                                    try {
+                                        Log.e(TAG,response.errorBody().string());
+                                    } catch (IOException e) {
+                                        e.printStackTrace();
+                                    }
+
+                                    return;
+                                }
+
+                                Log.i(TAG, "Successfully posted riddle to server.\nResponseBody=\n" + response.body());
+                                if (args == null)
+                                    Toast.makeText(requireContext(), R.string.roomCreateSuccess, Toast.LENGTH_SHORT).show();
+                                else
+                                    Toast.makeText(requireContext(), R.string.roomUpdateSuccess, Toast.LENGTH_SHORT).show();
+
+                                riddleViewModel.addRiddle(response.body());
+                                NavHostFragment.findNavController(RiddleDetailFragment.this).navigateUp();
+                            }
+
+                            @Override
+                            public void onFailure(@NonNull Call<Riddle> call, @NonNull Throwable t) {
+                                progressLayout.setVisibility(View.INVISIBLE);
+                                Log.e(TAG, "Failed to create room.", t);
+//                        Toast.makeText(requireContext(), R.string.roomCreateFailed, Toast.LENGTH_SHORT).show();
+                                Toast.makeText(requireContext(), t.toString(), Toast.LENGTH_SHORT).show();
+                            }
+                        });
+
+                    }
+                });
+
+            }
+
+
+
         }
 
         tfName.addTextChangedListener(new SimpleTextWatcher() {
@@ -94,50 +181,8 @@ public class RiddleDetailFragment extends DaggerFragment {
             }
         });
 
-        view.findViewById(R.id.applyButton).setOnClickListener(v -> {
-            final Call<Riddle> call = viewModel.createRiddleCallIfValid();
-            if (call == null)
-                Toast.makeText(requireContext(), R.string.roomInputNotValid, Toast.LENGTH_LONG).show();
-            else {
-                progressLayout.setVisibility(View.VISIBLE);
-                call.enqueue(new Callback<Riddle>() {
-                    @Override
-                public void onResponse(@NonNull Call<Riddle> call, @NonNull Response<Riddle> response) {
-                        progressLayout.setVisibility(View.INVISIBLE);
 
-                        if(!response.isSuccessful())
-                        {
-                            Toast.makeText(requireContext(),"Riddle hasn´t been created", Toast.LENGTH_SHORT).show();
-                            try {
-                                Log.e(TAG,response.errorBody().string());
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
 
-                            return;
-                        }
-
-                        Log.i(TAG, "Successfully posted riddle to server.\nResponseBody=\n" + response.body());
-                        if (args == null)
-                            Toast.makeText(requireContext(), R.string.roomCreateSuccess, Toast.LENGTH_SHORT).show();
-                        else
-                            Toast.makeText(requireContext(), R.string.roomUpdateSuccess, Toast.LENGTH_SHORT).show();
-
-                        riddleViewModel.addRiddle(response.body());
-                        NavHostFragment.findNavController(RiddleDetailFragment.this).navigateUp();
-                    }
-
-                    @Override
-                    public void onFailure(@NonNull Call<Riddle> call, @NonNull Throwable t) {
-                        progressLayout.setVisibility(View.INVISIBLE);
-                        Log.e(TAG, "Failed to create room.", t);
-//                        Toast.makeText(requireContext(), R.string.roomCreateFailed, Toast.LENGTH_SHORT).show();
-                        Toast.makeText(requireContext(), t.toString(), Toast.LENGTH_SHORT).show();
-                    }
-                });
-
-            }
-        });
         if (args != null) {
             final Button btnDelete = view.findViewById(R.id.deleteButton);
             btnDelete.setVisibility(View.VISIBLE);

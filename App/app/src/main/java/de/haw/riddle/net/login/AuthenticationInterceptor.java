@@ -21,8 +21,9 @@ public class AuthenticationInterceptor implements Authenticator {
 
     @Override
     public Request authenticate(Route route, Response response) {
+        System.out.println(prefs.getString(Preferences.TOKEN,""));
         return response.request().newBuilder()
-                .header("x-access-token", prefs.getString(Preferences.TOKEN, ""))
+                .header("x-access-tokens", prefs.getString(Preferences.TOKEN, ""))
                 .build();
     }
 }

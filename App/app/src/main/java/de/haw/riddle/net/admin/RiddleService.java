@@ -3,7 +3,10 @@ package de.haw.riddle.net.admin;
 import java.util.List;
 
 import de.haw.riddle.net.ApiResponse;
+import de.haw.riddle.ui.admin.model.Device;
 import de.haw.riddle.ui.admin.model.Riddle;
+import de.haw.riddle.ui.admin.model.UpdateDeviceDto;
+import de.haw.riddle.ui.admin.model.UpdateRiddleDto;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.DELETE;
@@ -22,8 +25,8 @@ public interface RiddleService {
     @POST("/puzzles")
     Call<Riddle> createRiddle(@Body CreateRiddleDto riddle);
 
-    @PUT("/puzzles")
-    Call<Riddle> updateRiddle(@Body Riddle riddle);
+    @PUT("/puzzles/{id}")
+    Call<Riddle> updateRiddle(@Path("id") long id, @Body UpdateRiddleDto riddle);
 
     @DELETE("/puzzles/{id}")
     Call<Riddle> deleteRiddle(@Path("id") long id);

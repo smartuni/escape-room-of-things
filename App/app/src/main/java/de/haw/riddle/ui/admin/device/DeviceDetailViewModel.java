@@ -42,17 +42,22 @@ import retrofit2.Call;
      }
 
      public void setDevice(Device device) {
-         this.device = device;
-         description= device.getDescription();
-         devIP= device.getDevIP();
-         id= device.getId();
-         isEventDevice=device.isEventDevice();
-         name=device.getName();
-         nodeState=device.getNodeState();
-         publicKey=device.getPublicKey();
+
+         if(device!=null){
+             this.device = device;
+             description= device.getDescription();
+             devIP= device.getDevIP();
+             id= device.getId();
+             isEventDevice=device.isEventDevice();
+             name=device.getName();
+             nodeState=device.getNodeState();
+             publicKey=device.getPublicKey();
+
+             serial=device.getSerial();
+             state=device.getState();
+         }
          puzzles=device.getParentPuzzleId();
-         serial=device.getSerial();
-         state=device.getState();
+
      }
 
      public long getId() {
