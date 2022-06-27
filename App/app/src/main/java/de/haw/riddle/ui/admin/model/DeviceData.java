@@ -12,9 +12,12 @@ import lombok.ToString;
 public class DeviceData {
 
     private final String serial;
-    @SerializedName("pubkey")
+    @SerializedName("psk")
     private final String publicKey;
     private final String name;
+
+    @SerializedName(value="qrid",alternate = {"id"})
+    private  final String id;
 
 
 

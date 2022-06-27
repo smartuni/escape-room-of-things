@@ -24,11 +24,20 @@ import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
+import de.haw.riddle.net.login.LoginService;
+import de.haw.riddle.net.login.Token;
 import de.haw.riddle.ui.admin.AdminLoginDialog;
 import de.haw.riddle.util.Preferences;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.navigation.NavigationView;
+
+import java.io.IOException;
+
+import javax.inject.Inject;
 
 public class MainActivity extends AppCompatActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
 
@@ -48,6 +57,9 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
     private AppBarConfiguration appBarConfiguration;
     private AppBarLayout appBarLayout;
     private NavigationView navigationView;
+
+    @Inject
+    LoginService loginService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,6 +89,29 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         NavigationUI.setupWithNavController(navigationView, navController);
 
         configureAdminOptions(prefs.getBoolean(Preferences.IS_ADMIN, false));
+
+        loginService.login("admin", "admin").enqueue(new Callback<Token>() {
+            @Override
+            public void onResponse(@NonNull Call<Token> call, @NonNull Response<Token> response) {
+                if (response.isSuccessful()) {
+                    assert response.body() != null;
+                    prefs.edit().putString(Preferences.TOKEN, response.body().getToken()).apply();
+                    Log.i(TAG, "Logged in successfully");
+                } else {
+                    try {
+                        assert response.errorBody() != null;
+                        Log.e(TAG, "Failed to login.\n" + response.errorBody().string());
+                    } catch (IOException e) {
+                        Log.wtf(TAG, "Failed to read errorBody.", e);
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<Token> call, @NonNull Throwable t) {
+                Log.e(TAG, "Failed to login", t);
+            }
+        });
     }
 
     public void hideDrawerAndMenu() {
