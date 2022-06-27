@@ -74,15 +74,15 @@ def admin_token_required(f):
             token = request.headers['x-access-tokens']
 
         if not token:
-            return 401, "token missing"
+            return make_response('no token', 401, {'Authentication': '"no token"'})
         try:
             data = jwt.decode(token, app.config['SECRET_KEY'], algorithms=["HS256"])
             current_user = User.query.filter_by(public_id=data['public_id']).first()
             if not current_user.admin:
-                return 401, "unauthorized access"
+                return make_response('unauthorized access', 401, {'Authentication': '"unauthorized access"'})
 
         except:
-            return jsonify({'message': 'token is invalid'})
+            return make_response('---', 401, {'Authentication': '"---"'})
 
         return f(*args, **kwargs)
 
