@@ -27,7 +27,8 @@ import dagger.android.support.AndroidSupportInjectionModule;
                 LedModule.class,
                 AdminModule.class,
                 InfoModule.class,
-                ViewModelBuilder.class
+                ViewModelBuilder.class,
+                ActivityModule.class
         })
 public interface ApplicationComponent extends AndroidInjector<RiddleApplication> {
 
