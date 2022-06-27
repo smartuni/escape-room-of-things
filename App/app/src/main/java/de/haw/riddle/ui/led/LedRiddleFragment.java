@@ -59,12 +59,6 @@ public class LedRiddleFragment extends DaggerFragment {
                 .setPositiveButton(R.string.confirm, (dialogInterface, i) -> showNextTip())
                 .create()
                 .show());
-
-        final Button congrats = view.findViewById(R.id.congrats);
-        congrats.setOnClickListener(v -> {
-            NavHostFragment.findNavController(this).navigate(R.id.action_ledRiddleFragment_to_congratulationsWindow, CongratulationsWindow.createArgs(R.id.action_congratulationsWindow_to_legoRiddleFragmentPart1));
-            ((MainActivity) requireActivity()).showDrawerAndMenu();
-        });
     }
 
     @Override
