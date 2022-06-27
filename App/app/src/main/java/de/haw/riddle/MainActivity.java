@@ -24,6 +24,8 @@ import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
+import dagger.android.DaggerActivity;
+import dagger.android.support.DaggerAppCompatActivity;
 import de.haw.riddle.net.login.LoginService;
 import de.haw.riddle.net.login.Token;
 import de.haw.riddle.ui.admin.AdminLoginDialog;
@@ -39,7 +41,7 @@ import java.io.IOException;
 
 import javax.inject.Inject;
 
-public class MainActivity extends AppCompatActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
+public class MainActivity extends DaggerAppCompatActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
 
     private static final String TAG = MainActivity.class.getSimpleName();
 
