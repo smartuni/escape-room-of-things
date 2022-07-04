@@ -23,7 +23,7 @@
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
-
+        android:id="@+id/tlPort"
         android:layout_width="match_parent"
         android:layout_height="80dp"
         android:layout_below="@id/ipTextLayout"
@@ -31,6 +31,51 @@
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/portTextField"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:inputType="number" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/tlWater"
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:layout_below="@id/tlPort"
+        android:hint="Id of water riddle">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/idRiddleWater"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:inputType="number" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/tlLego"
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:layout_below="@id/tlWater"
+        android:hint="Id of lego riddle">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/idRiddleLego"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:inputType="number" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/tlLight"
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:layout_below="@id/tlLego"
+        android:hint="Id of light riddle">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/idRiddleLight"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:inputType="number" />

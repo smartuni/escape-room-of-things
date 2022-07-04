@@ -1,18 +1,16 @@
 package de.haw.riddle.ui.lego;
 
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
-import androidx.fragment.app.Fragment;
-import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -22,9 +20,7 @@ import java.util.LinkedList;
 import java.util.Queue;
 
 import dagger.android.support.DaggerFragment;
-import de.haw.riddle.MainActivity;
 import de.haw.riddle.R;
-import de.haw.riddle.ui.CongratulationsWindow;
 import de.haw.riddle.ui.water.TipsListAdapter;
 
 public class LegoRiddleFragmentPart1 extends DaggerFragment {
@@ -39,7 +35,7 @@ public class LegoRiddleFragmentPart1 extends DaggerFragment {
         super.onCreate(savedInstanceState);
         tips.add("Mary is going to be 64 years old in 15 years.");
         tips.add("Cindy is going to be 31 in 15 years. 95 - 31 = ?");
-        tips.add("Follow this order: divide, multiply, subtract. Then try solving the equation by subtracting the number you got from 35.");
+        tips.add("Follow this order: divide, multiply, subtract.\nThen try solving the equation by subtracting the number you got from 35.");
     }
 
     @Nullable
@@ -57,7 +53,6 @@ public class LegoRiddleFragmentPart1 extends DaggerFragment {
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
 
-
         btnTip = view.findViewById(R.id.btnTip);
         btnTip.setOnClickListener(view1 -> new AlertDialog.Builder(requireContext())
                 .setTitle("Are you sure you need a tip?")
@@ -66,21 +61,23 @@ public class LegoRiddleFragmentPart1 extends DaggerFragment {
                 .create()
                 .show());
 
-
         btnCode = view.findViewById(R.id.btnCode);
-        final EditText input = new EditText(requireContext());
         btnCode.setOnClickListener(view1 -> {
+            final EditText input = new EditText(requireContext());
             new AlertDialog.Builder(requireContext())
                     .setTitle("Enter the code")
                     .setMessage("Which color has the LED?")
                     .setView(input)
+                    .setCancelable(false)
                     .setNegativeButton(R.string.cancel, (dialogInterface, i) -> dialogInterface.cancel())
                     .setPositiveButton("Confirm", (dialog, whichButton) -> {
-                        String value = input.getText().toString();
-                        if (value.equalsIgnoreCase("red")) {
-                           NavHostFragment.findNavController(LegoRiddleFragmentPart1.this).navigate(R.id.action_legoRiddleFragmentPart1_to_legoRiddleFragmentPart2);
-                        };
-                        }
+                                String value = input.getText().toString();
+                                if (value.equalsIgnoreCase("red")) {
+                                    NavHostFragment.findNavController(LegoRiddleFragmentPart1.this).navigate(R.id.action_legoRiddleFragmentPart1_to_legoRiddleFragmentPart2);
+                                } else {
+                                    Toast.makeText(requireContext(), "Wrong answer", Toast.LENGTH_SHORT).show();
+                                }
+                            }
                     )
                     .create()
                     .show();

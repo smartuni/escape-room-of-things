@@ -85,8 +85,9 @@ public class MainActivity extends DaggerAppCompatActivity implements SharedPrefe
         appBarConfiguration = new AppBarConfiguration.Builder(
                 R.id.fragmentInfo,
                 R.id.fragmentWaterRiddle,
-                R.id.fragmentLegoRiddle,
-                R.id.fragmentLed,
+                R.id.legoRiddleFragmentPart1,
+                R.id.legoRiddleFragmentPart2,
+                R.id.ledRiddleFragment,
                 R.id.fragmentRoom,
                 R.id.fragmentSettings)
                 .setOpenableLayout(drawerLayout)

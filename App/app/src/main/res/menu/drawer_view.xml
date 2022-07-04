@@ -9,11 +9,15 @@
             android:icon="@drawable/baseline_riddle_24"
             android:title="Water Riddle" />
         <item
-            android:id="@id/fragmentLegoRiddle"
+            android:id="@id/legoRiddleFragmentPart1"
             android:icon="@drawable/baseline_riddle_24"
-            android:title="Lego Riddle" />
+            android:title="Lego part 1" />
         <item
-            android:id="@id/fragmentLed"
+            android:id="@id/legoRiddleFragmentPart2"
+            android:icon="@drawable/baseline_riddle_24"
+            android:title="Lego part 2" />
+        <item
+            android:id="@id/ledRiddleFragment"
             android:icon="@drawable/baseline_lightbulb_24"
             android:title="@string/led" />
     </group>

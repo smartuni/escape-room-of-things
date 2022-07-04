@@ -1,6 +1,8 @@
 package de.haw.riddle.ui.water;
 
 import android.os.Bundle;
+import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,14 +31,18 @@ import de.haw.riddle.PullPuzzleStateRunnable;
 import de.haw.riddle.R;
 import de.haw.riddle.net.admin.RiddleService;
 import de.haw.riddle.ui.CongratulationsWindow;
+import de.haw.riddle.util.Preferences;
 
-public class WaterRiddleFragment extends DaggerFragment {
+public class WaterRiddleFragment extends DaggerFragment implements PullPuzzleStateRunnable.Callback {
 
-    private ScheduledExecutorService scheduledExecutorService = Executors.newScheduledThreadPool(1);
+    private static final String TAG = WaterRiddleFragment.class.getSimpleName();
+
+    private final ScheduledExecutorService scheduledExecutorService = Executors.newScheduledThreadPool(1);
     private final Queue<String> tips = new LinkedList<>();
     private final TipsListAdapter adapter = new TipsListAdapter();
     private Button btnTip;
-    private ScheduledFuture scheduledFuture;
+    private ScheduledFuture<?> scheduledFuture;
+    private PullPuzzleStateRunnable task;
 
     @Inject
     RiddleService riddleService;
@@ -44,9 +50,9 @@ public class WaterRiddleFragment extends DaggerFragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        tips.add("fill the 0.3l bottle with water.");
-        tips.add("pour your 0.3l into the 0.5l bottle. \nThen fill the 0.3l bottle again an \nuse it to fill the 0.5l.");
-        tips.add("empty the 0.5l bottle and pour the \n0.3l bottle’s remaining 0.1 liter in. \nRefill the 0.3l bottle and pour it into \nthe 0.5l bottle. ");
+        tips.add("Fill the 0.3l bottle with water.");
+        tips.add("Pour your 0.3l into the 0.5l bottle. \nThen fill the 0.3l bottle again an \nuse it to fill the 0.5l.");
+        tips.add("Empty the 0.5l bottle and pour the \n0.3l bottle’s remaining 0.1 liter in. \nRefill the 0.3l bottle and pour it into \nthe 0.5l bottle. ");
     }
 
     @Nullable
@@ -87,12 +93,18 @@ public class WaterRiddleFragment extends DaggerFragment {
     @Override
     public void onResume() {
         super.onResume();
-        scheduledFuture = scheduledExecutorService.schedule(new PullPuzzleStateRunnable(NavHostFragment.findNavController(this), riddleService, R.id.action_fragmentWaterRiddle_to_congratulationsWindow, R.id.action_congratulationsWindow_to_legoRiddleFragmentPart1), 2, TimeUnit.SECONDS);
+        Log.i(TAG, "Schedule riddle state pull");
+        final int idRiddleWater = PreferenceManager.getDefaultSharedPreferences(requireContext()).getInt(Preferences.ID_RIDDLE_WATER, 0);
+        task = new PullPuzzleStateRunnable(riddleService, idRiddleWater, this);
+        scheduledFuture = scheduledExecutorService.scheduleAtFixedRate(task, 1, 3, TimeUnit.SECONDS);
+//        scheduledFuture = scheduledExecutorService.schedule(new PullPuzzleStateRunnable(NavHostFragment.findNavController(this), riddleService, R.id.action_fragmentWaterRiddle_to_congratulationsWindow, R.id.action_congratulationsWindow_to_legoRiddleFragmentPart1), 2, TimeUnit.SECONDS);
     }
 
     @Override
     public void onPause() {
         super.onPause();
+        Log.i(TAG, "Cancel riddle state pull");
+        task.cancel();
         scheduledFuture.cancel(true);
     }
 
@@ -107,4 +119,12 @@ public class WaterRiddleFragment extends DaggerFragment {
             btnTip.setEnabled(false);
     }
 
+    @Override
+    public void onPuzzleStateSolved() {
+        Log.i(TAG, "onPuzzleSolved()");
+        task.cancel();
+        scheduledFuture.cancel(true);
+        Log.i(TAG, "Show congrats window");
+        NavHostFragment.findNavController(this).navigate(R.id.congratulationsWindow, CongratulationsWindow.createArgs(R.id.legoRiddleFragmentPart1));
+    }
 }

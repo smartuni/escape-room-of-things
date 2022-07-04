@@ -1,6 +1,8 @@
 package de.haw.riddle.ui.lego;
 
 import android.os.Bundle;
+import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,14 +32,18 @@ import de.haw.riddle.R;
 import de.haw.riddle.net.admin.RiddleService;
 import de.haw.riddle.ui.CongratulationsWindow;
 import de.haw.riddle.ui.water.TipsListAdapter;
+import de.haw.riddle.util.Preferences;
 
-public class LegoRiddleFragmentPart2 extends DaggerFragment {
+public class LegoRiddleFragmentPart2 extends DaggerFragment implements PullPuzzleStateRunnable.Callback {
+
+    private static final String TAG = LegoRiddleFragmentPart2.class.getSimpleName();
 
     private final Queue<String> tips = new LinkedList<>();
     private final TipsListAdapter adapter = new TipsListAdapter();
     private Button btnTip;
     private ScheduledExecutorService scheduledExecutorService = Executors.newScheduledThreadPool(1);
-    private ScheduledFuture scheduledFuture;
+    private ScheduledFuture<?> scheduledFuture;
+    private PullPuzzleStateRunnable task;
 
     @Inject
     RiddleService riddleService;
@@ -88,12 +94,18 @@ public class LegoRiddleFragmentPart2 extends DaggerFragment {
     @Override
     public void onResume() {
         super.onResume();
-        scheduledFuture = scheduledExecutorService.schedule(new PullPuzzleStateRunnable(NavHostFragment.findNavController(this), riddleService, R.id.action_legoRiddleFragmentPart2_to_congratulationsWindow, R.id.action_congratulationsWindow_to_ledRiddleFragment), 2, TimeUnit.SECONDS);
+        Log.i(TAG, "Schedule riddle state pull");
+        final int idRiddleLego = PreferenceManager.getDefaultSharedPreferences(requireContext()).getInt(Preferences.ID_RIDDLE_LEGO, 0);
+        task = new PullPuzzleStateRunnable(riddleService, idRiddleLego, this);
+        scheduledFuture = scheduledExecutorService.scheduleAtFixedRate(task, 1, 3, TimeUnit.SECONDS);
+//        scheduledFuture = scheduledExecutorService.schedule(new PullPuzzleStateRunnable(NavHostFragment.findNavController(this), riddleService, R.id.action_legoRiddleFragmentPart2_to_congratulationsWindow, R.id.action_congratulationsWindow_to_ledRiddleFragment), 2, TimeUnit.SECONDS);
     }
 
     @Override
     public void onPause() {
         super.onPause();
+        Log.i(TAG, "Cancel riddle state pull");
+        task.cancel();
         scheduledFuture.cancel(true);
     }
 
@@ -108,4 +120,12 @@ public class LegoRiddleFragmentPart2 extends DaggerFragment {
             btnTip.setEnabled(false);
     }
 
+    @Override
+    public void onPuzzleStateSolved() {
+        Log.i(TAG, "onPuzzleSolved()");
+        task.cancel();
+        scheduledFuture.cancel(true);
+        Log.i(TAG, "Show congrats window");
+        NavHostFragment.findNavController(this).navigate(R.id.congratulationsWindow, CongratulationsWindow.createArgs(R.id.ledRiddleFragment));
+    }
 }

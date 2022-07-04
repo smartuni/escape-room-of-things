@@ -18,7 +18,7 @@
     <fragment
         android:id="@+id/fragmentWaterRiddle"
         android:name="de.haw.riddle.ui.water.WaterRiddleFragment"
-        android:label="riddle1"
+        android:label="Water"
         tools:layout="@layout/fragment_water" >
         <action
             android:id="@+id/action_fragmentWaterRiddle_to_congratulationsWindow"
@@ -117,7 +117,7 @@
     <fragment
         android:id="@+id/legoRiddleFragmentPart1"
         android:name="de.haw.riddle.ui.lego.LegoRiddleFragmentPart1"
-        android:label="LegoRiddleFragmentPart1" >
+        android:label="Lego part 1" >
         <action
             android:id="@+id/action_legoRiddleFragmentPart1_to_legoRiddleFragmentPart2"
             app:destination="@id/legoRiddleFragmentPart2" />
@@ -125,7 +125,7 @@
     <fragment
         android:id="@+id/legoRiddleFragmentPart2"
         android:name="de.haw.riddle.ui.lego.LegoRiddleFragmentPart2"
-        android:label="LegoRiddleFragmentPart2" >
+        android:label="Lego part 2" >
         <action
             android:id="@+id/action_legoRiddleFragmentPart2_to_congratulationsWindow"
             app:destination="@id/congratulationsWindow" />
@@ -139,7 +139,7 @@
     <fragment
         android:id="@+id/ledRiddleFragment"
         android:name="de.haw.riddle.ui.led.LedRiddleFragment"
-        android:label="fragment_led"
+        android:label="Stop the light"
         tools:layout="@layout/fragment_led" >
         <action
             android:id="@+id/action_ledRiddleFragment_to_congratulationsWindow"

@@ -14,8 +14,10 @@ import androidx.annotation.Nullable;
 
 import de.haw.riddle.R;
 import de.haw.riddle.util.Preferences;
+
 import com.google.android.material.textfield.TextInputEditText;
 
+import java.util.Objects;
 import java.util.regex.Pattern;
 
 import dagger.android.support.DaggerFragment;
@@ -38,9 +40,15 @@ public class AdminSettingsFragment extends DaggerFragment {
         Button applyButton = view.findViewById(R.id.applyButton);
         TextInputEditText ipAddress = view.findViewById(R.id.ipTextField);
         TextInputEditText port = view.findViewById(R.id.portTextField);
+        TextInputEditText water = view.findViewById(R.id.idRiddleWater);
+        TextInputEditText lego = view.findViewById(R.id.idRiddleLego);
+        TextInputEditText light = view.findViewById(R.id.idRiddleLight);
 
         ipAddress.setText(preferences.getString(Preferences.IP_ADDRESS, null));
         port.setText(preferences.getString(Preferences.PORT, null));
+        water.setText(String.valueOf(preferences.getInt(Preferences.ID_RIDDLE_WATER, 0)));
+        lego.setText(String.valueOf(preferences.getInt(Preferences.ID_RIDDLE_LEGO, 0)));
+        light.setText(String.valueOf(preferences.getInt(Preferences.ID_RIDDLE_LIGHT, 0)));
 
 
         applyButton.setOnClickListener(view1 -> {
@@ -48,6 +56,11 @@ public class AdminSettingsFragment extends DaggerFragment {
             String portText = port.getText() == null ? "" : port.getText().toString();
             boolean isValidIp = REGEX_IP.matcher(ipText).find();
             boolean isValidPort = REGEX_PORT.matcher(portText).find();
+
+            final int idWater = Integer.parseInt(Objects.requireNonNull(water.getText()).toString());
+            final int idLego = Integer.parseInt(Objects.requireNonNull(lego.getText()).toString());
+            final int idLight = Integer.parseInt(Objects.requireNonNull(light.getText()).toString());
+
 
             if (!REGEX_IP.matcher(ipText).find())
                 Toast.makeText(requireContext(), "IP-Address not valid", Toast.LENGTH_LONG).show();
@@ -57,6 +70,9 @@ public class AdminSettingsFragment extends DaggerFragment {
                 preferences.edit()
                         .putString(Preferences.IP_ADDRESS, ipText)
                         .putString(Preferences.PORT, portText)
+                        .putInt(Preferences.ID_RIDDLE_WATER, idWater)
+                        .putInt(Preferences.ID_RIDDLE_LEGO, idLego)
+                        .putInt(Preferences.ID_RIDDLE_LIGHT, idLight)
                         .apply();
         });
 
